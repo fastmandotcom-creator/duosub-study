@@ -65,6 +65,9 @@
     <string name="settings_original_caption_language">Original caption language</string>
     <string name="settings_translate_to">Translate to</string>
     <string name="settings_original_language">Original language</string>
+    <string name="settings_line_one">Line 1</string>
+    <string name="settings_line_two">Line 2</string>
+    <string name="settings_line_pair_hint">Line 1 is Vietnamese by default, including automatic captions. Line 2 is English. Change either one here.</string>
     <string name="settings_model_download_hint">A language model downloads only when it is needed.</string>
     <string name="settings_third_line">Third line</string>
     <string name="settings_third_line_off">Off</string>

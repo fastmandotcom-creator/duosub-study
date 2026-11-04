@@ -258,6 +258,16 @@ internal const val DEFAULT_SOURCE_LANGUAGE = "vi"
 /** Second subtitle line: English. */
 internal const val DEFAULT_TARGET_LANGUAGE = "en"
 
+/** True while the learner still uses the default pair: line 1 Vietnamese, line 2 English. */
+internal fun usesVietnameseEnglishPair(
+    sourcePreference: String,
+    targetLanguage: String,
+): Boolean =
+    sourcePreference.substringBefore('-').equals(DEFAULT_SOURCE_LANGUAGE, ignoreCase = true) &&
+        targetLanguage.substringBefore('-').equals(DEFAULT_TARGET_LANGUAGE, ignoreCase = true)
+
+internal fun DualSubUiState.usesVietnameseEnglishPair(): Boolean = usesVietnameseEnglishPair(sourcePreference, targetLanguage)
+
 /** Where to translate the loaded track so the pair can be Vietnamese then English. */
 internal fun studyTranslationTarget(sourceLanguage: String?): String =
     if (sourceLanguage?.substringBefore('-')?.equals("vi", ignoreCase = true) == true) "en" else "vi"
@@ -266,6 +276,14 @@ internal fun studyTranslationTarget(sourceLanguage: String?): String =
  * The line the learner reads first is Vietnamese, then English. A Vietnamese track stays as it is.
  * An English track is translated into Vietnamese and that translation moves to the first line.
  */
+/** Line 1 and line 2 as the learner set them. The default pair still puts Vietnamese first. */
+internal fun DualSubUiState.studyLine(segment: SubtitleSegment): SubtitleSegment =
+    if (usesVietnameseEnglishPair()) {
+        segment.asStudyPair(resolvedSourceLanguage, studyTranslationTarget(resolvedSourceLanguage), thirdLineFor(segment))
+    } else {
+        segment
+    }
+
 internal fun SubtitleSegment.asStudyPair(
     sourceLanguage: String?,
     targetLanguage: String,

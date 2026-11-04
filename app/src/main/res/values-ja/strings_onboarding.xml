@@ -13,10 +13,10 @@
     <string name="onboarding_guide_open_video_body">YouTube のリンクを貼り付けるか、YouTube アプリから動画を共有するか、DualSub Replay 内でそのまま閲覧できます。</string>
     <string name="onboarding_language_welcome">DualSub Replay へようこそ</string>
     <string name="onboarding_language_intro">言語は一度選ぶだけです。あとで字幕の設定から変更できます。</string>
-    <string name="onboarding_language_native_title">あなたの母語</string>
-    <string name="onboarding_language_native_helper">小さい翻訳字幕として表示されます。</string>
-    <string name="onboarding_language_learning_title">学びたい言語</string>
-    <string name="onboarding_language_learning_helper">優先する字幕トラックです。大きい字幕は動画の字幕に従います。</string>
+    <string name="onboarding_language_native_title">1行目</string>
+    <string name="onboarding_language_native_helper">最初に表示します。既定はベトナム語で、自動字幕も含みます。</string>
+    <string name="onboarding_language_learning_title">2行目</string>
+    <string name="onboarding_language_learning_helper">翻訳です。既定は英語です。今すぐ、または後で字幕設定から変更できます。</string>
     <string name="onboarding_language_select">言語を選択</string>
     <string name="onboarding_language_continue">続ける</string>
     <string name="onboarding_language_skip_for_now">今はスキップ</string>

@@ -65,6 +65,9 @@
     <string name="settings_original_caption_language">원본 자막 언어</string>
     <string name="settings_translate_to">번역할 언어</string>
     <string name="settings_original_language">원본 언어</string>
+    <string name="settings_line_one">1행</string>
+    <string name="settings_line_two">2행</string>
+    <string name="settings_line_pair_hint">1행은 기본이 베트남어이며 자동 자막도 포함합니다. 2행은 영어입니다. 여기서 둘 다 바꿀 수 있습니다.</string>
     <string name="settings_model_download_hint">언어 모델은 필요할 때만 다운로드돼요.</string>
     <string name="settings_third_line">세 번째 줄</string>
     <string name="settings_third_line_off">끄기</string>

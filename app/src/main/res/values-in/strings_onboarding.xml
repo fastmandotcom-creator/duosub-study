@@ -13,10 +13,10 @@
     <string name="onboarding_guide_open_video_body">Tempel tautan YouTube, bagikan video langsung dari aplikasi YouTube, atau cukup jelajahi di dalam DualSub Replay.</string>
     <string name="onboarding_language_welcome">Selamat datang di DualSub Replay</string>
     <string name="onboarding_language_intro">Pilih bahasa Anda sekali saja. Anda dapat mengubahnya nanti di setelan subtitel.</string>
-    <string name="onboarding_language_native_title">Bahasa ibu Anda</string>
-    <string name="onboarding_language_native_helper">Ditampilkan sebagai subtitel terjemahan berukuran kecil.</string>
-    <string name="onboarding_language_learning_title">Bahasa yang ingin Anda pelajari</string>
-    <string name="onboarding_language_learning_helper">Trek subtitel pilihan; subtitel besar mengikuti video.</string>
+    <string name="onboarding_language_native_title">Baris 1</string>
+    <string name="onboarding_language_native_helper">Ditampilkan lebih dulu. Bawaan bahasa Vietnam, termasuk takarir otomatis.</string>
+    <string name="onboarding_language_learning_title">Baris 2</string>
+    <string name="onboarding_language_learning_helper">Terjemahan. Bawaan bahasa Inggris. Ubah salah satunya sekarang atau nanti di setelan.</string>
     <string name="onboarding_language_select">Pilih bahasa</string>
     <string name="onboarding_language_continue">Lanjutkan</string>
     <string name="onboarding_language_skip_for_now">Lewati dulu</string>

@@ -65,6 +65,9 @@
     <string name="settings_original_caption_language">Idioma das legendas originais</string>
     <string name="settings_translate_to">Traduzir para</string>
     <string name="settings_original_language">Idioma original</string>
+    <string name="settings_line_one">Linha 1</string>
+    <string name="settings_line_two">Linha 2</string>
+    <string name="settings_line_pair_hint">A linha 1 é vietnamita por padrão, inclusive legendas automáticas. A linha 2 é inglês. Mude qualquer uma aqui.</string>
     <string name="settings_model_download_hint">O modelo de idioma só é baixado quando necessário.</string>
     <string name="settings_third_line">Terceira linha</string>
     <string name="settings_third_line_off">Desligada</string>

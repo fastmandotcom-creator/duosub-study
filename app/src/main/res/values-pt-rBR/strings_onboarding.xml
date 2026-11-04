@@ -13,10 +13,10 @@
     <string name="onboarding_guide_open_video_body">Cole um link do YouTube, compartilhe um vídeo direto do app do YouTube ou simplesmente navegue dentro do DualSub Replay.</string>
     <string name="onboarding_language_welcome">Boas-vindas ao DualSub Replay</string>
     <string name="onboarding_language_intro">Escolha seus idiomas uma vez. Você pode alterá-los depois nas configurações de legendas.</string>
-    <string name="onboarding_language_native_title">Seu idioma nativo</string>
-    <string name="onboarding_language_native_helper">Aparece como a legenda traduzida menor.</string>
-    <string name="onboarding_language_learning_title">Idioma que você quer aprender</string>
-    <string name="onboarding_language_learning_helper">Faixa de legendas preferida; a legenda maior acompanha o vídeo.</string>
+    <string name="onboarding_language_native_title">Linha 1</string>
+    <string name="onboarding_language_native_helper">Aparece primeiro. Vietnamita por padrão, inclusive legendas automáticas.</string>
+    <string name="onboarding_language_learning_title">Linha 2</string>
+    <string name="onboarding_language_learning_helper">A tradução. Inglês por padrão. Mude qualquer linha agora ou depois nas configurações.</string>
     <string name="onboarding_language_select">Selecionar idioma</string>
     <string name="onboarding_language_continue">Continuar</string>
     <string name="onboarding_language_skip_for_now">Pular por enquanto</string>

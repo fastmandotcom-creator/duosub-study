@@ -13,10 +13,10 @@
     <string name="onboarding_guide_open_video_body">YouTube 링크를 붙여넣거나, YouTube 앱에서 동영상을 바로 공유하거나, DualSub Replay 안에서 바로 둘러보세요.</string>
     <string name="onboarding_language_welcome">DualSub Replay에 오신 것을 환영해요</string>
     <string name="onboarding_language_intro">언어는 한 번만 선택하면 돼요. 나중에 자막 설정에서 바꿀 수 있어요.</string>
-    <string name="onboarding_language_native_title">내 모국어</string>
-    <string name="onboarding_language_native_helper">작은 번역 자막으로 표시돼요.</string>
-    <string name="onboarding_language_learning_title">배우고 싶은 언어</string>
-    <string name="onboarding_language_learning_helper">선호하는 자막 트랙이에요. 큰 자막은 동영상을 따라가요.</string>
+    <string name="onboarding_language_native_title">1행</string>
+    <string name="onboarding_language_native_helper">먼저 표시됩니다. 기본은 베트남어이며 자동 자막도 포함합니다.</string>
+    <string name="onboarding_language_learning_title">2행</string>
+    <string name="onboarding_language_learning_helper">번역입니다. 기본은 영어입니다. 지금 또는 나중에 자막 설정에서 바꿀 수 있습니다.</string>
     <string name="onboarding_language_select">언어 선택</string>
     <string name="onboarding_language_continue">계속</string>
     <string name="onboarding_language_skip_for_now">나중에 하기</string>

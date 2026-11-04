@@ -65,6 +65,9 @@
     <string name="settings_original_caption_language">Idioma de los subtítulos originales</string>
     <string name="settings_translate_to">Traducir a</string>
     <string name="settings_original_language">Idioma original</string>
+    <string name="settings_line_one">Línea 1</string>
+    <string name="settings_line_two">Línea 2</string>
+    <string name="settings_line_pair_hint">La línea 1 es vietnamita de forma predeterminada, incluso con subtítulos automáticos. La línea 2 es inglés. Cambia cualquiera de las dos aquí.</string>
     <string name="settings_model_download_hint">El modelo de idioma solo se descarga cuando hace falta.</string>
     <string name="settings_third_line">Tercera línea</string>
     <string name="settings_third_line_off">Desactivada</string>

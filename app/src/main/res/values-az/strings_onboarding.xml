@@ -13,10 +13,10 @@
     <string name="onboarding_guide_open_video_body">YouTube linkini yapışdırın, videonu birbaşa YouTube tətbiqindən paylaşın və ya sadəcə DualSub Replay daxilində gəzin.</string>
     <string name="onboarding_language_welcome">DualSub Replay-ə xoş gəlmisiniz</string>
     <string name="onboarding_language_intro">Dillərinizi bir dəfə seçin. Sonra onları altyazı ayarlarında dəyişə bilərsiniz.</string>
-    <string name="onboarding_language_native_title">Ana diliniz</string>
-    <string name="onboarding_language_native_helper">Kiçik tərcümə altyazısı kimi göstərilir.</string>
-    <string name="onboarding_language_learning_title">Öyrənmək istədiyiniz dil</string>
-    <string name="onboarding_language_learning_helper">Üstünlük verilən altyazı treki; böyük altyazı videoya uyğun gəlir.</string>
+    <string name="onboarding_language_native_title">Sətir 1</string>
+    <string name="onboarding_language_native_helper">Əvvəl göstərilir. Standart Vyetnamcadır, avtomatik altyazı da daxil.</string>
+    <string name="onboarding_language_learning_title">Sətir 2</string>
+    <string name="onboarding_language_learning_helper">Tərcümə. Standart İngiliscədir. İndi və ya sonra altyazı ayarlarında dəyişin.</string>
     <string name="onboarding_language_select">Dil seçin</string>
     <string name="onboarding_language_continue">Davam et</string>
     <string name="onboarding_language_skip_for_now">Hələlik keç</string>

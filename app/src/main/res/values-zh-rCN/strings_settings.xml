@@ -65,6 +65,9 @@
     <string name="settings_original_caption_language">原文字幕语言</string>
     <string name="settings_translate_to">翻译为</string>
     <string name="settings_original_language">原文语言</string>
+    <string name="settings_line_one">第1行</string>
+    <string name="settings_line_two">第2行</string>
+    <string name="settings_line_pair_hint">第1行默认是越南语，包括自动字幕。第2行是英语。可在此更改任一行。</string>
     <string name="settings_model_download_hint">语言模型仅在需要时下载。</string>
     <string name="settings_third_line">第三行</string>
     <string name="settings_third_line_off">关闭</string>

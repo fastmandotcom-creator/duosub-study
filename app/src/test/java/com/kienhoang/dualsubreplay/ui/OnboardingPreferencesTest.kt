@@ -26,6 +26,8 @@ class OnboardingPreferencesTest {
         assertEquals("en", DEFAULT_TARGET_LANGUAGE)
         assertEquals("vi", DualSubUiState().sourcePreference)
         assertEquals("en", DualSubUiState().targetLanguage)
+        assertEquals(true, usesVietnameseEnglishPair("vi", "en"))
+        assertEquals(false, usesVietnameseEnglishPair("ja", "en"))
         assertEquals("en", studyTranslationTarget("vi"))
         assertEquals("vi", studyTranslationTarget("en"))
         val english = com.kienhoang.dualsubreplay.data.SubtitleSegment(1, 0, 1, "hello", "xin chào")

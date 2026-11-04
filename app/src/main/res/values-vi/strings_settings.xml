@@ -65,6 +65,9 @@
     <string name="settings_original_caption_language">Ngôn ngữ phụ đề gốc</string>
     <string name="settings_translate_to">Dịch sang</string>
     <string name="settings_original_language">Ngôn ngữ gốc</string>
+    <string name="settings_line_one">Dòng 1</string>
+    <string name="settings_line_two">Dòng 2</string>
+    <string name="settings_line_pair_hint">Mặc định dòng 1 là tiếng Việt, kể cả phụ đề tự động. Dòng 2 là tiếng Anh. Đổi từng dòng ngay tại đây.</string>
     <string name="settings_model_download_hint">Mô hình ngôn ngữ chỉ được tải xuống khi cần.</string>
     <string name="settings_third_line">Dòng thứ ba</string>
     <string name="settings_third_line_off">Tắt</string>

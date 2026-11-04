@@ -65,6 +65,9 @@
     <string name="settings_original_caption_language">元の字幕の言語</string>
     <string name="settings_translate_to">翻訳先</string>
     <string name="settings_original_language">元の言語</string>
+    <string name="settings_line_one">1行目</string>
+    <string name="settings_line_two">2行目</string>
+    <string name="settings_line_pair_hint">1行目は既定でベトナム語です。自動字幕も含みます。2行目は英語です。どちらもここで変更できます。</string>
     <string name="settings_model_download_hint">言語モデルは必要なときだけダウンロードされます。</string>
     <string name="settings_third_line">3行目</string>
     <string name="settings_third_line_off">オフ</string>

@@ -215,8 +215,8 @@ private fun showLanguagePickerIfOpen(
         title =
             stringResource(
                 when (mode) {
-                    LanguagePickerMode.SOURCE -> R.string.settings_original_caption_language
-                    LanguagePickerMode.TARGET -> R.string.settings_translate_to
+                    LanguagePickerMode.SOURCE -> R.string.settings_line_one
+                    LanguagePickerMode.TARGET -> R.string.settings_line_two
                     LanguagePickerMode.THIRD -> R.string.settings_third_line
                 },
             ),
@@ -300,7 +300,7 @@ private fun LanguagePickerButtons(
     targetLanguage: String,
     onPick: (LanguagePickerMode) -> Unit,
 ) {
-    Text(stringResource(R.string.settings_original_language))
+    Text(stringResource(R.string.settings_line_one))
     Spacer(Modifier.height(6.dp))
     OutlinedButton(
         onClick = { onPick(LanguagePickerMode.SOURCE) },
@@ -309,7 +309,7 @@ private fun LanguagePickerButtons(
         Text(sourceLabel, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
     Spacer(Modifier.height(12.dp))
-    Text(stringResource(R.string.settings_translate_to))
+    Text(stringResource(R.string.settings_line_two))
     Spacer(Modifier.height(6.dp))
     OutlinedButton(
         onClick = { onPick(LanguagePickerMode.TARGET) },
@@ -317,6 +317,7 @@ private fun LanguagePickerButtons(
     ) {
         Text(languageDisplayName(targetLanguage, currentInterfaceLocale()))
     }
+    SettingsHint(stringResource(R.string.settings_line_pair_hint))
     SettingsHint(stringResource(R.string.settings_model_download_hint))
 }
 
@@ -332,14 +333,15 @@ private fun CompactLanguageRows(
     onPick: (LanguagePickerMode) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        CompactLanguageRow(stringResource(R.string.settings_original_language), sourceLabel, "source_language_picker") {
+        CompactLanguageRow(stringResource(R.string.settings_line_one), sourceLabel, "source_language_picker") {
             onPick(LanguagePickerMode.SOURCE)
         }
         CompactLanguageRow(
-            stringResource(R.string.settings_translate_to),
+            stringResource(R.string.settings_line_two),
             languageDisplayName(targetLanguage, currentInterfaceLocale()),
             "target_language_picker",
         ) { onPick(LanguagePickerMode.TARGET) }
+        SettingsHint(stringResource(R.string.settings_line_pair_hint))
         // Only while Layout & format → Third subtitle line is on; "Off" in its list turns it off again.
         if (thirdLine.enabled) {
             CompactLanguageRow(stringResource(R.string.settings_third_line), thirdLineLabel(thirdLine.language), "third_language_picker") {

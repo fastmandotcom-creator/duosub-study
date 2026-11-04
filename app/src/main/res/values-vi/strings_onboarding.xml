@@ -13,10 +13,10 @@
     <string name="onboarding_guide_open_video_body">Dán liên kết YouTube, chia sẻ video trực tiếp từ ứng dụng YouTube, hoặc chỉ cần duyệt ngay trong DualSub Replay.</string>
     <string name="onboarding_language_welcome">Chào mừng bạn đến với DualSub Replay</string>
     <string name="onboarding_language_intro">Chỉ cần chọn ngôn ngữ một lần. Bạn có thể đổi lại sau trong cài đặt phụ đề.</string>
-    <string name="onboarding_language_native_title">Ngôn ngữ mẹ đẻ của bạn</string>
-    <string name="onboarding_language_native_helper">Hiển thị dưới dạng phụ đề dịch cỡ nhỏ.</string>
-    <string name="onboarding_language_learning_title">Ngôn ngữ bạn muốn học</string>
-    <string name="onboarding_language_learning_helper">Bản phụ đề ưu tiên; phụ đề lớn sẽ theo video.</string>
+    <string name="onboarding_language_native_title">Dòng 1</string>
+    <string name="onboarding_language_native_helper">Hiện trước. Mặc định tiếng Việt, kể cả phụ đề tự động.</string>
+    <string name="onboarding_language_learning_title">Dòng 2</string>
+    <string name="onboarding_language_learning_helper">Phụ đề dịch. Mặc định tiếng Anh. Đổi từng dòng ngay bây giờ hoặc sau trong cài đặt phụ đề.</string>
     <string name="onboarding_language_select">Chọn ngôn ngữ</string>
     <string name="onboarding_language_continue">Tiếp tục</string>
     <string name="onboarding_language_skip_for_now">Để sau</string>

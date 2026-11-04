@@ -65,6 +65,9 @@
     <string name="settings_original_caption_language">Orijinal altyazının dili</string>
     <string name="settings_translate_to">Tərcümə dili</string>
     <string name="settings_original_language">Orijinal dil</string>
+    <string name="settings_line_one">Sətir 1</string>
+    <string name="settings_line_two">Sətir 2</string>
+    <string name="settings_line_pair_hint">Sətir 1 standart olaraq Vyetnamcadır, avtomatik altyazı da daxil. Sətir 2 İngiliscədir. İkisini də burada dəyişin.</string>
     <string name="settings_model_download_hint">Dil modeli yalnız lazım olanda endirilir.</string>
     <string name="settings_third_line">Üçüncü sətir</string>
     <string name="settings_third_line_off">Söndürülüb</string>

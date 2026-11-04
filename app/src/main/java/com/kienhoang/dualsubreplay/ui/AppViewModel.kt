@@ -711,20 +711,20 @@ class AppViewModel internal constructor(
         nativeLanguage: String,
         learningLanguage: String,
     ) {
-        if (normalizedOnboardingLanguages(nativeLanguage, learningLanguage) == null) return
-        // This study build always shows Vietnamese first and English second, for every video.
+        val languages = normalizedOnboardingLanguages(nativeLanguage, learningLanguage) ?: return
+        val (lineOne, lineTwo) = languages
         preferences
             .edit()
-            .putString("preferred_caption_language", DEFAULT_SOURCE_LANGUAGE)
-            .putString(LEARNING_LANGUAGE_PREFERENCE, DEFAULT_SOURCE_LANGUAGE)
-            .putString("target_language", DEFAULT_TARGET_LANGUAGE)
+            .putString("preferred_caption_language", lineOne)
+            .putString(LEARNING_LANGUAGE_PREFERENCE, lineOne)
+            .putString("target_language", lineTwo)
             .apply()
-        _state.update { it.copy(sourcePreference = DEFAULT_SOURCE_LANGUAGE, targetLanguage = DEFAULT_TARGET_LANGUAGE) }
-        warmTranslationModel(sourceLanguage = DEFAULT_SOURCE_LANGUAGE, targetLanguage = DEFAULT_TARGET_LANGUAGE)
+        _state.update { it.copy(sourcePreference = lineOne, targetLanguage = lineTwo) }
+        warmTranslationModel(sourceLanguage = lineOne, targetLanguage = lineTwo)
         finishOnboarding()
     }
 
-    fun skipOnboarding() = completeOnboarding(DEFAULT_TARGET_LANGUAGE, DEFAULT_SOURCE_LANGUAGE)
+    fun skipOnboarding() = completeOnboarding(DEFAULT_SOURCE_LANGUAGE, DEFAULT_TARGET_LANGUAGE)
 
     private fun finishOnboarding() {
         preferences.edit().putBoolean("onboarding_completed", true).apply()
@@ -1421,10 +1421,9 @@ class AppViewModel internal constructor(
                     liveTranslationGate.reset()
                     liveTranslationJob?.cancel()
 
-                    val studyTarget = studyTranslationTarget(track.languageCode)
-                    preferences.edit().putString("target_language", studyTarget).apply()
                     _state.update { current ->
                         if (!isCurrentLoad(current, videoId, generation)) return@update current
+                        val studyPair = current.usesVietnameseEnglishPair() && studyNeedsEnglishLine(track.languageCode)
                         current.copy(
                             liveFallback = false,
                             liveOriginal = null,
@@ -1432,16 +1431,14 @@ class AppViewModel internal constructor(
                             retryingTranscript = false,
                             fullTranscriptProblem = null,
                             resolvedSourceLanguage = track.languageCode,
-                            sourcePreference = DEFAULT_SOURCE_LANGUAGE,
-                            targetLanguage = studyTarget,
                             availableSourceLanguages = track.availableLanguages,
                             loadedTrackId = track.trackId,
                             generatedCaptions = track.isGenerated,
                             segments = emptyList(),
                             stage = LoadStage.TRANSLATING,
-                            statusMessage = translationStartingMessage(studyTarget),
-                            thirdLineEnabled = studyNeedsEnglishLine(track.languageCode) || current.thirdLineEnabled,
-                            thirdLanguage = if (studyNeedsEnglishLine(track.languageCode)) "en" else current.thirdLanguage,
+                            statusMessage = translationStartingMessage(current.targetLanguage),
+                            thirdLineEnabled = studyPair || current.thirdLineEnabled,
+                            thirdLanguage = if (studyPair) DEFAULT_TARGET_LANGUAGE else current.thirdLanguage,
                         )
                     }
 
@@ -1504,7 +1501,15 @@ class AppViewModel internal constructor(
         val googleRequests = CoroutineScope(coroutineContext + SupervisorJob(coroutineContext.job))
         var shown: Pair<CaptionFormat, String>? = null
         _state
-            .map { Triple(it.captionFormat, it.targetLanguage, it.onDeviceFallback) }
+            .map {
+                val translateTo =
+                    if (it.usesVietnameseEnglishPair()) {
+                        studyTranslationTarget(it.resolvedSourceLanguage ?: it.sourcePreference)
+                    } else {
+                        it.targetLanguage
+                    }
+                Triple(it.captionFormat, translateTo, it.onDeviceFallback)
+            }
             .distinctUntilChanged()
             .collectLatest { (format, target) ->
                 // Only the engine changed: the rows stay on screen until the other engine's lines replace them.

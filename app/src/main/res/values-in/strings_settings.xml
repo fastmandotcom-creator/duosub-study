@@ -65,6 +65,9 @@
     <string name="settings_original_caption_language">Bahasa subtitel asli</string>
     <string name="settings_translate_to">Terjemahkan ke</string>
     <string name="settings_original_language">Bahasa asli</string>
+    <string name="settings_line_one">Baris 1</string>
+    <string name="settings_line_two">Baris 2</string>
+    <string name="settings_line_pair_hint">Baris 1 bawaan adalah bahasa Vietnam, termasuk takarir otomatis. Baris 2 adalah bahasa Inggris. Ubah salah satunya di sini.</string>
     <string name="settings_model_download_hint">Model bahasa hanya diunduh saat dibutuhkan.</string>
     <string name="settings_third_line">Baris ketiga</string>
     <string name="settings_third_line_off">Mati</string>
