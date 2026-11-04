@@ -1439,7 +1439,9 @@ class AppViewModel internal constructor(
                             generatedCaptions = track.isGenerated,
                             segments = emptyList(),
                             stage = LoadStage.TRANSLATING,
-                            statusMessage = translationStartingMessage(current.targetLanguage),
+                            statusMessage = translationStartingMessage(studyTarget),
+                            thirdLineEnabled = studyNeedsEnglishLine(track.languageCode) || current.thirdLineEnabled,
+                            thirdLanguage = if (studyNeedsEnglishLine(track.languageCode)) "en" else current.thirdLanguage,
                         )
                     }
 

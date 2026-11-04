@@ -269,16 +269,26 @@ internal fun studyTranslationTarget(sourceLanguage: String?): String =
 internal fun SubtitleSegment.asStudyPair(
     sourceLanguage: String?,
     targetLanguage: String,
+    english: String? = null,
 ): SubtitleSegment {
     val source = sourceLanguage?.substringBefore('-')?.lowercase()
     val target = targetLanguage.substringBefore('-').lowercase()
-    val translated = translatedText?.takeIf { it.isNotBlank() } ?: return this
+    val translated = translatedText?.takeIf { it.isNotBlank() }
+    val englishText = english?.takeIf { it.isNotBlank() }
     return when {
         source == null || source == "vi" -> this
-        source == "en" && target == "vi" -> copy(originalText = translated, translatedText = originalText, words = emptyList())
-        target == "vi" -> copy(originalText = translated, translatedText = null, words = emptyList())
+        source == "en" && target == "vi" && translated != null ->
+            copy(originalText = translated, translatedText = originalText, words = emptyList())
+        target == "vi" && translated != null ->
+            copy(originalText = translated, translatedText = englishText, words = emptyList())
         else -> this
     }
+}
+
+/** A video that is neither Vietnamese nor English needs a second translation for the English line. */
+internal fun studyNeedsEnglishLine(sourceLanguage: String?): Boolean {
+    val source = sourceLanguage?.substringBefore('-')?.lowercase()
+    return source != null && source != "vi" && source != "en"
 }
 
 internal fun storedSourcePreference(raw: String?): String =

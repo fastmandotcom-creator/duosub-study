@@ -986,8 +986,9 @@ internal fun SubtitleTimeline(
         ) {
             itemsIndexed(state.segments, key = { _, segment -> segment.id }) { index, segment ->
                 val active = index == state.currentIndex
+                val shown = segment.asStudyPair(state.resolvedSourceLanguage, state.targetLanguage, state.thirdLineFor(segment))
                 CompactSubtitleCard(
-                    segment = segment.asStudyPair(state.resolvedSourceLanguage, state.targetLanguage),
+                    segment = shown,
                     showOriginal = showOriginal,
                     showTranslation = showTranslation,
                     translationPosition = state.translationPosition,
@@ -1010,7 +1011,7 @@ internal fun SubtitleTimeline(
                     isDownloadingTranslationModel = state.isDownloadingTranslationModel,
                     translationUnavailable = state.translationError != null,
                     onWordClick = onWordClick,
-                    thirdText = if (showTranslation) state.thirdLineFor(segment) else null,
+                    thirdText = if (showTranslation && shown.translatedText != state.thirdLineFor(segment)) state.thirdLineFor(segment) else null,
                 )
             }
         }

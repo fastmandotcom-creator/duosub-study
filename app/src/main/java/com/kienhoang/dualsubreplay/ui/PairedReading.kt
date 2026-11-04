@@ -74,7 +74,8 @@ internal fun currentSpokenPair(state: DualSubUiState): SpokenPair? {
         if (primary.isEmpty()) return null
         return SpokenPair(primary, source, state.liveTranslated?.trim().orEmpty(), state.targetLanguage)
     }
-    val line = state.segments.getOrNull(state.currentIndex)?.asStudyPair(state.resolvedSourceLanguage, state.targetLanguage) ?: return null
+    val raw = state.segments.getOrNull(state.currentIndex) ?: return null
+    val line = raw.asStudyPair(state.resolvedSourceLanguage, state.targetLanguage, state.thirdLineFor(raw))
     val primary = line.originalText.trim()
     if (primary.isEmpty()) return null
     return SpokenPair(primary, DEFAULT_SOURCE_LANGUAGE, line.translatedText?.trim().orEmpty(), DEFAULT_TARGET_LANGUAGE)
