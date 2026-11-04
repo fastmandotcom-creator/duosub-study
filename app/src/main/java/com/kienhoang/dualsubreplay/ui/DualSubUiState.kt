@@ -252,10 +252,34 @@ internal fun storedLearningLanguage(
         raw?.takeIf { it != "auto" }?.let(::normalizeSupportedLanguage)
     }
 
-/** Original captions for this study build: English. Translation defaults to Vietnamese. */
-internal const val DEFAULT_SOURCE_LANGUAGE = "en"
+/** First subtitle line: Vietnamese, including an automatic translation when the video has no Vietnamese track. */
+internal const val DEFAULT_SOURCE_LANGUAGE = "vi"
 
-internal const val DEFAULT_TARGET_LANGUAGE = "vi"
+/** Second subtitle line: English. */
+internal const val DEFAULT_TARGET_LANGUAGE = "en"
+
+/** Where to translate the loaded track so the pair can be Vietnamese then English. */
+internal fun studyTranslationTarget(sourceLanguage: String?): String =
+    if (sourceLanguage?.substringBefore('-')?.equals("vi", ignoreCase = true) == true) "en" else "vi"
+
+/**
+ * The line the learner reads first is Vietnamese, then English. A Vietnamese track stays as it is.
+ * An English track is translated into Vietnamese and that translation moves to the first line.
+ */
+internal fun SubtitleSegment.asStudyPair(
+    sourceLanguage: String?,
+    targetLanguage: String,
+): SubtitleSegment {
+    val source = sourceLanguage?.substringBefore('-')?.lowercase()
+    val target = targetLanguage.substringBefore('-').lowercase()
+    val translated = translatedText?.takeIf { it.isNotBlank() } ?: return this
+    return when {
+        source == null || source == "vi" -> this
+        source == "en" && target == "vi" -> copy(originalText = translated, translatedText = originalText, words = emptyList())
+        target == "vi" -> copy(originalText = translated, translatedText = null, words = emptyList())
+        else -> this
+    }
+}
 
 internal fun storedSourcePreference(raw: String?): String =
     raw

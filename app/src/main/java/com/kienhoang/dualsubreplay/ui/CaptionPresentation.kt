@@ -68,7 +68,7 @@ private fun unfilteredLearningOverlayContent(
             statusText = strings.get(R.string.player_live_subtitles_status, state.statusMessage.orEmpty()),
         )
     }
-    val active = state.segments.getOrNull(state.currentIndex)
+    val active = state.segments.getOrNull(state.currentIndex)?.asStudyPair(state.resolvedSourceLanguage, state.targetLanguage)
     if (active != null) {
         return LearningOverlayContent(
             originalText = active.originalText,

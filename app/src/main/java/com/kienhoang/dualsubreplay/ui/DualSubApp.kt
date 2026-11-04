@@ -987,7 +987,7 @@ internal fun SubtitleTimeline(
             itemsIndexed(state.segments, key = { _, segment -> segment.id }) { index, segment ->
                 val active = index == state.currentIndex
                 CompactSubtitleCard(
-                    segment = segment,
+                    segment = segment.asStudyPair(state.resolvedSourceLanguage, state.targetLanguage),
                     showOriginal = showOriginal,
                     showTranslation = showTranslation,
                     translationPosition = state.translationPosition,

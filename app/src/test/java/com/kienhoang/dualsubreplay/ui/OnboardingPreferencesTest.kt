@@ -22,10 +22,15 @@ class OnboardingPreferencesTest {
     }
 
     @Test fun studyDefaultsAreEnglishCaptionsAndVietnameseTranslation() {
-        assertEquals("en", DEFAULT_SOURCE_LANGUAGE)
-        assertEquals("vi", DEFAULT_TARGET_LANGUAGE)
-        assertEquals("en", DualSubUiState().sourcePreference)
-        assertEquals("vi", DualSubUiState().targetLanguage)
+        assertEquals("vi", DEFAULT_SOURCE_LANGUAGE)
+        assertEquals("en", DEFAULT_TARGET_LANGUAGE)
+        assertEquals("vi", DualSubUiState().sourcePreference)
+        assertEquals("en", DualSubUiState().targetLanguage)
+        assertEquals("en", studyTranslationTarget("vi"))
+        assertEquals("vi", studyTranslationTarget("en"))
+        val english = com.kienhoang.dualsubreplay.data.SubtitleSegment(1, 0, 1, "hello", "xin chào")
+        assertEquals("xin chào", english.asStudyPair("en", "vi").originalText)
+        assertEquals("hello", english.asStudyPair("en", "vi").translatedText)
     }
 
     @Test fun storedSourcePreferenceFallsBackToAuto() {

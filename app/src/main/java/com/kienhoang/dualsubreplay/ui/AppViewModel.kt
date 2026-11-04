@@ -711,16 +711,16 @@ class AppViewModel internal constructor(
         nativeLanguage: String,
         learningLanguage: String,
     ) {
-        val languages = normalizedOnboardingLanguages(nativeLanguage, learningLanguage) ?: return
-        val (native, learning) = languages
+        if (normalizedOnboardingLanguages(nativeLanguage, learningLanguage) == null) return
+        // This study build always shows Vietnamese first and English second, for every video.
         preferences
             .edit()
-            .putString("preferred_caption_language", learning)
-            .putString(LEARNING_LANGUAGE_PREFERENCE, learning)
+            .putString("preferred_caption_language", DEFAULT_SOURCE_LANGUAGE)
+            .putString(LEARNING_LANGUAGE_PREFERENCE, DEFAULT_SOURCE_LANGUAGE)
+            .putString("target_language", DEFAULT_TARGET_LANGUAGE)
             .apply()
-        preferences.edit().putString("target_language", native).apply()
-        _state.update { it.copy(sourcePreference = learning, targetLanguage = native) }
-        warmTranslationModel(sourceLanguage = learning, targetLanguage = native)
+        _state.update { it.copy(sourcePreference = DEFAULT_SOURCE_LANGUAGE, targetLanguage = DEFAULT_TARGET_LANGUAGE) }
+        warmTranslationModel(sourceLanguage = DEFAULT_SOURCE_LANGUAGE, targetLanguage = DEFAULT_TARGET_LANGUAGE)
         finishOnboarding()
     }
 
@@ -1421,6 +1421,8 @@ class AppViewModel internal constructor(
                     liveTranslationGate.reset()
                     liveTranslationJob?.cancel()
 
+                    val studyTarget = studyTranslationTarget(track.languageCode)
+                    preferences.edit().putString("target_language", studyTarget).apply()
                     _state.update { current ->
                         if (!isCurrentLoad(current, videoId, generation)) return@update current
                         current.copy(
@@ -1430,11 +1432,8 @@ class AppViewModel internal constructor(
                             retryingTranscript = false,
                             fullTranscriptProblem = null,
                             resolvedSourceLanguage = track.languageCode,
-                            sourcePreference =
-                                resolvedSourcePreference(
-                                    current.sourcePreference,
-                                    track.languageCode,
-                                ),
+                            sourcePreference = DEFAULT_SOURCE_LANGUAGE,
+                            targetLanguage = studyTarget,
                             availableSourceLanguages = track.availableLanguages,
                             loadedTrackId = track.trackId,
                             generatedCaptions = track.isGenerated,

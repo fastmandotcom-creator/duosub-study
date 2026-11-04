@@ -42,8 +42,8 @@ fun LanguageSetupScreen(
     onComplete: (nativeLanguage: String, learningLanguage: String) -> Unit,
     onSkip: () -> Unit,
 ) {
-    var nativeLanguage by remember { mutableStateOf<String?>(DEFAULT_TARGET_LANGUAGE) }
-    var learningLanguage by remember { mutableStateOf<String?>(DEFAULT_SOURCE_LANGUAGE) }
+    var nativeLanguage by remember { mutableStateOf<String?>("vi") }
+    var learningLanguage by remember { mutableStateOf<String?>("en") }
     var pickerMode by remember { mutableStateOf<SetupPickerMode?>(null) }
     var searchQuery by remember { mutableStateOf("") }
     val interfaceLocale = currentInterfaceLocale()
