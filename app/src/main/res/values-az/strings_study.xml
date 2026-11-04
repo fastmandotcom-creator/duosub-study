@@ -14,6 +14,11 @@
     <string name="study_play_mode_repeat">Hər sətri təkrarla</string>
     <string name="study_play_mode_repeat_description">Davam etməzdən əvvəl hər sətri bir neçə dəfə oynadır. Sonsuz seçimi başqa sətrə toxunana və ya videonu irəli-geri çəkənə qədər sətri təkrarlayır.</string>
     <string name="study_repeat_forever">Sonsuz</string>
+    <string name="study_play_mode_read_pair">Əvvəl orijinalı, sonra tərcüməni oxu</string>
+    <string name="study_play_mode_read_pair_description">Orijinal sətri, sonra tərcüməsini oxuyur və bu cütlüyü təkrarlayır. 2 dəfə: orijinal, tərcümə, orijinal, tərcümə. Mənanı dərhal eşitmək onu daha uzun yadda saxladır.</string>
+    <string name="study_pair_read_count">Cütlüyü neçə dəfə oxumaq</string>
+    <string name="study_read_pair_primary_progress">Orijinal %1$d/%2$d</string>
+    <string name="study_read_pair_secondary_progress">Tərcümə %1$d/%2$d</string>
     <string name="study_play_mode_new_word">Bir yeni söz olan sətirlərdə dayan</string>
     <string name="study_play_mode_new_word_description">Yalnız hələ bilmədiyiniz düz bir söz olan sətirlərdən sonra dayanır. Bildiyim sözlər lazımdır.</string>
     <string name="study_play_mode_needs_known_words">Bu rejimdən istifadə etmək üçün aşağıda Bildiyim sözlər seçimini yandırın.</string>

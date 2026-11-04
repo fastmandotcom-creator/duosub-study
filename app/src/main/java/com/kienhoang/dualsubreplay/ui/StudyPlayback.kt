@@ -226,7 +226,7 @@ internal class StudyPlaybackDriver {
             StudyPlayMode.NEW_WORD_LINES -> StudyAction.Pause.takeIf { line in tick.newWordLines }
             StudyPlayMode.READ_FIRST -> readNext(tick.segments, line + 1) ?: StudyAction.Pause
             StudyPlayMode.REPEAT_LINE -> repeat(tick, line)
-            StudyPlayMode.NORMAL -> null
+            StudyPlayMode.READ_PAIR, StudyPlayMode.NORMAL -> null
         }
     }
 

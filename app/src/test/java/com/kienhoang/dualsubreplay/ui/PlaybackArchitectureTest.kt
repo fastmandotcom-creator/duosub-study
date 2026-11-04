@@ -207,6 +207,9 @@ class PlaybackArchitectureTest {
         assertTrue(speed.contains("video.playbackRate = 0.75;"))
         assertTrue(webPlaybackSpeedScript(9f).contains("video.playbackRate = 2.0;"))
         assertTrue(webPlaybackSpeedScript(Float.NaN).contains("video.playbackRate = 1.0;"))
+        assertTrue(webPlayScript().contains("window.location.protocol !== 'https:'"))
+        assertTrue(webPlayScript().contains("host.endsWith('.youtube.com')"))
+        assertTrue(webPlayScript().contains("video.play()"))
     }
 
     @Test

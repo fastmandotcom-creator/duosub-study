@@ -202,6 +202,14 @@ class StudyPlaybackTest {
     }
 
     @Test
+    fun readPairLeavesPlaybackToTheReader() {
+        val settings = StudySettings(playMode = StudyPlayMode.READ_PAIR, pairReadCount = 2)
+        assertEquals(emptyList<StudyAction>(), play(StudyPlaybackDriver(), settings, 900, 11_000).map { it.second })
+        assertEquals(2, storedPairReadCount(2))
+        assertEquals(DEFAULT_PAIR_READ_COUNT, storedPairReadCount(4))
+    }
+
+    @Test
     fun readFirstStopsAtTheStartOfEachLine() {
         val driver = StudyPlaybackDriver()
         val settings = StudySettings(playMode = StudyPlayMode.READ_FIRST)
@@ -288,6 +296,7 @@ class StudyPlaybackTest {
 
     @Test
     fun storedStudySettingsFallBackToTheirDefaults() {
+        assertEquals(StudyPlayMode.READ_PAIR, storedStudyPlayMode("read_pair"))
         assertEquals(StudyPlayMode.LISTEN_FIRST, storedStudyPlayMode("listen_first"))
         assertEquals(StudyPlayMode.NORMAL, storedStudyPlayMode("shadowing"))
         assertEquals(StudyPlayMode.NORMAL, storedStudyPlayMode(null))

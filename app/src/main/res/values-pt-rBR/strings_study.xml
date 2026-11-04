@@ -15,6 +15,11 @@
     <string name="study_play_mode_repeat">Repetir cada linha</string>
     <string name="study_play_mode_repeat_description">Toca cada linha algumas vezes antes de seguir. Sempre repete a linha até você tocar em outra linha ou avançar/voltar o vídeo.</string>
     <string name="study_repeat_forever">Sempre</string>
+    <string name="study_play_mode_read_pair">Ler original e depois tradução</string>
+    <string name="study_play_mode_read_pair_description">Lê a linha original e depois a tradução, e repete esse par. Duas vezes é: original, tradução, original, tradução. Ouvir o significado logo após o original ajuda a lembrar.</string>
+    <string name="study_pair_read_count">Vezes do par</string>
+    <string name="study_read_pair_primary_progress">Original %1$d/%2$d</string>
+    <string name="study_read_pair_secondary_progress">Tradução %1$d/%2$d</string>
     <string name="study_play_mode_new_word">Pausar em linhas com uma palavra nova</string>
     <string name="study_play_mode_new_word_description">Só pausa depois das linhas com exatamente uma palavra que você ainda não conhece. Precisa de Palavras conhecidas.</string>
     <string name="study_play_mode_needs_known_words">Ative Palavras conhecidas abaixo para usar este modo.</string>

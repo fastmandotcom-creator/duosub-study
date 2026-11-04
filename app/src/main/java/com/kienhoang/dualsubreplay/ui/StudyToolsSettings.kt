@@ -51,6 +51,9 @@ internal fun StudyToolsSettingsSection() {
     if (settings.playMode == StudyPlayMode.REPEAT_LINE) {
         StudyRepeatCountSettings(settings.repeatCount) { count -> preferences.edit().putInt(STUDY_REPEAT_COUNT_PREFERENCE, count).apply() }
     }
+    if (settings.playMode == StudyPlayMode.READ_PAIR) {
+        PairReadCountSettings(settings.pairReadCount) { count -> preferences.edit().putInt(PAIR_READ_COUNT_PREFERENCE, count).apply() }
+    }
     if (settings.playMode == StudyPlayMode.NEW_WORD_LINES && !settings.knownWords) {
         SettingsHint(stringResource(R.string.study_play_mode_needs_known_words))
     }
@@ -167,6 +170,30 @@ private fun StudyRepeatCountSettings(
                 onClick = { onChange(option) },
                 label = { Text(studyRepeatCountLabel(option)) },
                 modifier = Modifier.testTag("study_repeat_$option"),
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun PairReadCountSettings(
+    count: Int,
+    onChange: (Int) -> Unit,
+) {
+    Text(
+        stringResource(R.string.study_pair_read_count),
+        modifier = Modifier.padding(start = 48.dp, top = 4.dp),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    FlowRow(Modifier.padding(start = 48.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        PAIR_READ_COUNTS.forEach { option ->
+            FilterChip(
+                selected = count == option,
+                onClick = { onChange(option) },
+                label = { Text(pluralStringResource(R.plurals.study_repeat_count, option, option)) },
+                modifier = Modifier.testTag("pair_read_$option"),
             )
         }
     }

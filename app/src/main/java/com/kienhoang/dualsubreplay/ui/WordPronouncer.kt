@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -152,6 +153,88 @@ internal class WordPronouncer(context: Context) {
             message = resources.getString(R.string.practice_speech_settings_manual)
         }
     }
+
+    /**
+     * Speaks primary then secondary, [times] times. A side already recorded plays again from that
+     * file. [onFinished] runs when the pair ends; a cancelled pair does not call it.
+     */
+    fun readPair(
+        pair: SpokenPair,
+        times: Int,
+        onProgress: (PairReadProgress) -> Unit = {},
+        onFinished: () -> Unit = {},
+    ) {
+        if (disposed || (pair.primary.isBlank() && pair.secondary.isBlank())) {
+            onFinished()
+            return
+        }
+        stop()
+        speech =
+            scope.launch {
+                val copies = mutableMapOf<String, File>()
+                var failed: PronunciationResult? = null
+                try {
+                    val spoken =
+                        playPairedReading(
+                            times,
+                            speak = { side ->
+                                val text = if (side == ReadSide.PRIMARY) pair.primary else pair.secondary
+                                val language = if (side == ReadSide.PRIMARY) pair.primaryLanguage else pair.secondaryLanguage
+                                if (text.isBlank()) {
+                                    true
+                                } else {
+                                    val result = speakSide(text, language, copies)
+                                    if (result != PronunciationResult.SPOKEN) failed = result
+                                    result == PronunciationResult.SPOKEN
+                                }
+                            },
+                            onProgress = onProgress,
+                        )
+                    if (!spoken && failed == null) failed = PronunciationResult.PLAYBACK_FAILED
+                } finally {
+                    copies.values.forEach { it.delete() }
+                    if (isActive) {
+                        lastResult = failed
+                        showSpeechSettings = failed != null && failed != PronunciationResult.INVALID_LANGUAGE
+                        message = failureMessage(failed)
+                        onFinished()
+                    }
+                }
+            }
+    }
+
+    private suspend fun speakSide(
+        text: String,
+        language: String,
+        copies: MutableMap<String, File>,
+    ): PronunciationResult {
+        val key = "${language.trim()}\u0000${text.trim()}"
+        copies[key]?.takeIf { it.isFile && it.length() > 0 }?.let { file ->
+            return if (playSpeechFile(file, readPronunciationVolume(application))) {
+                PronunciationResult.SPOKEN
+            } else {
+                PronunciationResult.PLAYBACK_FAILED
+            }
+        }
+        val result = pronounce(text, language)
+        if (result == PronunciationResult.SPOKEN) {
+            cache.lookup(text, language)?.let { recorded ->
+                val copy = File(application.cacheDir, "pair-read-${copies.size}.${recorded.extension}")
+                withContext(Dispatchers.IO) { recorded.copyTo(copy, overwrite = true) }
+                copies[key] = copy
+            }
+        }
+        return result
+    }
+
+    private fun failureMessage(failed: PronunciationResult?): String? =
+        when (failed) {
+            null, PronunciationResult.SPOKEN -> null
+            PronunciationResult.NO_VOICE -> resources.getString(R.string.practice_speech_no_voice)
+            PronunciationResult.UNAVAILABLE -> resources.getString(R.string.practice_speech_unavailable)
+            PronunciationResult.PLAYBACK_FAILED -> resources.getString(R.string.practice_speech_playback_failed)
+            PronunciationResult.INVALID_LANGUAGE -> resources.getString(R.string.practice_speech_invalid_language)
+        }
 
     fun stop() {
         speech?.cancel()

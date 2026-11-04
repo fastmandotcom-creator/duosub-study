@@ -220,6 +220,7 @@ private fun aiStudySettingValue(
     when (setting) {
         AiSetting.STUDY_PLAY_MODE -> study.playMode.storageValue
         AiSetting.STUDY_REPEAT_COUNT -> if (study.repeatCount == STUDY_REPEAT_FOREVER) AI_REPEAT_FOREVER else study.repeatCount.toString()
+        AiSetting.PAIR_READ_COUNT -> study.pairReadCount.toString()
         AiSetting.SKIP_SILENCE -> study.skipSilence.storageValue
         AiSetting.KNOWN_WORDS -> study.knownWordsMode.storageValue
         AiSetting.KNOWN_WORDS_AFTER -> study.knownWordsAfter.toString()
@@ -672,6 +673,11 @@ internal class AppAiActions(
         when (setting) {
             AiSetting.STUDY_PLAY_MODE -> editor.putString(STUDY_PLAY_MODE_PREFERENCE, storedStudyPlayMode(value).storageValue)
             AiSetting.STUDY_REPEAT_COUNT -> editor.putInt(STUDY_REPEAT_COUNT_PREFERENCE, aiStudyRepeatCount(value))
+            AiSetting.PAIR_READ_COUNT ->
+                editor.putInt(
+                    PAIR_READ_COUNT_PREFERENCE,
+                    storedPairReadCount(value.toIntOrNull() ?: DEFAULT_PAIR_READ_COUNT),
+                )
             AiSetting.SKIP_SILENCE -> editor.putString(SKIP_SILENCE_PREFERENCE, storedSkipSilence(value).storageValue)
             AiSetting.KNOWN_WORDS -> editor.putString(KNOWN_WORDS_PREFERENCE, storedKnownWordsMode(value).storageValue)
             AiSetting.KNOWN_WORDS_AFTER -> editor.putInt(KNOWN_WORDS_AFTER_PREFERENCE, storedKnownWordsAfter(value.toIntOrNull() ?: 0))

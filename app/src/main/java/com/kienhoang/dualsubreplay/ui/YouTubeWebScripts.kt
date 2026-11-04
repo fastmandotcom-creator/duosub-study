@@ -650,6 +650,19 @@ internal fun parseWebPlaybackSnapshot(rawValue: String?): WebPlaybackSnapshot? {
     }.getOrNull()
 }
 
+internal fun webPlayScript(): String =
+    """
+    (function() {
+      const host = window.location.hostname.toLowerCase().replace(/\.${'$'}/, '');
+      if (window.location.protocol !== 'https:' || !(host === 'youtube.com' || host.endsWith('.youtube.com'))) return false;
+      document.querySelectorAll('video').forEach(function(video) {
+        const request = video.play();
+        if (request && request.catch) request.catch(function() {});
+      });
+      return true;
+    })();
+    """.trimIndent()
+
 internal fun webPauseScript(): String =
     """
     (function() {

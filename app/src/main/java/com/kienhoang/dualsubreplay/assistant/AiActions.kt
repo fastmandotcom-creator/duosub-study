@@ -53,7 +53,8 @@ internal val AI_APP_LANGUAGES = listOf("device", "en", "vi", "es", "pt-BR", "ja"
 internal val AI_DAILY_GOALS = listOf("off", "5", "10", "15", "20", "30", "45", "60")
 
 /** The keys of `StudyPlayMode`; a test keeps them equal. */
-internal val AI_STUDY_PLAY_MODES = listOf("normal", "pause_after_line", "read_first", "listen_first", "repeat_line", "new_word_lines")
+internal val AI_STUDY_PLAY_MODES =
+    listOf("normal", "pause_after_line", "read_first", "listen_first", "repeat_line", "read_pair", "new_word_lines")
 
 /** The keys of `SkipSilence`; a test keeps them equal. */
 internal val AI_SKIP_SILENCE = listOf("off", "2x", "4x", "jump")
@@ -66,6 +67,9 @@ internal val AI_SEND_TO_APPS = listOf("ankidroid", "ankiconnect")
 
 /** The plays of each line in Repeat each line (`STUDY_REPEAT_COUNTS`), which a test keeps equal. */
 internal val AI_STUDY_REPEAT_COUNTS = listOf("2", "3", "5", AI_REPEAT_FOREVER)
+
+/** Times Read primary, then secondary speaks the pair (`PAIR_READ_COUNTS`). */
+internal val AI_PAIR_READ_COUNTS = listOf("1", "2", "3", "5")
 
 /** Repeat each line's count with no limit (`STUDY_REPEAT_FOREVER`). */
 internal const val AI_REPEAT_FOREVER = "forever"
@@ -125,6 +129,7 @@ internal enum class AiSetting(
     DAILY_GOAL("daily_goal", AI_DAILY_GOALS),
     STUDY_PLAY_MODE("study_play_mode", AI_STUDY_PLAY_MODES),
     STUDY_REPEAT_COUNT("study_repeat_count", AI_STUDY_REPEAT_COUNTS),
+    PAIR_READ_COUNT("pair_read_count", AI_PAIR_READ_COUNTS),
     SKIP_SILENCE("skip_silence", AI_SKIP_SILENCE),
     KNOWN_WORDS("known_words", AI_KNOWN_WORDS_MODES),
     KNOWN_WORDS_AFTER("known_words_after", AI_KNOWN_WORDS_AFTER),
@@ -608,6 +613,9 @@ private val SETTING_CHOICE_ALIASES by lazy {
                 "pause_after_each_line" to "pause_after_line",
                 "repeat" to "repeat_line",
                 "repeat_each_line" to "repeat_line",
+                "read_primary_then_secondary" to "read_pair",
+                "read_primary,_then_secondary" to "read_pair",
+                "primary_then_secondary" to "read_pair",
                 "new_words" to "new_word_lines",
                 "one_new_word" to "new_word_lines",
             ),
@@ -654,7 +662,7 @@ internal fun aiSettingValue(
         AiSetting.APP_LANGUAGE -> if (key in DEVICE_LANGUAGE_WORDS) "device" else aiAppLanguage(raw)
         AiSetting.DAILY_GOAL -> aiDailyGoal(key)
         AiSetting.GOOGLE_WAIT -> aiGoogleWait(key)
-        AiSetting.STUDY_REPEAT_COUNT, AiSetting.KNOWN_WORDS_AFTER ->
+        AiSetting.STUDY_REPEAT_COUNT, AiSetting.PAIR_READ_COUNT, AiSetting.KNOWN_WORDS_AFTER ->
             key
                 .removeSuffix("times")
                 .removeSuffix("x")
@@ -766,7 +774,9 @@ internal fun aiSettingValues(setting: AiSetting): String =
         AiSetting.STUDY_PLAY_MODE ->
             choiceList(setting.choices) +
                 " (pause_after_line pauses after each line, read_first stops at each line's start, listen_first hides subtitles " +
-                "until each line ends, repeat_line plays each line study_repeat_count times, new_word_lines pauses after lines " +
+                "until each line ends, repeat_line plays each line study_repeat_count times, read_pair reads the original line " +
+                "then its translation pair_read_count times (default 2: original, translation, original, translation) and " +
+                "then continues the video, new_word_lines pauses after lines " +
                 "with exactly one new word and needs known_words on; all need the full transcript)"
         AiSetting.STUDY_REPEAT_COUNT ->
             choiceList(setting.choices) +
@@ -811,7 +821,14 @@ internal fun aiSettingValues(setting: AiSetting): String =
             choiceList(setting.choices) +
                 " (TV layout, beta: on an Android TV, TV home with YouTube search, remote buttons on the video and words " +
                 "picked from a list; on by default on a TV; phones and tablets never use it)"
-        else -> choiceList(setting.choices)
+        else -> choiceList(setting.choices) + pairReadCountValues(setting)
+    }
+
+private fun pairReadCountValues(setting: AiSetting): String =
+    if (setting == AiSetting.PAIR_READ_COUNT) {
+        " (how many times read_pair says the original and then the translation; 2 is hello, meaning, hello, meaning)"
+    } else {
+        ""
     }
 
 internal fun choiceList(choices: List<String>): String =

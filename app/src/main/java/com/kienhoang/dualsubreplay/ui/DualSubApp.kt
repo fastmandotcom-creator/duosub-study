@@ -54,7 +54,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -119,97 +121,106 @@ fun DualSubApp(
     val pronouncer = rememberWordPronouncer()
     BindPhraseActions(state, webController, pronouncer, viewModel::translateSubtitleText)
     val studyRunner = rememberStudyPlaybackRunner(webController, state)
+    val pairReader = remember(pronouncer, webController) { PairedLineReaderHost(pronouncer, webController) }
+    val pairSettings by rememberStudySettings()
+    SideEffect {
+        pairReader.state = state
+        pairReader.times = pairSettings.pairReadCount
+    }
+    PairedLineAutoReader(pairReader, state, pairSettings.playMode)
     var showVocabulary by remember { mutableStateOf(false) }
     var showProgress by remember { mutableStateOf(false) }
 
     DualSubTheme {
-        if (!state.onboardingCompleted) {
-            LanguageSetupScreen(onComplete = viewModel::completeOnboarding, onSkip = viewModel::skipOnboarding)
-        } else if (!state.guideCompleted) {
-            GuideScreen(onFinish = viewModel::completeGuide)
-        } else if (!state.dailyGoalPromptCompleted) {
-            DailyGoalSetupScreen(onFinish = viewModel::completeDailyGoalPrompt)
-        } else {
-            DualSubExperience(
-                state = state,
-                webController = webController,
-                onVocabulary = { viewModel.selectLearningWord(null); webController.pause(); showVocabulary = true },
-                onProgress = {
-                    viewModel.selectLearningWord(null)
-                    webController.pause()
-                    showProgress = true
+        CompositionLocalProvider(LocalPairedReading provides pairReader) {
+            if (!state.onboardingCompleted) {
+                LanguageSetupScreen(onComplete = viewModel::completeOnboarding, onSkip = viewModel::skipOnboarding)
+            } else if (!state.guideCompleted) {
+                GuideScreen(onFinish = viewModel::completeGuide)
+            } else if (!state.dailyGoalPromptCompleted) {
+                DailyGoalSetupScreen(onFinish = viewModel::completeDailyGoalPrompt)
+            } else {
+                DualSubExperience(
+                    state = state,
+                    webController = webController,
+                    onVocabulary = { viewModel.selectLearningWord(null); webController.pause(); showVocabulary = true },
+                    onProgress = {
+                        viewModel.selectLearningWord(null)
+                        webController.pause()
+                        showProgress = true
+                    },
+                    onAutoPronounceChange = viewModel::setAutoPronounce,
+                    playerMode = playerMode,
+                    effectivePlayerMode = effectivePlayerMode,
+                    onPlayerModeChange = onPlayerModeChange,
+                    externalSettingsRequestId = externalSettingsRequestId,
+                    fullscreenLearningOverlay = fullscreenLearningOverlay,
+                    onNavigationVisibilityChange = onNavigationVisibilityChange,
+                    onPageChanged = viewModel::onYouTubePageChanged,
+                    onPlaybackSecond = studyRunner.afterSecond(viewModel::onWebPlaybackSecond),
+                    onPlaybackPaused = studyRunner.afterPaused(viewModel::onWebPlaybackPaused),
+                    onShowSubtitles = viewModel::showSubtitlePanel,
+                    onHideSubtitles = viewModel::hideSubtitlePanel,
+                    onRetry = viewModel::retryCaptions,
+                    onSourceChange = viewModel::setSourcePreference,
+                    onTargetChange = viewModel::setTargetLanguage,
+                    onThirdLineChange = viewModel::setThirdLine,
+                    onFontScaleChange = viewModel::setFontScale,
+                    onPortraitPanelOffsetFractionChange = viewModel::setPortraitPanelOffsetFraction,
+                    onResetPortraitPanelPosition = viewModel::resetPortraitPanelPosition,
+                    onLandscapeSplitChange = viewModel::setLandscapeSplitEnabled,
+                    onOriginalColorChange = viewModel::setOriginalSubtitleColor,
+                    onTranslatedColorChange = viewModel::setTranslatedSubtitleColor,
+                    onHighlightColorChange = viewModel::setHighlightColor,
+                    onWordHighlightChange = viewModel::setWordHighlightEnabled,
+                    onCustomColorsChange = viewModel::setCustomColorsEnabled,
+                    onCaptionFormatChange = viewModel::setCaptionFormat,
+                    onTranslationPositionChange = viewModel::setTranslationPosition,
+                    onTranscriptFollowChange = viewModel::setTranscriptFollow,
+                    lockOverlayToVideo = state.lockOverlayToVideo,
+                    onLockOverlayToVideoChange = viewModel::setLockOverlayToVideo,
+                    preloadModelsEnabled = state.preloadModelsEnabled,
+                    onPreloadModelsChange = viewModel::setPreloadModelsEnabled,
+                    naturalSubtitlesEnabled = state.naturalSubtitlesEnabled,
+                    onNaturalSubtitlesChange = viewModel::setNaturalSubtitlesEnabled,
+                    onHideSoundCuesChange = viewModel::setHideSoundCues,
+                    wordLearningEnabled = state.wordLearningEnabled,
+                    onWordLearningChange = viewModel::setWordLearningEnabled,
+                    wordLearningTarget = state.wordLearningTarget,
+                    onWordLearningTargetChange = viewModel::setWordLearningTarget,
+                    wordLearningActiveOnly = state.wordLearningActiveOnly,
+                    onWordLearningActiveOnlyChange = viewModel::setWordLearningActiveOnly,
+                    tapToLearnEnabled = state.tapToLearnEnabled,
+                    onTapToLearnChange = viewModel::setTapToLearnEnabled,
+                    onWordClick = viewModel::selectLearningWord,
+                    onResetSettings = viewModel::resetAllSettings,
+                    tabActions = remember(viewModel) { browserTabActions(viewModel) },
+                    onOpenVideo = { videoId -> viewModel.acceptSharedText("https://m.youtube.com/watch?v=$videoId") },
+                )
+            }
+            state.selectedLearningWord?.let { selection ->
+                SelectedWordDialog(selection, state, savedWords, viewModel, webController, pronouncer)
+            }
+            if (showVocabulary) SavedWordsScreen(
+                repository = viewModel.vocabulary,
+                onOnline = { word ->
+                    pronouncer.stop()
+                    if (state.activeVideoId != word.videoId) {
+                        viewModel.acceptSharedText("https://www.youtube.com/watch?v=${word.videoId}")
+                    }
+                    webController.replayClip(word)
                 },
-                onAutoPronounceChange = viewModel::setAutoPronounce,
-                playerMode = playerMode,
-                effectivePlayerMode = effectivePlayerMode,
-                onPlayerModeChange = onPlayerModeChange,
-                externalSettingsRequestId = externalSettingsRequestId,
-                fullscreenLearningOverlay = fullscreenLearningOverlay,
-                onNavigationVisibilityChange = onNavigationVisibilityChange,
-                onPageChanged = viewModel::onYouTubePageChanged,
-                onPlaybackSecond = studyRunner.afterSecond(viewModel::onWebPlaybackSecond),
-                onPlaybackPaused = studyRunner.afterPaused(viewModel::onWebPlaybackPaused),
-                onShowSubtitles = viewModel::showSubtitlePanel,
-                onHideSubtitles = viewModel::hideSubtitlePanel,
-                onRetry = viewModel::retryCaptions,
-                onSourceChange = viewModel::setSourcePreference,
-                onTargetChange = viewModel::setTargetLanguage,
-                onThirdLineChange = viewModel::setThirdLine,
-                onFontScaleChange = viewModel::setFontScale,
-                onPortraitPanelOffsetFractionChange = viewModel::setPortraitPanelOffsetFraction,
-                onResetPortraitPanelPosition = viewModel::resetPortraitPanelPosition,
-                onLandscapeSplitChange = viewModel::setLandscapeSplitEnabled,
-                onOriginalColorChange = viewModel::setOriginalSubtitleColor,
-                onTranslatedColorChange = viewModel::setTranslatedSubtitleColor,
-                onHighlightColorChange = viewModel::setHighlightColor,
-                onWordHighlightChange = viewModel::setWordHighlightEnabled,
-                onCustomColorsChange = viewModel::setCustomColorsEnabled,
-                onCaptionFormatChange = viewModel::setCaptionFormat,
-                onTranslationPositionChange = viewModel::setTranslationPosition,
-                onTranscriptFollowChange = viewModel::setTranscriptFollow,
-                lockOverlayToVideo = state.lockOverlayToVideo,
-                onLockOverlayToVideoChange = viewModel::setLockOverlayToVideo,
-                preloadModelsEnabled = state.preloadModelsEnabled,
-                onPreloadModelsChange = viewModel::setPreloadModelsEnabled,
-                naturalSubtitlesEnabled = state.naturalSubtitlesEnabled,
-                onNaturalSubtitlesChange = viewModel::setNaturalSubtitlesEnabled,
-                onHideSoundCuesChange = viewModel::setHideSoundCues,
-                wordLearningEnabled = state.wordLearningEnabled,
-                onWordLearningChange = viewModel::setWordLearningEnabled,
-                wordLearningTarget = state.wordLearningTarget,
-                onWordLearningTargetChange = viewModel::setWordLearningTarget,
-                wordLearningActiveOnly = state.wordLearningActiveOnly,
-                onWordLearningActiveOnlyChange = viewModel::setWordLearningActiveOnly,
-                tapToLearnEnabled = state.tapToLearnEnabled,
-                onTapToLearnChange = viewModel::setTapToLearnEnabled,
-                onWordClick = viewModel::selectLearningWord,
-                onResetSettings = viewModel::resetAllSettings,
-                tabActions = remember(viewModel) { browserTabActions(viewModel) },
-                onOpenVideo = { videoId -> viewModel.acceptSharedText("https://m.youtube.com/watch?v=$videoId") },
+                onPause = { webController.pause() },
+                onDismiss = { showVocabulary = false },
+            )
+            if (showProgress) ProgressScreen(
+                repository = viewModel.immersion,
+                savedWords = savedWords,
+                goalMinutes = state.dailyGoalMinutes,
+                onGoalChange = viewModel::setDailyGoal,
+                onDismiss = { showProgress = false },
             )
         }
-        state.selectedLearningWord?.let { selection ->
-            SelectedWordDialog(selection, state, savedWords, viewModel, webController, pronouncer)
-        }
-        if (showVocabulary) SavedWordsScreen(
-            repository = viewModel.vocabulary,
-            onOnline = { word ->
-                pronouncer.stop()
-                if (state.activeVideoId != word.videoId) {
-                    viewModel.acceptSharedText("https://www.youtube.com/watch?v=${word.videoId}")
-                }
-                webController.replayClip(word)
-            },
-            onPause = { webController.pause() },
-            onDismiss = { showVocabulary = false },
-        )
-        if (showProgress) ProgressScreen(
-            repository = viewModel.immersion,
-            savedWords = savedWords,
-            goalMinutes = state.dailyGoalMinutes,
-            onGoalChange = viewModel::setDailyGoal,
-            onDismiss = { showProgress = false },
-        )
     }
 }
 
@@ -231,9 +242,14 @@ private fun SelectedWordDialog(
         val namedDecks = remember(savedWords) { com.kienhoang.dualsubreplay.data.namedDecks(savedWords) }
         var deck by remember(selection) {
             mutableStateOf(
-                if (existingWord != null) existingWord.deck else rememberedDeck(context, selection.wordLanguage)?.takeIf { it in namedDecks },
+                if (existingWord != null) {
+                    existingWord.deck
+                } else {
+                    rememberedDeck(context, selection.wordLanguage)?.takeIf { it in namedDecks }
+                },
             )
         }
+        val pairReader = LocalPairedReading.current
         WordLearningDialog(
             selection = selection,
             existingWord = existingWord,
@@ -247,8 +263,17 @@ private fun SelectedWordDialog(
                 rememberDeck(context, selection.wordLanguage, deck)
             },
             onSpeak = {
-                webController.pause()
-                pronouncer.speak(spokenText(selection.token.text, selection.token.startIndex, selection.parts), selection.wordLanguage)
+                val spoken = spokenText(selection.token.text, selection.token.startIndex, selection.parts)
+                val secondary = wordPairSecondary(selection, existingWord?.meaning)
+                if (pairReader != null && secondary.isNotEmpty()) {
+                    pairReader.read(
+                        SpokenPair(spoken, selection.wordLanguage, secondary, selection.meaningLanguage),
+                        resumeAfter = false,
+                    )
+                } else {
+                    webController.pause()
+                    pronouncer.speak(spoken, selection.wordLanguage)
+                }
             },
             speechMessage = pronouncer.message,
             onSpeechSettings = if (pronouncer.showSpeechSettings) pronouncer::openSpeechSettings else null,
@@ -709,6 +734,7 @@ private fun SubtitlePanel(
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
+                    ReadPairButton()
                     ComprehensionChip()
                     PanelSettingsButton(onClick = onSettings, onLongClick = onLongPressSettings, size = 48.dp, iconSize = 24.dp)
                     IconButton(onClick = onHide) {
@@ -888,6 +914,7 @@ private fun SideSubtitlePanel(
                             overflow = TextOverflow.Ellipsis,
                         )
                     }
+                    ReadPairButton()
                     ComprehensionChip()
                     PanelSettingsButton(onClick = onSettings, onLongClick = onLongPressSettings, size = 36.dp, iconSize = 20.dp)
                     IconButton(onClick = onHide, modifier = Modifier.size(36.dp)) {

@@ -16,6 +16,7 @@ import com.kienhoang.dualsubreplay.data.storedPageTokenMode
 
 internal const val STUDY_PLAY_MODE_PREFERENCE = "study_play_mode"
 internal const val STUDY_REPEAT_COUNT_PREFERENCE = "study_repeat_count"
+internal const val PAIR_READ_COUNT_PREFERENCE = "pair_read_count"
 internal const val SKIP_SILENCE_PREFERENCE = "skip_silence"
 internal const val KNOWN_WORDS_PREFERENCE = "known_words_mode"
 internal const val KNOWN_WORDS_AFTER_PREFERENCE = "known_words_after"
@@ -44,6 +45,7 @@ internal val STUDY_SETTING_KEYS =
     listOf(
         STUDY_PLAY_MODE_PREFERENCE,
         STUDY_REPEAT_COUNT_PREFERENCE,
+        PAIR_READ_COUNT_PREFERENCE,
         SKIP_SILENCE_PREFERENCE,
         KNOWN_WORDS_PREFERENCE,
         KNOWN_WORDS_AFTER_PREFERENCE,
@@ -69,6 +71,7 @@ enum class StudyPlayMode(
     READ_FIRST("read_first", R.string.study_play_mode_read_first, R.string.study_play_mode_read_first_description),
     LISTEN_FIRST("listen_first", R.string.study_play_mode_listen_first, R.string.study_play_mode_listen_first_description),
     REPEAT_LINE("repeat_line", R.string.study_play_mode_repeat, R.string.study_play_mode_repeat_description),
+    READ_PAIR("read_pair", R.string.study_play_mode_read_pair, R.string.study_play_mode_read_pair_description),
     NEW_WORD_LINES("new_word_lines", R.string.study_play_mode_new_word, R.string.study_play_mode_new_word_description),
 }
 
@@ -133,9 +136,17 @@ internal val STUDY_REPEAT_COUNTS = listOf(2, 3, 5, STUDY_REPEAT_FOREVER)
 
 internal const val DEFAULT_STUDY_REPEAT_COUNT = 2
 
+/** How many times Read primary, then secondary speaks the pair. Default 2: original, translation, original, translation. */
+internal val PAIR_READ_COUNTS = listOf(1, 2, 3, 5)
+
+internal const val DEFAULT_PAIR_READ_COUNT = 2
+
+internal fun storedPairReadCount(value: Int): Int = value.takeIf { it in PAIR_READ_COUNTS } ?: DEFAULT_PAIR_READ_COUNT
+
 internal data class StudySettings(
     val playMode: StudyPlayMode = StudyPlayMode.NORMAL,
     val repeatCount: Int = DEFAULT_STUDY_REPEAT_COUNT,
+    val pairReadCount: Int = DEFAULT_PAIR_READ_COUNT,
     val skipSilence: SkipSilence = SkipSilence.OFF,
     val knownWordsMode: KnownWordsMode = KnownWordsMode.OFF,
     val knownWordsAfter: Int = DEFAULT_KNOWN_WORDS_AFTER,
@@ -175,6 +186,7 @@ internal fun readStudySettings(preferences: SharedPreferences): StudySettings =
     StudySettings(
         playMode = storedStudyPlayMode(preferences.getString(STUDY_PLAY_MODE_PREFERENCE, null)),
         repeatCount = storedStudyRepeatCount(preferences.getInt(STUDY_REPEAT_COUNT_PREFERENCE, DEFAULT_STUDY_REPEAT_COUNT)),
+        pairReadCount = storedPairReadCount(preferences.getInt(PAIR_READ_COUNT_PREFERENCE, DEFAULT_PAIR_READ_COUNT)),
         skipSilence = storedSkipSilence(preferences.getString(SKIP_SILENCE_PREFERENCE, null)),
         knownWordsMode = storedKnownWordsMode(preferences.getString(KNOWN_WORDS_PREFERENCE, null)),
         knownWordsAfter = storedKnownWordsAfter(preferences.getInt(KNOWN_WORDS_AFTER_PREFERENCE, DEFAULT_KNOWN_WORDS_AFTER)),

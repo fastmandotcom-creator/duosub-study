@@ -236,6 +236,11 @@ internal class YouTubeWebController {
         playingClipVideo = null
         scriptAction?.invoke(webPauseScript())
     }
+
+    /** Continues the page video after a paired reading. */
+    fun play() {
+        scriptAction?.invoke(webPlayScript())
+    }
     fun replayClip(word: com.kienhoang.dualsubreplay.data.SavedWord) {
         pause()
         pendingClip = word
