@@ -27,8 +27,8 @@ data class DualSubUiState(
     val browserTabs: BrowserTabs = BrowserTabs(),
     val activeVideoId: String? = null,
     val subtitlePanelVisible: Boolean = true,
-    val sourcePreference: String = "auto",
-    val targetLanguage: String = "vi",
+    val sourcePreference: String = DEFAULT_SOURCE_LANGUAGE,
+    val targetLanguage: String = DEFAULT_TARGET_LANGUAGE,
     /** Settings → Layout & format → Third subtitle line: one more translation under each subtitle; off by default. */
     val thirdLineEnabled: Boolean = false,
     /** The third line's language, remembered while the line is off; null until one is picked. */
@@ -251,6 +251,11 @@ internal fun storedLearningLanguage(
     listOf(learning, preferredCaption).firstNotNullOfOrNull { raw ->
         raw?.takeIf { it != "auto" }?.let(::normalizeSupportedLanguage)
     }
+
+/** Original captions for this study build: English. Translation defaults to Vietnamese. */
+internal const val DEFAULT_SOURCE_LANGUAGE = "en"
+
+internal const val DEFAULT_TARGET_LANGUAGE = "vi"
 
 internal fun storedSourcePreference(raw: String?): String =
     raw

@@ -21,6 +21,13 @@ class OnboardingPreferencesTest {
         assertNull(normalizedOnboardingLanguages("", ""))
     }
 
+    @Test fun studyDefaultsAreEnglishCaptionsAndVietnameseTranslation() {
+        assertEquals("en", DEFAULT_SOURCE_LANGUAGE)
+        assertEquals("vi", DEFAULT_TARGET_LANGUAGE)
+        assertEquals("en", DualSubUiState().sourcePreference)
+        assertEquals("vi", DualSubUiState().targetLanguage)
+    }
+
     @Test fun storedSourcePreferenceFallsBackToAuto() {
         assertEquals("auto", storedSourcePreference(null))
         assertEquals("auto", storedSourcePreference(""))

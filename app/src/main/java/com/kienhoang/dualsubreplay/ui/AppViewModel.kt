@@ -227,13 +227,13 @@ class AppViewModel internal constructor(
                     ),
                 sourcePreference =
                     storedSourcePreference(
-                        preferences.getString("preferred_caption_language", "auto"),
+                        preferences.getString("preferred_caption_language", DEFAULT_SOURCE_LANGUAGE),
                     ),
                 targetLanguage =
                     preferences
-                        .getString("target_language", "vi")
+                        .getString("target_language", DEFAULT_TARGET_LANGUAGE)
                         ?.takeIf(TranslationLanguages::isSupported)
-                        ?: "vi",
+                        ?: DEFAULT_TARGET_LANGUAGE,
                 recentTargetLanguages =
                     parseRecentLanguages(preferences.getString(RECENT_TARGET_LANGUAGES_PREFERENCE, null)),
                 onboardingCompleted = preferences.getBoolean("onboarding_completed", false),
@@ -679,7 +679,7 @@ class AppViewModel internal constructor(
     private fun learningLanguage(): String? =
         storedLearningLanguage(
             preferences.getString(LEARNING_LANGUAGE_PREFERENCE, null),
-            preferences.getString("preferred_caption_language", null),
+            preferences.getString("preferred_caption_language", DEFAULT_SOURCE_LANGUAGE),
         )
 
     fun setTargetLanguage(language: String) {
@@ -724,7 +724,7 @@ class AppViewModel internal constructor(
         finishOnboarding()
     }
 
-    fun skipOnboarding() = finishOnboarding()
+    fun skipOnboarding() = completeOnboarding(DEFAULT_TARGET_LANGUAGE, DEFAULT_SOURCE_LANGUAGE)
 
     private fun finishOnboarding() {
         preferences.edit().putBoolean("onboarding_completed", true).apply()
@@ -1181,8 +1181,8 @@ class AppViewModel internal constructor(
         liveCaptionProgress = null
         _state.update { current ->
             current.copy(
-                sourcePreference = "auto",
-                targetLanguage = "vi",
+                sourcePreference = DEFAULT_SOURCE_LANGUAGE,
+                targetLanguage = DEFAULT_TARGET_LANGUAGE,
                 recentTargetLanguages = emptyList(),
                 thirdLineEnabled = false,
                 thirdLanguage = null,
