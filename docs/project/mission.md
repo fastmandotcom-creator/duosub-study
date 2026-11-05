@@ -1,6 +1,6 @@
 # Project mission
 
-DualSub Replay helps Android users learn languages through YouTube: read original
+DuoSub Study helps Android users learn languages through YouTube: read original
 and translated subtitles together, tap a sentence to replay it, and save words and
 context for later practice. See the [product guide](../../README.md) for features.
 

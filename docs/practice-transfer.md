@@ -23,7 +23,7 @@ Map other columns in the review dialog and set fallback language tags (for
 example `en`, `vi`, or `ja`) when the file lacks them. The optional source must
 be a YouTube URL or video ID. TSV does not transfer Anki scheduling, media, or
 card templates. Replacing an existing word from TSV preserves its current
-DualSub review schedule; a JSON replacement restores the backup's schedule. A file
+DuoSub review schedule; a JSON replacement restores the backup's schedule. A file
 without notes or a video title never erases the ones a word already has. JSON
 backups from Triple Sub Replay keep their notes (`personalNotes`).
 Anki's plain-text export can flatten embedded line breaks into spaces.

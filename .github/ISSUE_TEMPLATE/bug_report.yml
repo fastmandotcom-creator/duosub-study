@@ -1,11 +1,11 @@
 name: Bug report
-description: Report a reproducible problem in DualSub Replay
+description: Report a reproducible problem in DuoSub Study
 title: "[Bug]: "
 labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: Thanks for helping improve DualSub Replay. Remove private information before submitting.
+      value: Thanks for helping improve DuoSub Study. Remove private information before submitting.
   - type: input
     id: app-version
     attributes:

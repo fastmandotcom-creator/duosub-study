@@ -81,7 +81,7 @@ internal fun ankiConnectNames(result: Any?): List<String> {
 }
 
 /**
- * The deck the cards go to: the one chosen in Settings while it still exists, else a DualSub Replay
+ * The deck the cards go to: the one chosen in Settings while it still exists, else a DuoSub Study
  * deck, else null (the caller makes one, then falls back to [ankiConnectFallbackDeck]).
  */
 internal fun ankiConnectDeck(
@@ -92,14 +92,14 @@ internal fun ankiConnectDeck(
 internal fun ankiConnectFallbackDeck(decks: List<String>): String? = ANKI_DEFAULT_DECK.takeIf { it in decks } ?: decks.firstOrNull()
 
 /**
- * The note type a card uses when the DualSub Replay one cannot be made (AnkiConnect Android cannot
+ * The note type a card uses when the DuoSub Study one cannot be made (AnkiConnect Android cannot
  * make note types): Anki's own Basic, else any note type with at least two fields.
  */
 internal fun ankiConnectFallbackNoteType(names: List<String>): String? =
     names.firstOrNull { it == "Basic" } ?: names.firstOrNull { it.startsWith("Basic") } ?: names.firstOrNull()
 
 /**
- * [word]'s note for a note type with [fieldNames]: the DualSub Replay fields one by one, or, in
+ * [word]'s note for a note type with [fieldNames]: the DuoSub Study fields one by one, or, in
  * any other note type, the word and sentence on the front (first field) and the rest on the back.
  */
 internal fun ankiConnectFields(
@@ -115,7 +115,7 @@ internal fun ankiConnectFields(
     return mapOf(fieldNames[0] to front, fieldNames[1] to back)
 }
 
-/** The DualSub Replay note type, made where AnkiConnect can make one (desktop Anki). */
+/** The DuoSub Study note type, made where AnkiConnect can make one (desktop Anki). */
 internal fun ankiConnectNoteTypeParams(): JSONObject =
     JSONObject()
         .put("modelName", ANKI_NOTE_TYPE_NAME)

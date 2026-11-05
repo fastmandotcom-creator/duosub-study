@@ -15,7 +15,7 @@ This page describes the CI and release paths for `main`. There are two channels:
 
 ## Study publishing flow
 
-1. Commit the focused change on `main` (see [CONTRIBUTING](../CONTRIBUTING.md)).
+1. Commit the focused change directly on `main` (see [AGENTS.md](../AGENTS.md)).
 2. Push: `git push origin main`.
 3. Publish the Study APK: `python3 tools/publish_study_apk.py`.
 

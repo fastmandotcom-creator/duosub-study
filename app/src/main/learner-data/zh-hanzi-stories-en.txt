@@ -1,5 +1,5 @@
 # English memory stories for the 3,000 HSK 3.0 characters (simplified), one per line: character,
-# keyword, story. Written for DualSub Replay and shared under the app's MIT licence. Each story
+# keyword, story. Written for DuoSub Study and shared under the app's MIT licence. Each story
 # builds the character from the parts Make Me a Hanzi names (zh-hanzi.txt) and gives the pinyin
 # of the part that carries the sound.
 爱	love	A claw 爫 reaches under a cover 冖 to hold a friend 友 close: love.

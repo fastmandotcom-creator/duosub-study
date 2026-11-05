@@ -4,12 +4,12 @@ Chinese character details on the word card use these data files (not under the A
   - Stroke order (learner-data/zh-hanzi-strokes.txt) is made from its graphics.txt, which is
     derived from the fonts AR PL KaitiM GB and AR PL UKai, Copyright 1999 Arphic Technology Co.,
     Ltd. It is shared under the Arphic Public License below. Changed on 2026-10-24 for
-    DualSub Replay: kept to the HSK 3.0 characters and their traditional forms, scaled to a
+    DuoSub Study: kept to the HSK 3.0 characters and their traditional forms, scaled to a
     512-unit box and written with relative path commands.
   - Character facts, parts, the meaning part and the sound part (learner-data/zh-hanzi.txt) are
     made from its dictionary.txt (derived from Unihan and CJKlib), shared under the GNU Lesser
     General Public License version 3 or later below; the GNU GPL it builds on is at
-    https://www.gnu.org/licenses/gpl-3.0.html. Changed on 2026-10-24 for DualSub Replay: kept to
+    https://www.gnu.org/licenses/gpl-3.0.html. Changed on 2026-10-24 for DuoSub Study: kept to
     the characters the app shows, with HSK 3.0 levels and words added.
 - HSK 3.0 character list (https://github.com/ivankra/hsk30), Copyright 2023 Ivan Krasilnikov,
   under the MIT License.

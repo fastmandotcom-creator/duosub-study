@@ -85,7 +85,7 @@ See [Continuous integration and releases](docs/releasing.md) for versioning and 
 
 ## AI agents coding directly on `main`
 
-These rules apply to any coding agent (Claude, Copilot, Codex, Cursor and others), whether it works for an outside contributor or for the owner. The human process is in [CONTRIBUTING.md](CONTRIBUTING.md); agents follow it too.
+These rules apply to any coding agent (Claude, Copilot, Codex, Cursor and others). All work happens directly on `main` — see the [development workflow](#development-workflow) and [publishing](#publishing-a-study-release-from-main) above; agents follow it too.
 
 - One focused change per commit, on `main`. No feature branches, no forks, no pull requests. Say in the commit message that an agent wrote or changed the code, and link the spec (or state why none is needed). Record validation results in the spec: not run is not passed.
 - Never commit or paste secrets: API keys, tokens, `*.jks`/`*.keystore`, `ANDROID_RELEASE_*` values, `local.properties`, personal YouTube data, or caption/video dumps. Do not print secrets in logs or commit text. Keep test fixtures offline and synthetic.

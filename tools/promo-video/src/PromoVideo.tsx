@@ -99,7 +99,7 @@ const EndCard: React.FC<PromoProps> = ({repositoryUrl}) => {
       <Background />
       <div style={{transform: `scale(${scale})`, display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
         <BrandMark size={180} />
-        <div style={{fontSize: 105, fontWeight: 900, marginTop: 48}}>DualSub <span style={{color: colors.primary}}>Replay</span></div>
+        <div style={{fontSize: 105, fontWeight: 900, marginTop: 48}}>DuoSub <span style={{color: colors.primary}}>Study</span></div>
         <div style={{fontSize: 38, color: colors.secondary, marginTop: 24}}>Free&nbsp;&nbsp;•&nbsp;&nbsp;Open source&nbsp;&nbsp;•&nbsp;&nbsp;Android</div>
         <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 20, width: 1000, marginTop: 56}}>
           {chips.map((label, index) => (
@@ -207,7 +207,7 @@ export const SocialCard: React.FC<PromoProps> = () => (
   <AbsoluteFill style={{...base, backgroundImage: 'radial-gradient(circle at 77% 42%, #13505A 0%, #061416 48%, #020A0B 100%)'}}>
     <div style={{position: 'absolute', left: 68, top: 72}}><BrandMark size={92} /></div>
     <div style={{position: 'absolute', left: 68, top: 195, width: 680}}>
-      <div style={{fontSize: 72, lineHeight: 1, fontWeight: 900}}>DualSub <span style={{color: colors.primary}}>Replay</span></div>
+      <div style={{fontSize: 72, lineHeight: 1, fontWeight: 900}}>DuoSub <span style={{color: colors.primary}}>Study</span></div>
       <div style={{fontSize: 39, lineHeight: 1.18, fontWeight: 700, marginTop: 28}}>Dual subtitles.<br />Tap any sentence to replay.</div>
       <div style={{fontSize: 24, color: colors.muted, marginTop: 34}}>Free, open-source Android language learning</div>
     </div>

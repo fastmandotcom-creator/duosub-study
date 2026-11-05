@@ -19,7 +19,7 @@ args.output.parent.mkdir(parents=True, exist_ok=True)
 with tempfile.TemporaryDirectory(prefix="anki-qa-") as directory:
     collection = Collection(str(pathlib.Path(directory) / "qa.anki2"))
     try:
-        model = collection.models.new("DualSub Replay QA")
+        model = collection.models.new("DuoSub Study QA")
         for field in fields:
             collection.models.add_field(model, collection.models.new_field(field))
         template = collection.models.new_template("Card 1")

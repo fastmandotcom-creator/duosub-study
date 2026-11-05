@@ -16,7 +16,7 @@ learners, who are the largest group of learners.
 
 ## Goals
 
-- `dual-subtitles-youtube-android/`: a fair comparison of DualSub Replay, Trancy, the
+- `dual-subtitles-youtube-android/`: a fair comparison of DuoSub Study, Trancy, the
   Dualsub Firefox add-on, and Language Reactor, with sources and a "Last checked" date.
 - `learn-english/`: how to learn English with YouTube using the app.
 - English and Vietnamese versions, linked from every page's footer and the home FAQ.

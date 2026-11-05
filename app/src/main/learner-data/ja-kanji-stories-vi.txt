@@ -1,5 +1,5 @@
 # Vietnamese memory stories for the 2,136 jōyō kanji, one per line: kanji, keyword, story.
-# Written for DualSub Replay and shared under the app's MIT licence. Each story builds the kanji
+# Written for DuoSub Study and shared under the app's MIT licence. Each story builds the kanji
 # from the parts KanjiVG names (ja-kanji.txt), and ends with its Hán Việt reading in capitals.
 一	một	Một nét ngang duy nhất: số MỘT, NHẤT như trong "thống nhất", "nhất định".
 七	bảy	Một nét ngang bị nét móc cắt ngang, trông như số 7 lộn ngược: bảy, THẤT như "thất tịch".

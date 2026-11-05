@@ -34,7 +34,7 @@ scope, not merge or release.
    that are neither known nor saved.
 4. **Send to AnkiDroid** (on by default; the buttons show only when AnkiDroid is installed): the word
    card's "Send to AnkiDroid" adds a note (word, meaning, reading, sentence, translation, a YouTube
-   link at the line's time) to a "DualSub Replay" deck with its own "DualSub Replay" note type;
+   link at the line's time) to a "DuoSub Study" deck with its own "DuoSub Study" note type;
    Saved words → Export gets "Send all to AnkiDroid". Words already sent are not sent twice.
 5. **Blur box** (off by default): a blurred box on the video that can be dragged and resized to
    cover subtitles burned into the picture; its place is kept.

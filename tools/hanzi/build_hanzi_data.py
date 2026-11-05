@@ -505,7 +505,7 @@ def write(hanzi: dict[str, Hanzi]) -> None:
         "# Chinese characters for the word card's character pages, made by tools/hanzi/build_hanzi_data.py from\n"
         f"# Make Me a Hanzi's dictionary.txt (commit {MAKEMEAHANZI_COMMIT[:12]}, Shaunak Kishore, from Unihan\n"
         "# and CJKlib), shared under the GNU LGPL 3 or later (https://www.gnu.org/licenses/lgpl-3.0.html).\n"
-        "# Changed on 2026-10-24 for DualSub Replay: kept to the characters the app shows, with HSK 3.0 levels\n"
+        "# Changed on 2026-10-24 for DuoSub Study: kept to the characters the app shows, with HSK 3.0 levels\n"
         f"# and words from ivankra/hsk30 (commit {HSK30_COMMIT[:12]}, MIT) and forms from Unihan added.\n"
         "# Format (tab separated): character, pinyin (,), strokes, HSK level (1-6, 7 for 7-9, 0 a part only),\n"
         "# other forms (traditional of a simplified one, or the reverse), radical, meanings (;), parts\n"
@@ -534,7 +534,7 @@ def write(hanzi: dict[str, Hanzi]) -> None:
     strokes_header = (
         f"# Stroke order from Make Me a Hanzi's graphics.txt (commit {MAKEMEAHANZI_COMMIT[:12]}), derived from\n"
         "# Arphic PL KaitiM GB and Arphic PL UKai, Copyright 1999 Arphic Technology Co., Ltd., shared under the\n"
-        "# Arphic Public License (its text is in assets/licenses/hanzi.txt). Changed on 2026-10-24 for DualSub\n"
+        "# Arphic Public License (its text is in assets/licenses/hanzi.txt). Changed on 2026-10-24 for DuoSub Study\n"
         "# Replay by tools/hanzi/build_hanzi_data.py: kept to the HSK 3.0 characters and their traditional\n"
         "# forms, scaled to a 512-unit box with y pointing down, and written with relative path commands.\n"
         "# Format (tab separated): character, then per stroke in order its outline (SVG path) and centre line\n"

@@ -43,11 +43,11 @@
     <string name="study_send_to_app_title">Send words to</string>
     <string name="study_app_ankidroid" translatable="false">AnkiDroid</string>
     <string name="study_app_ankiconnect" translatable="false">AnkiConnect</string>
-    <string name="study_ankidroid_description">Cards go to a DualSub Replay deck. Keep AnkiDroid open in the background: on many phones it only accepts cards while it is running.</string>
-    <string name="study_ankiconnect_description">Sends to AnkiConnect on this phone (127.0.0.1:8765), which the AnkiConnect Android app, Yomitan and asbplayer use. Open AnkiConnect Android once so its server runs. Where AnkiConnect cannot make a DualSub Replay note type, cards use Anki\'s Basic note type.</string>
+    <string name="study_ankidroid_description">Cards go to a DuoSub Study deck. Keep AnkiDroid open in the background: on many phones it only accepts cards while it is running.</string>
+    <string name="study_ankiconnect_description">Sends to AnkiConnect on this phone (127.0.0.1:8765), which the AnkiConnect Android app, Yomitan and asbplayer use. Open AnkiConnect Android once so its server runs. Where AnkiConnect cannot make a DuoSub Study note type, cards use Anki\'s Basic note type.</string>
     <string name="study_ankiconnect_deck_title">AnkiConnect deck</string>
     <string name="study_ankiconnect_deck_value">Deck: %1$s</string>
-    <string name="study_ankiconnect_deck_automatic">Automatic (DualSub Replay, else Default)</string>
+    <string name="study_ankiconnect_deck_automatic">Automatic (DuoSub Study, else Default)</string>
     <string name="study_ankiconnect_deck_choose">Choose deck</string>
     <string name="study_ankiconnect_deck_loading">Loading decks…</string>
     <string name="study_blur_box_title">Blur box</string>

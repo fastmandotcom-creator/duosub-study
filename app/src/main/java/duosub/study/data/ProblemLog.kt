@@ -119,7 +119,7 @@ internal fun problemEmailUri(
 ): String = "mailto:$PROBLEM_REPORT_EMAIL?subject=${urlEncoded(problemEmailSubject(appVersion))}&body=${urlEncoded(report)}"
 
 /** English, like the report: it is for the project, not the person sending it. */
-internal fun problemEmailSubject(appVersion: String): String = "DualSub Replay problem report ($appVersion)"
+internal fun problemEmailSubject(appVersion: String): String = "DuoSub Study problem report ($appVersion)"
 
 private fun urlEncoded(value: String): String = URLEncoder.encode(value, "UTF-8").replace("+", "%20")
 

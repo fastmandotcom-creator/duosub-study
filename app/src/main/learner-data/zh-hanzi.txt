@@ -1,7 +1,7 @@
 # Chinese characters for the word card's character pages, made by tools/hanzi/build_hanzi_data.py from
 # Make Me a Hanzi's dictionary.txt (commit bddc96d41bef, Shaunak Kishore, from Unihan
 # and CJKlib), shared under the GNU LGPL 3 or later (https://www.gnu.org/licenses/lgpl-3.0.html).
-# Changed on 2026-10-24 for DualSub Replay: kept to the characters the app shows, with HSK 3.0 levels
+# Changed on 2026-10-24 for DuoSub Study: kept to the characters the app shows, with HSK 3.0 levels
 # and words from ivankra/hsk30 (commit 4ff9e3915ce8, MIT) and forms from Unihan added.
 # Format (tab separated): character, pinyin (,), strokes, HSK level (1-6, 7 for 7-9, 0 a part only),
 # other forms (traditional of a simplified one, or the reverse), radical, meanings (;), parts

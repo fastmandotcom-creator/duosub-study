@@ -231,7 +231,7 @@ internal fun ReportProblemDialog(onDismiss: () -> Unit) {
     var noEmailApp by remember { mutableStateOf(false) }
     val copy = {
         scope.launch {
-            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("DualSub Replay", report)))
+            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("DuoSub Study", report)))
             copied = true
         }
     }

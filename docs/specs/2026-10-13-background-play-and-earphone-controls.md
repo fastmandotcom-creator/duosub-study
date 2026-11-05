@@ -40,7 +40,7 @@ owner chose "Everyone" on 2026-10-13. This does not authorize merging or publish
 
 ## User-visible behavior
 
-- After a video starts playing, a "DualSub Replay" media notification appears with the video
+- After a video starts playing, a "DuoSub Study" media notification appears with the video
   title, play/pause and a seek bar. Tapping it opens the app.
 - Touching the earphones pauses a playing video and resumes a paused one; the notification button
   does the same.

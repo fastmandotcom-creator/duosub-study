@@ -11,15 +11,15 @@ can post, and the questions those posts should answer. It complements the
 
 Tested by the owner in ChatGPT with memory turned off.
 
-| Question | DualSub Replay mentioned? | What ChatGPT recommended and cited |
+| Question | DuoSub Study mentioned? | What ChatGPT recommended and cited |
 | --- | --- | --- |
 | What's a good Android app for dual subtitles on YouTube? | No | Migaku, then LingoTube, each with a Google Play card |
-| How about an open-source alternative? (follow-up) | Yes, as the top pick | DualSub Replay, citing the GitHub repository |
+| How about an open-source alternative? (follow-up) | Yes, as the top pick | DuoSub Study, citing the GitHub repository |
 
 So the repository already reads well to ChatGPT, but the default answer goes to apps with
 a Google Play listing and third-party mentions. A web search the same day showed the same
 pattern: Trancy's own blog posts and AlternativeTo dominate "Language Reactor alternative
-Android", and no Reddit thread mentions DualSub Replay yet.
+Android", and no Reddit thread mentions DuoSub Study yet.
 
 ## Questions people ask AI assistants
 
@@ -64,7 +64,7 @@ video.
 
 ### r/androidapps
 
-Title: [DEV] DualSub Replay: free, open-source app for dual subtitles on YouTube (no ads, no account)
+Title: [DEV] DuoSub Study: free, open-source app for dual subtitles on YouTube (no ads, no account)
 
 I'm the developer. I couldn't find an Android app that shows YouTube subtitles in two
 languages and lets me replay one sentence at a time, so I built one.
@@ -84,7 +84,7 @@ https://fastmandotcom-creator.github.io/duosub-study/
 
 Title: I built an open-source Android app for learning languages from YouTube subtitles
 
-DualSub Replay shows YouTube captions in two languages, replays any sentence with one
+DuoSub Study shows YouTube captions in two languages, replays any sentence with one
 tap, and explains words and grammar. It's Kotlin and Jetpack Compose, MIT-licensed, with
 on-device language data (jieba, HanLP, OpenNLP and WordNet word lists) and no server of
 its own. I'd love feedback on the code or ideas for what to add.
@@ -100,7 +100,7 @@ Use the r/LearnJapanese draft in the [launch kit](launch-kit.md#rlearnjapanese-e
 Title: I made a free Android app that adds pinyin and word-by-word help to YouTube subtitles
 
 I'm learning from YouTube and wanted Chinese captions with a translation underneath,
-pinyin on every word, and a way to replay one sentence without scrubbing. DualSub Replay
+pinyin on every word, and a way to replay one sentence without scrubbing. DuoSub Study
 splits the subtitle into words, shows pinyin, explains grammar points with their HSK
 level, and speaks a word when you tap it. It's free and open source, with no ads. It's an
 APK from GitHub, not Google Play yet. I'm the developer, so please tell me where the word
@@ -130,7 +130,7 @@ rules allow, using the r/androidapps text without the `[DEV]` tag.
 Use this when someone asks one of the questions above. Change the first sentence to fit
 their question.
 
-> If you're on Android, I made a free, open-source app for exactly this: DualSub Replay
+> If you're on Android, I made a free, open-source app for exactly this: DuoSub Study
 > shows YouTube subtitles in two languages, replays a sentence with one tap, and lets you
 > tap words to look them up and save them (Anki export too). It's an APK from GitHub
 > since it isn't on Google Play yet:
@@ -152,14 +152,14 @@ ChatGPT cites AlternativeTo for "alternative to X" questions. Add the app at
 https://alternativeto.net (Add application), then mark it as an alternative to Language
 Reactor, Trancy, LingoTube and Migaku.
 
-- **Name:** DualSub Replay
+- **Name:** DuoSub Study
 - **Website:** https://fastmandotcom-creator.github.io/duosub-study/
 - **Platforms:** Android
 - **License:** Free, open source (MIT)
 - **Short description:** Learn a language with YouTube on your Android phone. Watch videos
   with subtitles in two languages, tap a sentence to hear it again, and tap a word to see
   what it means.
-- **Description:** DualSub Replay is a free, open-source Android app for learning languages
+- **Description:** DuoSub Study is a free, open-source Android app for learning languages
   with YouTube videos. It shows the original subtitles and a translation together, lets
   you tap any line to replay it, and opens a word card with meaning, pronunciation and
   grammar when you tap a word. Saved words can be practised later or exported to Anki.
@@ -178,5 +178,5 @@ Play's policies on YouTube content), so it is not planned here.
 ## Checking progress
 
 Ask ChatGPT the first four questions above with memory off once a month, and note
-whether DualSub Replay appears and which sources it cites. Record the result in the table
+whether DuoSub Study appears and which sources it cites. Record the result in the table
 at the top of this page.

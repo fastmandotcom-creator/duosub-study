@@ -24,7 +24,7 @@ tag; Practice showed every word in one list and practised every due word togethe
 ## Non-goals
 
 - Tags or a word in several decks: one deck per word.
-- Sending decks to AnkiDroid / AnkiConnect as subdecks (cards still go to the "DualSub Replay" deck).
+- Sending decks to AnkiDroid / AnkiConnect as subdecks (cards still go to the "DuoSub Study" deck).
 - An import option that puts every imported word in a chosen deck.
 - AI assistant tools to create, rename or move decks.
 

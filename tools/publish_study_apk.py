@@ -134,7 +134,7 @@ def main():
         matching_draft = next(
             (
                 item for item in releases
-                if item[1]["draft"] and item[1]["name"] == f"DualSub Study {version_name}"
+                if item[1]["draft"] and item[1]["name"] == f"DuoSub Study {version_name}"
             ),
             None,
         )
@@ -152,14 +152,14 @@ def main():
         release_id = matching_draft[1]["id"]
         api("PATCH", f"releases/{release_id}", {
             "tag_name": tag,
-            "name": f"DualSub Study {version_name}",
+            "name": f"DuoSub Study {version_name}",
             "body": notes,
         })
     else:
         draft = api("POST", "releases", {
             "tag_name": tag,
             "target_commitish": source_sha,
-            "name": f"DualSub Study {version_name}",
+            "name": f"DuoSub Study {version_name}",
             "body": notes,
             "draft": True,
             "prerelease": False,

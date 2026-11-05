@@ -32,7 +32,7 @@ class AppUpdatesTest {
             UpdateChannel.Preview(138, 470),
             updateChannelFor("duosub.study.preview", true, "1.0.4-pr138-build470"),
         )
-        // DualSub Study is published as a debug build under its own application id.
+        // DuoSub Study is published as a debug build under its own application id.
         assertEquals(UpdateChannel.Study, updateChannelFor("duosub.study.study", true, "1.0.4-study.7"))
         assertEquals(UpdateChannel.Study, updateChannelFor("duosub.study.study", false, "1.0.4-study.7"))
         // A local debug build is signed with another key, and the release smoke build is a test copy.

@@ -5,10 +5,10 @@
 [![Source: MIT](https://img.shields.io/badge/Source-MIT-26c6da.svg)](LICENSE)
 [![App distribution: GPL-3.0](https://img.shields.io/badge/App-GPL--3.0-blue.svg)](THIRD_PARTY_NOTICES.md)
 
-<h1 align="center">DualSub Replay</h1>
+<h1 align="center">DuoSub Study</h1>
 
 <p align="center">
-  <a href="https://fastmandotcom-creator.github.io/duosub-study/"><img src="site/favicon.svg" alt="DualSub Replay logo. Opens the website" width="180" height="180"></a>
+  <a href="https://fastmandotcom-creator.github.io/duosub-study/"><img src="site/favicon.svg" alt="DuoSub Study logo. Opens the website" width="180" height="180"></a>
 </p>
 
 <p align="center">
@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk"><img src="https://img.shields.io/badge/Download_for_Android-Free-3ddc84?style=for-the-badge&logo=android&logoColor=white" alt="Download DualSub Replay for Android, free" height="56"></a>
+  <a href="https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk"><img src="https://img.shields.io/badge/Download_for_Android-Free-3ddc84?style=for-the-badge&logo=android&logoColor=white" alt="Download DuoSub Study for Android, free" height="56"></a>
 </p>
 
 <p align="center">
@@ -34,25 +34,25 @@ Android may show a warning because the app comes from GitHub instead of Google P
 
 **Updating:** open the menu at the top left and tap **Check for updates**. To get new versions without asking, turn on **Settings → More settings → App updates → Update automatically**.
 
-> **About preview builds:** they install as a separate app called **DualSub Replay Preview**, so you can keep both. Your saved words do not move between them automatically; use **Saved words → Export** and **Import** to copy them.
+> **About preview builds:** they install as a separate app called **DuoSub Study Preview**, so you can keep both. Your saved words do not move between them automatically; use **Saved words → Export** and **Import** to copy them.
 
 ## See it in action
 
 <p align="center">
   <a href="docs/media/dualsub-replay-promo.mp4">
-    <img src="docs/images/dualsub-replay-demo.gif" alt="DualSub Replay showing dual subtitles on a YouTube video, then tapping a Japanese word to see its meaning, grammar and Save to vocabulary" width="400">
+    <img src="docs/images/dualsub-replay-demo.gif" alt="DuoSub Study showing dual subtitles on a YouTube video, then tapping a Japanese word to see its meaning, grammar and Save to vocabulary" width="400">
   </a>
 </p>
 
 <p align="center"><a href="docs/media/dualsub-replay-promo.mp4"><strong>▶ Watch the full video (50 seconds)</strong></a></p>
 
-### [Download DualSub Replay for Android](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk)
+### [Download DuoSub Study for Android](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk)
 
 Free · Android 8.0 or newer · See [How to install](#how-to-install) if you need help.
 
-## Why DualSub Replay?
+## Why DuoSub Study?
 
-DualSub Replay is a free, open-source **dual subtitles app for YouTube on Android**. It shows bilingual captions (the original and a translation into any of 101 languages), replays a sentence with one tap, explains words and English, Japanese and Chinese grammar, and saves words for spaced-repetition practice. [Website](https://fastmandotcom-creator.github.io/duosub-study/) · [Tiếng Việt](https://fastmandotcom-creator.github.io/duosub-study/vi/)
+DuoSub Study is a free, open-source **dual subtitles app for YouTube on Android**. It shows bilingual captions (the original and a translation into any of 101 languages), replays a sentence with one tap, explains words and English, Japanese and Chinese grammar, and saves words for spaced-repetition practice. [Website](https://fastmandotcom-creator.github.io/duosub-study/) · [Tiếng Việt](https://fastmandotcom-creator.github.io/duosub-study/vi/)
 
 - **See every meaning.** The original caption and its translation stay together while you watch.
 - **Repeat without scrubbing.** Tap a subtitle line and the video jumps back to that exact moment.
@@ -64,34 +64,34 @@ DualSub Replay is a free, open-source **dual subtitles app for YouTube on Androi
 
 | App | On Android | Cost | Best at |
 | --- | --- | --- | --- |
-| **DualSub Replay** | App with YouTube inside | Free, open source, no ads | Tap-to-replay, word lookup, grammar help, saved-word practice |
+| **DuoSub Study** | App with YouTube inside | Free, open source, no ads | Tap-to-replay, word lookup, grammar help, saved-word practice |
 | Trancy | App and browser extension | Free plan; Premium from about $3.49 a month | Bilingual subtitles; AI tools need Premium, free plan saves up to 100 words |
 | LingoTube | App on Google Play | Free, with ads | Dual captions with A-B repeat |
 | Language Reactor | No Android app (desktop Chrome only) | Free, paid Pro plan | Studying YouTube and Netflix on a computer |
 
 Facts checked in October 2026. See the [full comparison](https://fastmandotcom-creator.github.io/duosub-study/dual-subtitles-youtube-android/) for Migaku, Dualsub and more.
 
-If DualSub Replay helps your learning, consider [starring the repository](https://github.com/fastmandotcom-creator/duosub-study). It helps other language learners discover the project.
+If DuoSub Study helps your learning, consider [starring the repository](https://github.com/fastmandotcom-creator/duosub-study). It helps other language learners discover the project.
 
 <p align="center">
-  <img src="docs/images/dualsub-replay-japanese-english.webp" alt="DualSub Replay with a Japanese YouTube video, Japanese subtitles and English translations, the playing line's words colored by part of speech" width="280">
+  <img src="docs/images/dualsub-replay-japanese-english.webp" alt="DuoSub Study with a Japanese YouTube video, Japanese subtitles and English translations, the playing line's words colored by part of speech" width="280">
   &nbsp;
-  <img src="docs/images/dualsub-replay-english-vietnamese.webp" alt="DualSub Replay with an English YouTube video, English subtitles and Vietnamese translations, the playing line's words colored by part of speech" width="280">
+  <img src="docs/images/dualsub-replay-english-vietnamese.webp" alt="DuoSub Study with an English YouTube video, English subtitles and Vietnamese translations, the playing line's words colored by part of speech" width="280">
 </p>
 
 <p align="center">
-  <img src="docs/images/dualsub-replay-full-hd.jpg" alt="DualSub Replay showing bilingual English and Vietnamese subtitles over a landscape interview video" width="900">
+  <img src="docs/images/dualsub-replay-full-hd.jpg" alt="DuoSub Study showing bilingual English and Vietnamese subtitles over a landscape interview video" width="900">
 </p>
 
 <p align="center">
-  <img src="docs/images/dualsub-replay-landscape.png" alt="DualSub Replay in landscape with the YouTube video on the left and replayable Japanese and English subtitles on the right" width="900">
+  <img src="docs/images/dualsub-replay-landscape.png" alt="DuoSub Study in landscape with the YouTube video on the left and replayable Japanese and English subtitles on the right" width="900">
 </p>
 
 ## Features
 
 ### Watch with dual subtitles
 
-- Browse and search the real mobile YouTube site inside the app, or share a YouTube link (watch, Shorts, live, embed, or `youtu.be`) to DualSub Replay.
+- Browse and search the real mobile YouTube site inside the app, or share a YouTube link (watch, Shorts, live, embed, or `youtu.be`) to DuoSub Study.
 - Captions load automatically, manual or auto-generated, in any language the video offers.
 - Translations go into any of 101 languages. The 59 that Google ML Kit supports can also translate offline: download their models ahead of time in **Settings → Translation → Languages on this device**. The rest, such as Azerbaijani, Kazakh, Uzbek, Armenian and Burmese, translate online with Google Translate or AI.
 - Short caption fragments are merged into readable sentences, and the current one is highlighted. On eligible auto-generated captions, the spoken word is highlighted too.
@@ -139,7 +139,7 @@ If DualSub Replay helps your learning, consider [starring the repository](https:
 - **Settings → Android TV (beta)** turns the TV layout off. Phones and tablets never use it.
 
 <p align="center">
-  <img src="docs/images/dualsub-replay-android-tv.webp" alt="DualSub Replay on Android TV: a Japanese YouTube video with the subtitle panel beside it, Japanese lines colored by part of speech with English translations" width="900">
+  <img src="docs/images/dualsub-replay-android-tv.webp" alt="DuoSub Study on Android TV: a Japanese YouTube video with the subtitle panel beside it, Japanese lines colored by part of speech with English translations" width="900">
 </p>
 
 ### Use the app in your language
@@ -148,7 +148,7 @@ The interface is available in English, Tiếng Việt, Español, Português (Bra
 
 ## Quick start
 
-1. Open DualSub Replay, choose your native language and the language you are learning, and skim the short guide.
+1. Open DuoSub Study, choose your native language and the language you are learning, and skim the short guide.
 2. Search YouTube and pick a video with captions.
 3. Read the original and translated subtitles below the video, or beside it in landscape.
 4. Tap a subtitle line to replay it, or tap a word to learn it.
@@ -156,11 +156,11 @@ The interface is available in English, Tiếng Việt, Español, Português (Bra
 
 ## FAQ
 
-**How do I watch YouTube with two subtitles at once on Android?** Install DualSub Replay, open a captioned video, and pick your language. The original caption and its translation appear together under the video, or beside it in landscape.
+**How do I watch YouTube with two subtitles at once on Android?** Install DuoSub Study, open a captioned video, and pick your language. The original caption and its translation appear together under the video, or beside it in landscape.
 
 **Which languages can I learn?** The original can be any caption language a video offers, including auto-generated captions. Translations go into 101 languages, such as English, Spanish, Japanese, Korean, Chinese, French, German, Vietnamese and Azerbaijani. For the 59 that Google ML Kit supports, **Settings → Translation → Languages on this device** shows which are downloaded and lets you download or remove each one so translation works offline.
 
-**Is there a Language Reactor-style tool for Android?** Browser extensions such as Language Reactor run in desktop Chrome, not in the Android YouTube app. DualSub Replay is a separate, unaffiliated Android app with a similar two-language view, plus tap-to-replay, word lookup, and saved-word practice.
+**Is there a Language Reactor-style tool for Android?** Browser extensions such as Language Reactor run in desktop Chrome, not in the Android YouTube app. DuoSub Study is a separate, unaffiliated Android app with a similar two-language view, plus tap-to-replay, word lookup, and saved-word practice.
 
 **Can I sign in to YouTube?** Experimentally. The Google sign-in flow stays inside the app and returns to your video afterwards, but Google does not officially support signing in from embedded WebViews and may reject it with a "browser or app may not be secure" message. The app never pretends to be another browser or copies cookies. (On Android TV it only adds "Mobile" to the WebView's own user agent when it is missing, so YouTube sends its phone site.)
 
@@ -174,12 +174,12 @@ No account or API key is required, and the app has no analytics or advertising S
 
 ## Limitations
 
-- YouTube's official Data API does not let ordinary viewers download captions from arbitrary public videos, so DualSub Replay reads them through YouTube's undocumented internal interfaces. They can change without notice, and their use may be restricted by YouTube's terms. That code is isolated in `YouTubeCaptionProvider` so it can be replaced.
+- YouTube's official Data API does not let ordinary viewers download captions from arbitrary public videos, so DuoSub Study reads them through YouTube's undocumented internal interfaces. They can change without notice, and their use may be restricted by YouTube's terms. That code is isolated in `YouTubeCaptionProvider` so it can be replaced.
 - Videos play in YouTube's own mobile webpage player; the app does not download video. Spoken-word highlighting depends on YouTube's page and may be unavailable or less precise on some videos and phones, in which case it falls back to sentence timing.
 
 ## Community
 
-> "Thank you for creating and sharing DualSub Replay. It's a great open-source app!"
+> "Thank you for creating and sharing DuoSub Study. It's a great open-source app!"
 >
 > — [mrAlishah](https://github.com/fastmandotcom-creator/duosub-study/discussions/81#discussioncomment-19228373), who built [Triple Sub Replay](https://github.com/mrAlishah/triple-sub-replay), a fork that adds a third subtitle line for learning German with English and Persian, and became this project's first code contributor. The third line, video titles and notes on saved words came from Triple Sub Replay
 
@@ -188,7 +188,7 @@ Ideas and questions are welcome in [Discussions](https://github.com/fastmandotco
 <a href="https://star-history.com/#fastmandotcom-creator/duosub-study&Date">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=fastmandotcom-creator/duosub-study&type=Date&theme=dark">
-    <img src="https://api.star-history.com/svg?repos=fastmandotcom-creator/duosub-study&type=Date" alt="Star history of DualSub Replay on GitHub" width="600">
+    <img src="https://api.star-history.com/svg?repos=fastmandotcom-creator/duosub-study&type=Date" alt="Star history of DuoSub Study on GitHub" width="600">
   </picture>
 </a>
 
@@ -218,13 +218,13 @@ See the [technical context](docs/project/tech-stack.md) for the invariants that 
 
 ### CI, releases, and the website
 
-Development happens directly on `main` — there are no feature branches or pull requests in this project. Each change is committed straight to `main` and pushed. The Study APK is published with one local command, `python3 tools/publish_study_apk.py`, after the commit reaches `main`; it publishes to [GitHub Releases](https://github.com/fastmandotcom-creator/duosub-study/releases). The Android test suites (unit, lint, build, managed-device) are available through the [manual `Android build` workflow](https://github.com/fastmandotcom-creator/duosub-study/actions/workflows/android.yml) for extra evidence and are not a gate for the Study release. See [Continuous integration and releases](docs/releasing.md) and [Update DualSub Study from its own releases](docs/specs/2026-11-05-study-app-updates.md) for versioning and recovery.
+Development happens directly on `main` — there are no feature branches or pull requests in this project. Each change is committed straight to `main` and pushed. The Study APK is published with one local command, `python3 tools/publish_study_apk.py`, after the commit reaches `main`; it publishes to [GitHub Releases](https://github.com/fastmandotcom-creator/duosub-study/releases). The Android test suites (unit, lint, build, managed-device) are available through the [manual `Android build` workflow](https://github.com/fastmandotcom-creator/duosub-study/actions/workflows/android.yml) for extra evidence and are not a gate for the Study release. See [Continuous integration and releases](docs/releasing.md) and [Update DuoSub Study from its own releases](docs/specs/2026-11-05-study-app-updates.md) for versioning and recovery.
 
 The landing page in `site/` (English and Vietnamese) deploys to GitHub Pages when `site/` or `docs/images/` changes on `main`. The demo video, README GIF, poster and social card are rendered from code in [tools/promo-video](tools/promo-video/README.md).
 
-## Contributing and roadmap
+## Roadmap
 
-Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md), and the compact [roadmap](ROADMAP.md) before committing. Humans and coding agents share the [project context](docs/project/mission.md), [technical context](docs/project/tech-stack.md), and [lightweight spec workflow](docs/specs/README.md); [AGENTS.md](AGENTS.md) gives operational instructions.
+All development happens directly on `main`. See the compact [roadmap](ROADMAP.md), the [project context](docs/project/mission.md), the [technical context](docs/project/tech-stack.md), and the [lightweight spec workflow](docs/specs/README.md). [AGENTS.md](AGENTS.md) gives operational instructions for coding agents and contributors.
 
 ## License
 

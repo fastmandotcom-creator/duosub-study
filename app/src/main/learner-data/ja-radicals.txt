@@ -1,4 +1,4 @@
-# The 214 Kangxi radicals for the word card's kanji and Chinese character pages, written for DualSub
+# The 214 Kangxi radicals for the word card's kanji and Chinese character pages, written for DuoSub Study
 # Replay (MIT). Format (tab separated): number, forms (the main form first, then the shapes it takes
 # inside a character, including simplified Chinese forms such as 钅 and 鸟),
 # English name, Vietnamese name (bộ), Vietnamese meaning.

@@ -42,7 +42,7 @@ See AGENTS.md for handoff and docs/releasing.md for release recovery.
 
 ## Checklist
 
-<!-- Tick what is true; leave the rest unticked and explain in Notes. See CONTRIBUTING.md "How review works". -->
+<!-- Tick what is true; leave the rest unticked and explain in Notes. -->
 
 - [ ] One focused change; unrelated fixes are in their own PR.
 - [ ] Screenshots or a recording above for visible changes (or "No UI change").

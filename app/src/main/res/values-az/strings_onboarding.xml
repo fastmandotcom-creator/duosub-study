@@ -10,8 +10,8 @@
     <string name="onboarding_guide_replay_body">Deyilən hər sətir tərcüməsi ilə birlikdə siyahıda göstərilir. Videonu həmin ana qaytarmaq üçün sətirdəki oynatma düyməsinə toxunun, dilləri və ya mətn ölçüsünü dəyişmək üçün dişli çarxdan istifadə edin.</string>
     <string name="onboarding_guide_replay_image">Təkrar oynatma düymələri olan altyazı sətirləri paneli</string>
     <string name="onboarding_guide_open_video_title">İstənilən videonu açın</string>
-    <string name="onboarding_guide_open_video_body">YouTube linkini yapışdırın, videonu birbaşa YouTube tətbiqindən paylaşın və ya sadəcə DualSub Replay daxilində gəzin.</string>
-    <string name="onboarding_language_welcome">DualSub Replay-ə xoş gəlmisiniz</string>
+    <string name="onboarding_guide_open_video_body">YouTube linkini yapışdırın, videonu birbaşa YouTube tətbiqindən paylaşın və ya sadəcə DuoSub Study daxilində gəzin.</string>
+    <string name="onboarding_language_welcome">DuoSub Study-ə xoş gəlmisiniz</string>
     <string name="onboarding_language_intro">Dillərinizi bir dəfə seçin. Sonra onları altyazı ayarlarında dəyişə bilərsiniz.</string>
     <string name="onboarding_language_native_title">Sətir 1</string>
     <string name="onboarding_language_native_helper">Əvvəl göstərilir. Standart Vyetnamcadır, avtomatik altyazı da daxil.</string>

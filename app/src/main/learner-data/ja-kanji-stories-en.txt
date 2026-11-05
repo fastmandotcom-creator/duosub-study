@@ -1,5 +1,5 @@
 # English memory stories for the 2,136 jōyō kanji, one per line: kanji, keyword, story.
-# Written for DualSub Replay and shared under the app's MIT licence. Each story builds the kanji
+# Written for DuoSub Study and shared under the app's MIT licence. Each story builds the kanji
 # from the parts KanjiVG names (ja-kanji.txt).
 一	one	A single horizontal stroke: one finger held flat, the simplest number there is.
 七	seven	A cross whose tail hooks down and away, like a 7 drawn upside down: seven.

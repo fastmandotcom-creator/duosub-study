@@ -1,6 +1,6 @@
 # Distribution and source notices
 
-DualSub Replay copyright (c) 2026 Hoang Trung Kien. Original repository source is released under the [MIT License](LICENSE).
+DuoSub Study copyright (c) 2026 Hoang Trung Kien. Original repository source is released under the [MIT License](LICENSE).
 
 Offline video downloading (`yt-dlp`, `FFmpeg`), local media playback (`Media3`), and `WorkManager` were removed to simplify the app and drastically reduce APK size.
 

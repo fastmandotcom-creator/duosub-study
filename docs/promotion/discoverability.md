@@ -1,6 +1,6 @@
 # Discoverability checklist
 
-How people find DualSub Replay: Google results for searches such as "dual subtitles
+How people find DuoSub Study: Google results for searches such as "dual subtitles
 YouTube Android" or "phụ đề song ngữ YouTube", the GitHub repository page, and
 community posts. The repository carries the landing page (`site/`), README wording,
 and structured data. The steps below need the owner's GitHub or Google account.

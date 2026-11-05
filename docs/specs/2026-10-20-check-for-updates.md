@@ -40,7 +40,7 @@ GitHub.", so people visit GitHub and download every release by hand.
   available" with **Update** / **Not now** and a link to what's new (the release page). Update
   shows download progress, then Android installs. Failures say what went wrong (no connection,
   GitHub unreachable, checksum mismatch, Android refused) with **Try again**.
-- The first install asks the user to allow "Install unknown apps" for DualSub Replay (Android's
+- The first install asks the user to allow "Install unknown apps" for DuoSub Study (Android's
   own screen). Android may also show its own "Update this app?" confirmation; on Android 12+ the
   app asks for no confirmation, which Android grants to an app updating itself on most phones.
 - Automatic mode: if Android needs a confirmation while the app is in the background, the

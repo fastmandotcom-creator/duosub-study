@@ -1,4 +1,4 @@
-# DualSub Replay launch kit
+# DuoSub Study launch kit
 
 Use these drafts as starting points. Check each community's current rules, participate genuinely, and disclose that you built the project. Do not post the same wording everywhere.
 
@@ -14,20 +14,20 @@ Use these drafts as starting points. Check each community's current rules, parti
 ### English
 
 - I built a free Android app for dual YouTube subtitles and tap-to-replay
-- DualSub Replay: learn from YouTube one sentence at a time
-- Show HN: DualSub Replay – dual YouTube subtitles and tap-to-replay on Android
+- DuoSub Study: learn from YouTube one sentence at a time
+- Show HN: DuoSub Study – dual YouTube subtitles and tap-to-replay on Android
 
 ### Vietnamese
 
 - Mình làm ứng dụng Android miễn phí để xem phụ đề song ngữ YouTube và chạm để nghe lại
-- DualSub Replay: học ngoại ngữ trên YouTube theo từng câu
+- DuoSub Study: học ngoại ngữ trên YouTube theo từng câu
 - Ứng dụng mã nguồn mở với phụ đề song ngữ và dịch ngay trên thiết bị
 
 ## Facebook
 
 ### English
 
-I built DualSub Replay, a free and open-source Android app for learning languages with YouTube. It keeps original and translated subtitles together, and you can tap any subtitle paragraph to replay that exact moment. Tap a word for its meaning and, for Japanese, the grammar around it. There is no account, no ads, and no API key needed.
+I built DuoSub Study, a free and open-source Android app for learning languages with YouTube. It keeps original and translated subtitles together, and you can tap any subtitle paragraph to replay that exact moment. Tap a word for its meaning and, for Japanese, the grammar around it. There is no account, no ads, and no API key needed.
 
 The app is still evolving, especially because YouTube's caption interfaces can change. I would value honest feedback from language learners: what would make this useful in your daily study?
 
@@ -36,7 +36,7 @@ Download: https://github.com/fastmandotcom-creator/duosub-study/releases/latest/
 
 ### Vietnamese
 
-Mình vừa làm DualSub Replay, một ứng dụng Android miễn phí và mã nguồn mở để học ngoại ngữ qua YouTube. Ứng dụng hiển thị phụ đề gốc và bản dịch cùng lúc; bạn chỉ cần chạm vào một đoạn phụ đề để nghe lại đúng thời điểm đó. Chạm vào một từ để xem nghĩa, và với tiếng Nhật thì cả ngữ pháp xung quanh. Không quảng cáo, không cần API key hay tài khoản riêng.
+Mình vừa làm DuoSub Study, một ứng dụng Android miễn phí và mã nguồn mở để học ngoại ngữ qua YouTube. Ứng dụng hiển thị phụ đề gốc và bản dịch cùng lúc; bạn chỉ cần chạm vào một đoạn phụ đề để nghe lại đúng thời điểm đó. Chạm vào một từ để xem nghĩa, và với tiếng Nhật thì cả ngữ pháp xung quanh. Không quảng cáo, không cần API key hay tài khoản riêng.
 
 Ứng dụng vẫn đang được hoàn thiện, đặc biệt vì giao diện phụ đề nội bộ của YouTube có thể thay đổi. Mình rất mong nhận góp ý thật từ người học ngoại ngữ: điều gì sẽ giúp ứng dụng hữu ích hơn trong việc học hằng ngày của bạn?
 
@@ -69,7 +69,7 @@ Guidance: tailor the post to one subreddit, add the required flair, disclose tha
 
 Title: I made a free Android app that explains the grammar in YouTube subtitles as you watch
 
-I built DualSub Replay to study Japanese from YouTube. It shows the Japanese captions with a translation underneath, and tapping a line jumps the video back so you can hear it again. Tapping a word shows its reading, meaning and part of speech, and explains the grammar around it, such as the particle after it or an ending like 〜てくれました. You can save words with their sentence and review them later or export them to Anki.
+I built DuoSub Study to study Japanese from YouTube. It shows the Japanese captions with a translation underneath, and tapping a line jumps the video back so you can hear it again. Tapping a word shows its reading, meaning and part of speech, and explains the grammar around it, such as the particle after it or an ending like 〜てくれました. You can save words with their sentence and review them later or export them to Anki.
 
 It is free, open source and has no account or ads. It is an APK from GitHub, not Google Play yet. I am the developer and would like to hear where the grammar explanations are wrong or missing.
 
@@ -81,9 +81,9 @@ Guidance: check the subreddit's current self-promotion rules (some only allow it
 
 ### English
 
-Title: Show HN: DualSub Replay – dual YouTube subtitles and tap-to-replay on Android
+Title: Show HN: DuoSub Study – dual YouTube subtitles and tap-to-replay on Android
 
-DualSub Replay is a free, open-source Android app I built for sentence-by-sentence language learning with YouTube. It uses one embedded YouTube webpage player, displays original and translated captions together, and lets a learner tap a subtitle paragraph to seek that same player back to its start.
+DuoSub Study is a free, open-source Android app I built for sentence-by-sentence language learning with YouTube. It uses one embedded YouTube webpage player, displays original and translated captions together, and lets a learner tap a subtitle paragraph to seek that same player back to its start.
 
 The project is Kotlin/Jetpack Compose. Translation uses Google Translate's web endpoint and falls back to on-device ML Kit, with no API key. Caption retrieval is deliberately isolated because it depends on YouTube's undocumented transcript interface. I would especially value feedback about the single-player architecture, caption resilience, and whether the interaction is useful for real study.
 
@@ -91,7 +91,7 @@ https://github.com/fastmandotcom-creator/duosub-study
 
 ### Vietnamese reference
 
-DualSub Replay là ứng dụng Android miễn phí, mã nguồn mở để học ngoại ngữ theo từng câu trên YouTube. Ứng dụng dùng một trình phát trang web YouTube duy nhất, hiển thị phụ đề gốc cùng bản dịch và cho phép chạm vào đoạn phụ đề để tua lại chính trình phát đó.
+DuoSub Study là ứng dụng Android miễn phí, mã nguồn mở để học ngoại ngữ theo từng câu trên YouTube. Ứng dụng dùng một trình phát trang web YouTube duy nhất, hiển thị phụ đề gốc cùng bản dịch và cho phép chạm vào đoạn phụ đề để tua lại chính trình phát đó.
 
 Guidance: submit the repository URL, stay available for technical questions, and avoid marketing language or hashtags. Show HN works best as a candid explanation of what was built, how it works, and what remains imperfect.
 
@@ -99,7 +99,7 @@ Guidance: submit the repository URL, stay available for technical questions, and
 
 ### LinkedIn English
 
-I built DualSub Replay, a free and open-source Android app that turns captioned YouTube videos into a sentence-by-sentence language-learning experience.
+I built DuoSub Study, a free and open-source Android app that turns captioned YouTube videos into a sentence-by-sentence language-learning experience.
 
 • Original and translated subtitles together
 • Tap any subtitle paragraph to replay it
@@ -112,7 +112,7 @@ I would love practical feedback from Android developers and language learners.
 
 ### LinkedIn Vietnamese
 
-Mình vừa hoàn thiện DualSub Replay, một ứng dụng Android miễn phí và mã nguồn mở giúp biến video YouTube có phụ đề thành trải nghiệm học ngoại ngữ theo từng câu.
+Mình vừa hoàn thiện DuoSub Study, một ứng dụng Android miễn phí và mã nguồn mở giúp biến video YouTube có phụ đề thành trải nghiệm học ngoại ngữ theo từng câu.
 
 • Phụ đề gốc và bản dịch hiển thị cùng nhau
 • Chạm vào đoạn phụ đề để nghe lại
@@ -125,11 +125,11 @@ Mình rất mong nhận góp ý thực tế từ cộng đồng Android và ngư
 
 ### X English
 
-I built DualSub Replay: a free, open-source Android app for dual YouTube subtitles, one-tap sentence replay, and word and grammar lookup. Demo + APK + source: https://github.com/fastmandotcom-creator/duosub-study
+I built DuoSub Study: a free, open-source Android app for dual YouTube subtitles, one-tap sentence replay, and word and grammar lookup. Demo + APK + source: https://github.com/fastmandotcom-creator/duosub-study
 
 ### X Vietnamese
 
-Mình làm DualSub Replay: ứng dụng Android miễn phí, mã nguồn mở với phụ đề song ngữ YouTube, chạm để nghe lại từng câu và tra từ, ngữ pháp. Demo + APK + mã nguồn: https://github.com/fastmandotcom-creator/duosub-study
+Mình làm DuoSub Study: ứng dụng Android miễn phí, mã nguồn mở với phụ đề song ngữ YouTube, chạm để nghe lại từng câu và tra từ, ngữ pháp. Demo + APK + mã nguồn: https://github.com/fastmandotcom-creator/duosub-study
 
 Guidance: use the social card or a short native video, add a personal lesson learned, and keep the call to action focused on feedback.
 

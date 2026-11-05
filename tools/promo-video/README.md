@@ -1,4 +1,4 @@
-# DualSub Replay promotional video
+# DuoSub Study promotional video
 
 This Remotion project renders the repository's promotional media with pinned dependencies, bundled fonts and tool-local FFmpeg binaries.
 

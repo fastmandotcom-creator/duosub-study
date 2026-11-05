@@ -76,7 +76,7 @@ with nothing for Android apps yet. The fork reuses the Codex CLI's login instead
   `DualSubUiState.withThirdLineOnScreen` when a word is tapped and again when it is saved (the line
   may arrive in between). Saving again with the line off keeps the old one (`withThirdLineOf`).
   TSV export adds `thirdSentence` and `thirdLanguage` columns at the end. Anki gets no new field:
-  AnkiDroid's provider cannot add a field to the "DualSub Replay" note type people already have,
+  AnkiDroid's provider cannot add a field to the "DuoSub Study" note type people already have,
   and a second note type with the same name would split their cards.
 - Third line preferences: `third_subtitle_line_enabled` (default false) and
   `third_subtitle_language` (blank = none picked); both reset with all settings.

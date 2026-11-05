@@ -1,6 +1,6 @@
 # Stroke order from Make Me a Hanzi's graphics.txt (commit bddc96d41bef), derived from
 # Arphic PL KaitiM GB and Arphic PL UKai, Copyright 1999 Arphic Technology Co., Ltd., shared under the
-# Arphic Public License (its text is in assets/licenses/hanzi.txt). Changed on 2026-10-24 for DualSub
+# Arphic Public License (its text is in assets/licenses/hanzi.txt). Changed on 2026-10-24 for DuoSub Study
 # Replay by tools/hanzi/build_hanzi_data.py: kept to the HSK 3.0 characters and their traditional
 # forms, scaled to a 512-unit box with y pointing down, and written with relative path commands.
 # Format (tab separated): character, then per stroke in order its outline (SVG path) and centre line

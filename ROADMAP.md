@@ -1,4 +1,4 @@
-# DualSub Replay roadmap
+# DuoSub Study roadmap
 
 This roadmap is directional, not a promise of dates or features.
 

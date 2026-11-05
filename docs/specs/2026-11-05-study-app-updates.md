@@ -1,4 +1,4 @@
-# Update DualSub Study from its own releases
+# Update DuoSub Study from its own releases
 
 ## Status
 
@@ -6,7 +6,7 @@ Implemented 2026-11-05. Publish an end-user APK with `python3 tools/publish_stud
 
 ## Context / problem
 
-DualSub Study is published in `fastmandotcom-creator/duosub-study` as tag `study-<version>` with one asset, `DualSub-Study.apk`. The published APK (study-1.0.4.9, checked 2026-11-05) is a debug build with application id `duosub.study.study`, versionName `1.0.4-study.9`.
+DuoSub Study is published in `fastmandotcom-creator/duosub-study` as tag `study-<version>` with one asset, `DualSub-Study.apk`. The published APK (study-1.0.4.9, checked 2026-11-05) is a debug build with application id `duosub.study.study`, versionName `1.0.4-study.9`.
 
 `updateChannelFor` only knows the official app (`duosub.study`, not debuggable) and PR previews (`.preview`). The Study app matches neither, so its channel is `None`: it cannot update itself, and the update dialog opens the releases page of `fastmandotcom-creator/duosub-study`.
 

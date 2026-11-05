@@ -87,11 +87,11 @@
     <string name="study_known_words_offer_confirm">Nyalakan</string>
     <string name="study_known_words_offer_dismiss">Nanti saja</string>
     <string name="study_send_to_app_title">Kirim kata ke</string>
-    <string name="study_ankidroid_description">Kartu masuk ke dek DualSub Replay. Biarkan AnkiDroid terbuka di latar belakang: di banyak ponsel, AnkiDroid hanya menerima kartu saat sedang berjalan.</string>
-    <string name="study_ankiconnect_description">Mengirim ke AnkiConnect di ponsel ini (127.0.0.1:8765), yang dipakai aplikasi AnkiConnect Android, Yomitan, dan asbplayer. Buka AnkiConnect Android sekali agar servernya berjalan. Jika AnkiConnect tidak bisa membuat jenis catatan DualSub Replay, kartu memakai jenis catatan Basic dari Anki.</string>
+    <string name="study_ankidroid_description">Kartu masuk ke dek DuoSub Study. Biarkan AnkiDroid terbuka di latar belakang: di banyak ponsel, AnkiDroid hanya menerima kartu saat sedang berjalan.</string>
+    <string name="study_ankiconnect_description">Mengirim ke AnkiConnect di ponsel ini (127.0.0.1:8765), yang dipakai aplikasi AnkiConnect Android, Yomitan, dan asbplayer. Buka AnkiConnect Android sekali agar servernya berjalan. Jika AnkiConnect tidak bisa membuat jenis catatan DuoSub Study, kartu memakai jenis catatan Basic dari Anki.</string>
     <string name="study_ankiconnect_deck_title">Dek AnkiConnect</string>
     <string name="study_ankiconnect_deck_value">Dek: %1$s</string>
-    <string name="study_ankiconnect_deck_automatic">Otomatis (DualSub Replay, jika tidak ada Default)</string>
+    <string name="study_ankiconnect_deck_automatic">Otomatis (DuoSub Study, jika tidak ada Default)</string>
     <string name="study_ankiconnect_deck_choose">Pilih dek</string>
     <string name="study_ankiconnect_deck_loading">Memuat dek…</string>
     <string name="study_send_to_choose">Pilih tujuan pengiriman</string>

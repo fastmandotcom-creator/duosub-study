@@ -55,7 +55,7 @@ class ProblemLogTest {
     @Test
     fun theEmailGoesToTheProjectInboxWithTheReport() {
         val uri = problemEmailUri("App: 1.9.0\nPhone: Pixel & co", "1.9.0")
-        assertTrue(uri.startsWith("mailto:dualsubreplay.help@gmail.com?subject=DualSub%20Replay%20problem%20report%20%281.9.0%29&body="))
+        assertTrue(uri.startsWith("mailto:dualsubreplay.help@gmail.com?subject=DuoSub%20Study%20problem%20report%20%281.9.0%29&body="))
         assertEquals("App: 1.9.0\nPhone: Pixel & co", URLDecoder.decode(uri.substringAfter("&body="), "UTF-8"))
         assertFalse(uri.substringAfter("&body=").contains("&"))
     }

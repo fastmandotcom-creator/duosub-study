@@ -261,7 +261,7 @@ def prepare(api, pr):
             + notes + "\n\n<!-- automatic-release-v1 " + json.dumps(meta, sort_keys=True) + " -->\n")
     # Persist before building. Drafts reserve both version numbers across failures.
     release = api.api("releases", {"tag_name": "v" + version, "target_commitish": commit["sha"],
-                                   "name": f"DualSub Replay v{version}", "body": body,
+                                   "name": f"DuoSub Study v{version}", "body": body,
                                    "draft": True, "prerelease": False})
     return dict(meta, eligible=True, release_needed=True, release_id=release["id"], source_sha=commit["sha"],
                 minimum_safe_version_code=minimum_safe_version_code(releases, meta))

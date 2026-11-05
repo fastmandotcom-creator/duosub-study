@@ -42,7 +42,7 @@ The drawer shows a globe button with the current choice ("Device language" or th
 name). Tapping it lists "Device language" and the eight languages, each written in its own
 language. Picking one restarts the screen in that language (the YouTube page reloads once) and
 keeps it on later launches. "Device language" goes back to following the phone. On Android 13+
-the same choice appears in Settings > Apps > DualSub Replay > Language.
+the same choice appears in Settings > Apps > DuoSub Study > Language.
 
 ## Technical constraints / invariants
 

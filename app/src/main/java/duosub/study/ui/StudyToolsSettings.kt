@@ -298,7 +298,7 @@ private fun PageTokenSettings(
 
 /**
  * Where the Send to button sends words: the same choice as the button's ▾ list. AnkiConnect also
- * picks its deck, from the decks AnkiConnect lists (Automatic: DualSub Replay, else Default).
+ * picks its deck, from the decks AnkiConnect lists (Automatic: DuoSub Study, else Default).
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

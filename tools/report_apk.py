@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Inspect and report on DualSub Replay APK size, structure, permissions, and forbidden components.
+Inspect and report on DuoSub Study APK size, structure, permissions, and forbidden components.
 Enforces size limits (hard cap 80MB, stretch target 40MB) and asserts absence of forbidden components.
 """
 
@@ -184,7 +184,7 @@ def inspect_apk(apk_path: str, max_bytes: int, stretch_bytes: int):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Report and verify DualSub Replay APK")
+    parser = argparse.ArgumentParser(description="Report and verify DuoSub Study APK")
     parser.add_argument("apk", help="Path to APK file")
     parser.add_argument("--max-bytes", type=int, default=80_000_000, help="Hard size limit in bytes (default 80MB)")
     parser.add_argument("--stretch-bytes", type=int, default=40_000_000, help="Stretch target in bytes (default 40MB)")
@@ -194,7 +194,7 @@ def main():
     report = inspect_apk(args.apk, args.max_bytes, args.stretch_bytes)
 
     print("=" * 60)
-    print("DualSub Replay APK Inspection Report")
+    print("DuoSub Study APK Inspection Report")
     print("=" * 60)
     print(f"APK:                 {report['apk_path']}")
     print(f"Total Size:          {report['total_bytes']:,} bytes ({report['total_mb']} MB)")

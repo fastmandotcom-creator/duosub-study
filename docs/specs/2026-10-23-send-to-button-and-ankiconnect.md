@@ -45,9 +45,9 @@ than the default, the app remembers it and shows it on that button, with a list 
   AnkiConnect Android** when that app is installed. A refusal shows AnkiConnect's own first line.
 - Send to shows when the switch is on and AnkiDroid is installed, or when AnkiConnect is the
   chosen app (so phones without AnkiDroid can use it after picking AnkiConnect in Settings).
-- Cards: desktop-like AnkiConnect servers get the DualSub Replay deck and note type (made with
+- Cards: desktop-like AnkiConnect servers get the DuoSub Study deck and note type (made with
   `createDeck` / `createModel`); AnkiConnect Android cannot make either, so cards go to the chosen
-  deck, else DualSub Replay if the user made one, else Default, using Anki's Basic note type with
+  deck, else DuoSub Study if the user made one, else Default, using Anki's Basic note type with
   the word and sentence on the front and reading, meaning, translation and source on the back.
 - The AI assistant can read and change `send_to_app` (ankidroid / ankiconnect).
 
@@ -92,7 +92,7 @@ than the default, the app remembers it and shows it on that button, with a list 
 ## Risks / edge cases
 
 - AnkiConnect Android must be opened once (its server is a foreground service).
-- A user who made their own "DualSub Replay" note type with other fields gets the front/back layout.
+- A user who made their own "DuoSub Study" note type with other fields gets the front/back layout.
 - Deck names are listed only while AnkiConnect answers; otherwise the dialog says nothing answered.
 
 ## Release intent

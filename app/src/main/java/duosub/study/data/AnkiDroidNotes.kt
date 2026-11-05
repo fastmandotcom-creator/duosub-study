@@ -15,8 +15,8 @@ internal const val ANKIDROID_AUTHORITY = "com.ichi2.anki.flashcards"
 internal const val ANKIDROID_PERMISSION = "com.ichi2.anki.permission.READ_WRITE_DATABASE"
 internal const val ANKIDROID_PACKAGE = "com.ichi2.anki"
 
-internal const val ANKI_DECK_NAME = "DualSub Replay"
-internal const val ANKI_NOTE_TYPE_NAME = "DualSub Replay"
+internal const val ANKI_DECK_NAME = "DuoSub Study"
+internal const val ANKI_NOTE_TYPE_NAME = "DuoSub Study"
 internal val ANKI_FIELDS = listOf("Word", "Meaning", "Reading", "Sentence", "Translation", "Source")
 
 /** Anki keeps a note's fields in one text, separated by this character. */
@@ -70,7 +70,7 @@ internal fun ankiSourceLink(
 
 /**
  * The Translation field: the translation, then the third subtitle line under it. The third line shares
- * this field so the "DualSub Replay" note type keeps its fields: AnkiDroid's API cannot add a field to a
+ * this field so the "DuoSub Study" note type keeps its fields: AnkiDroid's API cannot add a field to a
  * note type people already have.
  */
 internal fun ankiTranslationHtml(word: SavedWord): String =
@@ -110,7 +110,7 @@ internal data class AnkiSendResult(
 )
 
 /**
- * Adds notes to AnkiDroid through its content provider: a "DualSub Replay" deck and note type are
+ * Adds notes to AnkiDroid through its content provider: a "DuoSub Study" deck and note type are
  * made the first time. Which words were sent is kept on the phone, so a word is not sent twice.
  */
 internal class AnkiDroidNotes(
