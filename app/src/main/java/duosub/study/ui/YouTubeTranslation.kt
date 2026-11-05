@@ -8,11 +8,11 @@ import duosub.study.translation.TranslationLanguages
 private val UNSPACED_LANGUAGES = setOf("ja", "zh", "th", "lo", "km", "my")
 
 /**
- * Pairs every text that translating [rows] asks for (see [rowTranslationTexts]) with YouTube's own
- * translated captions [cues]. YouTube translates its caption track cue by cue with the original
- * timing, while the app's rows are cut differently (whole sentences), so each cue goes to the row it
- * overlaps most, and a sentence's translation (and each of its row prefixes) joins the cues of its
- * rows. Texts whose rows got no cue are left out, so the caller can translate them another way. The
+ * Pairs every text that translating [rows] asks for (each row's own text, see
+ * [rowTranslationTexts]) with YouTube's own translated captions [cues]. YouTube translates its
+ * caption track cue by cue with the original timing, while the app's rows are cut differently, so
+ * each cue goes to the row it overlaps most and each row's translation joins the cues of that row
+ * only. Texts whose row got no cue are left out, so the caller can translate them another way. The
  * first occurrence of a repeated text wins.
  */
 internal fun youTubeRowTranslations(
@@ -23,27 +23,9 @@ internal fun youTubeRowTranslations(
     val separator = if (TranslationLanguages.normalize(targetLanguage).substringBefore('-') in UNSPACED_LANGUAGES) "" else " "
     val pieces = assignCuesToRows(rows, cues)
     val translations = linkedMapOf<String, String>()
-    var index = 0
-    while (index < rows.size) {
-        val sentence = rows[index].sentence
-        // The rows of one sentence follow each other; a lone row is a sentence of its own.
-        var end = index + 1
-        if (sentence != null) {
-            while (end < rows.size && rows[end].sentence?.let { it.text == sentence.text && it.cuts == sentence.cuts } == true) end++
-        }
-        val parts = (index until end).map { pieces[it] }
-        if (parts.any { it.isNotEmpty() }) {
-            val join = { count: Int -> parts.take(count).flatten().joinToString(separator) }
-            if (sentence == null) {
-                translations.putIfAbsent(rows[index].originalText, join(1))
-            } else {
-                translations.putIfAbsent(sentence.text, join(parts.size))
-                sentence.cuts.forEachIndexed { cut, offset ->
-                    translations.putIfAbsent(sentence.text.substring(0, offset).trim(), join(cut + 1))
-                }
-            }
-        }
-        index = end
+    rows.forEachIndexed { index, row ->
+        val text = pieces[index].joinToString(separator).trim()
+        if (text.isNotEmpty()) translations.putIfAbsent(row.originalText, text)
     }
     return translations
 }

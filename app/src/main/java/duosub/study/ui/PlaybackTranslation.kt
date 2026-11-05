@@ -50,49 +50,34 @@ internal class TranslationUpgrades(
 )
 
 /**
- * [rows] with every sentence (or lone row) that [lookup] has a translation for showing it, cut into
- * its rows as [translateRow] does: by the row prefixes' translations when all are there. A sentence
- * already showing that translation keeps its rows as they are.
+ * [rows] with every row that [lookup] has a translation for showing it. A row already showing that
+ * translation keeps it as it is.
  */
 internal fun withUpgrades(
     rows: List<SubtitleSegment>,
     lookup: (String) -> String?,
 ): List<SubtitleSegment> {
-    val sentences = HashSet<List<String>>()
+    val seen = HashSet<String>()
     return rows.indices.fold(rows) { current, index ->
         val row = current[index]
-        val texts = rowTranslationTexts(row)
-        if (row.sentence != null && !sentences.add(texts)) return@fold current
-        val translated = lookup(texts.first())?.trim() ?: return@fold current
+        val text = row.originalText
+        if (!seen.add(text)) return@fold current
+        val translated = lookup(text)?.trim()?.takeIf { it.isNotEmpty() } ?: return@fold current
         if (alreadyShows(current, row, translated)) return@fold current
-        val prefixes =
-            row.sentence?.let {
-                texts
-                    .drop(1)
-                    .map(lookup)
-                    .takeIf { found -> found.all { it != null } }
-                    ?.filterNotNull()
-            }
-        withTranslation(current, index, translated, prefixes)
+        withTranslation(current, index, translated)
     }
 }
 
-/** Whether every row of [row]'s sentence in [rows] is translated and together they read as part of [translated]. */
+/** Whether the rows in [rows] that show the same words as [row] already display [translated]. */
 private fun alreadyShows(
     rows: List<SubtitleSegment>,
     row: SubtitleSegment,
     translated: String,
 ): Boolean {
-    val sentence = row.sentence
-    val parts =
-        if (sentence == null) {
-            listOf(row)
-        } else {
-            rows.filter { other -> other.sentence.let { it != null && it.text == sentence.text && it.cuts == sentence.cuts } }
-        }
+    val parts = rows.filter { it.originalText == row.originalText }
     if (parts.any { it.translatedText == null }) return false
-    val shown = parts.joinToString("") { it.translatedText.orEmpty() }.filterNot(Char::isWhitespace)
-    return shown.isNotEmpty() && shown in translated.filterNot(Char::isWhitespace)
+    val shown = parts.first().translatedText.orEmpty().filterNot(Char::isWhitespace)
+    return shown.isNotEmpty() && shown == translated.filterNot(Char::isWhitespace)
 }
 
 /**
@@ -171,32 +156,27 @@ internal suspend fun translatePlaybackWindow(
     }
 }
 
-/** Translates row [index] through its whole sentence. A failed prefix only loses the finer row split. */
+/**
+ * Translates row [index] with its own text. The row shows the translation of exactly the words it
+ * shows: no whole-sentence cut, no proportional placement.
+ */
 private suspend fun translateRow(
     rows: List<SubtitleSegment>,
     index: Int,
     translate: suspend (String) -> String,
 ): List<SubtitleSegment> {
-    val sentence = rows[index].sentence
-    val texts = rowTranslationTexts(rows[index])
-    val translated = translate(texts.first()).trim()
-    // Translating each row's sentence prefix locates where that row ends in the full translation.
-    val prefixes =
-        try {
-            sentence?.let { texts.drop(1).map { prefix -> translate(prefix) } }
-        } catch (_: Exception) {
-            currentCoroutineContext().ensureActive()
-            null // Split the sentence's translation proportionally instead.
-        }
+    val row = rows[index]
+    val translated = translate(rowTranslationTexts(row).first()).trim()
     currentCoroutineContext().ensureActive()
-    return withTranslation(rows, index, translated, prefixes)
+    return withTranslation(rows, index, translated)
 }
 
-/** What translating [row] sends: its whole sentence, then each row's sentence prefix (or just the row's text). */
-internal fun rowTranslationTexts(row: SubtitleSegment): List<String> {
-    val sentence = row.sentence ?: return listOf(row.originalText)
-    return listOf(sentence.text) + sentence.cuts.map { cut -> sentence.text.substring(0, cut).trim() }
-}
+/**
+ * What translating [row] sends: the row's own text. Each display row is translated on its own, so
+ * the words shown under a row are always the translation of that row's own words (owner decision
+ * 2026-11-05, per-row contract) — a row is never the cut of another row's translation.
+ */
+internal fun rowTranslationTexts(row: SubtitleSegment): List<String> = listOf(row.originalText)
 
 /** How far past the row being translated an online engine translates in the same request. */
 internal const val PREFETCH_AHEAD_MS = 60_000L
@@ -215,9 +195,9 @@ internal fun upcomingTranslationTexts(
     return translationTexts(upcoming.filterIndexed { position, row -> position == 0 || row.translatedText == null })
 }
 
-/** Everything translating [rows] sends: each sentence (or lone row) once, with its row prefixes. */
+/** Everything translating [rows] sends: each display row's own text once. */
 internal fun translationTexts(rows: List<SubtitleSegment>): List<String> =
-    rows.distinctBy { it.sentence?.text ?: it.originalText }.flatMap(::rowTranslationTexts).distinct()
+    rows.map { it.originalText }.distinct()
 
 /** How far ahead the online engine translates in the background, past the [PREFETCH_AHEAD_MS] the window asks for. */
 internal const val BACKGROUND_PREFETCH_AHEAD_MS = 5 * 60_000L
@@ -304,25 +284,19 @@ internal suspend fun prefetchInBackground(
 }
 
 /**
- * A short row is translated through its whole sentence, so every row of that sentence (including
- * identical repeats in the window) receives its own slice of the one context-aware translation.
+ * Gives row [index] its own translation. Rows that show the same words (identical repeats of one
+ * display row) share the same translation, so repeated lines stay in sync; a row's translation is
+ * never a cut of another row's.
  */
 internal fun withTranslation(
     rows: List<SubtitleSegment>,
     index: Int,
     translated: String,
-    prefixTranslations: List<String>? = null,
 ): List<SubtitleSegment> {
-    val sentence = rows[index].sentence
-    if (sentence == null) return rows.toMutableList().also { it[index] = it[index].copy(translatedText = translated) }
-    val slices = translationSlices(translated, sentence.text.length, sentence.cuts, prefixTranslations)
-    return rows.map { row ->
-        val other = row.sentence
-        if (other != null && other.text == sentence.text && other.cuts == sentence.cuts) {
-            row.copy(translatedText = slices.getOrElse(other.index) { "" })
-        } else {
-            row
-        }
+    val row = rows[index]
+    val text = row.originalText
+    return rows.map { other ->
+        if (other.originalText == text) other.copy(translatedText = translated) else other
     }
 }
 

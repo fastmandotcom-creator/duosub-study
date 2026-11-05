@@ -26,7 +26,7 @@ class YouTubeTranslationTest {
     }
 
     @Test
-    fun aSentenceAndEachRowPrefixGetTheCuesOfItsRows() {
+    fun aRowGetsTheCuesOfItsOwnTimeSpan() {
         val sentence = "Today I want to go to a fun place with you."
         val cut = sentence.indexOf("to a")
         val rows =
@@ -38,10 +38,10 @@ class YouTubeTranslationTest {
 
         val translations = youTubeRowTranslations(rows, cues, "vi")
 
-        // Exactly the texts translating these rows asks for (see rowTranslationTexts).
-        assertEquals(rowTranslationTexts(rows[0]).toSet(), translations.keys)
-        assertEquals("Hôm nay tôi muốn đi đến một nơi vui cùng các bạn.", translations[sentence])
+        // Exactly the texts translating these rows asks for (see rowTranslationTexts): each row's own text.
+        assertEquals(rows.map { it.originalText }.toSet(), translations.keys)
         assertEquals("Hôm nay tôi muốn đi", translations[sentence.substring(0, cut).trim()])
+        assertEquals("đến một nơi vui cùng các bạn.", translations[sentence.substring(cut)])
     }
 
     @Test
