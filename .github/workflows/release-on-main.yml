@@ -1,200 +1,213 @@
-name: Release merged PR
+name: Publish Study APK
 
 on:
   push:
     branches: [main]
+    paths:
+      - "app/src/main/**"
+      - "app/build.gradle.kts"
+      - "app/proguard-rules.pro"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
+      - "gradle/**"
+      - ".github/workflows/release-on-main.yml"
   workflow_dispatch:
-    inputs:
-      pr_number:
-        description: Merged PR number to retry (uses its reserved version if one exists)
-        required: true
-        type: string
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
-  group: publish-main
+  group: publish-study-apk
   cancel-in-progress: false
   queue: max
 
 jobs:
-  prepare:
+  publish:
     if: github.repository == 'fastmandotcom-creator/duosub-study' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-      actions: read
-      pull-requests: read
-      issues: write # Create the optional release labels on first use.
-    outputs:
-      eligible: ${{ steps.plan.outputs.eligible }}
-      release_needed: ${{ steps.plan.outputs.release_needed }}
-      release_id: ${{ steps.plan.outputs.release_id }}
-      source_sha: ${{ steps.plan.outputs.source_sha }}
-      version: ${{ steps.plan.outputs.version }}
-      version_code: ${{ steps.plan.outputs.version_code }}
-      minimum_safe_version_code: ${{ steps.plan.outputs.minimum_safe_version_code }}
-    steps:
-      - name: Check out trusted main workflow source and release history
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Ensure optional release labels exist
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          labels="$(gh label list --limit 1000 --json name --jq '.[].name')"
-          for mode in patch minor major skip; do
-            label="release:$mode"
-            if ! grep -Fxq "$label" <<< "$labels"; then
-              gh label create "$label" --color 1D76DB --description "Release automation: $mode"
-            fi
-          done
-          if ! grep -Fxq "security:critical" <<< "$labels"; then
-            gh label create "security:critical" --color B60205 \
-              --description "Release fixes a security problem: older apps are asked to update at once"
-          fi
-
-      - name: Verify merge and CI, then reserve or resume the release
-        id: plan
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RELEASE_PR: ${{ inputs.pr_number }}
-        run: python3 tools/automatic_release.py prepare
-
-  publish-main:
-    needs: prepare
-    # release:skip merges publish nothing (owner decision 2026-10-18: no rolling main preview APK).
-    if: needs.prepare.outputs.eligible == 'true' && needs.prepare.outputs.release_needed == 'true'
-    runs-on: ubuntu-latest
     timeout-minutes: 30
-    permissions:
-      contents: write
     steps:
-      - name: Skip a release already published by an earlier attempt
-        id: resume
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          RELEASE_ID: ${{ needs.prepare.outputs.release_id }}
-        run: |
-          set -euo pipefail
-          if [[ -n "$RELEASE_ID" ]]; then
-            draft="$(gh api "repos/${GH_REPO}/releases/${RELEASE_ID}" --jq '.draft')"
-            if [[ "$draft" == "false" ]]; then
-              echo "build=false" >> "$GITHUB_OUTPUT"
-              echo "Release is already public; skipping all builds and uploads."
-              exit 0
-            fi
-            [[ "$draft" == "true" ]] || exit 1
-          fi
-          echo "build=true" >> "$GITHUB_OUTPUT"
-
-      - name: Check out the exact reserved release source
-        if: steps.resume.outputs.build == 'true'
+      - name: Check out main
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.prepare.outputs.source_sha }}
           persist-credentials: false
 
       - name: Set up Java 17
-        if: steps.resume.outputs.build == 'true'
         uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: temurin
           java-version: "17"
 
       - name: Set up Android SDK
-        if: steps.resume.outputs.build == 'true'
         uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
         with:
           packages: platform-tools
           log-accepted-android-sdk-licenses: false
 
       - name: Install Android build SDK
-        if: steps.resume.outputs.build == 'true'
         run: sdkmanager "platforms;android-37.0" "build-tools;36.0.0"
 
+      - name: Restore persistent Study signing key
+        id: signing
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.android/debug.keystore
+          key: dual-sub-replay-preview-signing-v1
+
+      - name: Require the existing signing key
+        if: steps.signing.outputs.cache-hit != 'true'
+        run: |
+          echo "The existing Study signing key cache was not found; refusing to publish an APK that cannot update existing installs." >&2
+          exit 1
+
       - name: Set up Gradle cache
-        if: steps.resume.outputs.build == 'true'
         uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
-      - name: Restore production signing key
-        if: steps.resume.outputs.build == 'true'
-        env:
-          ANDROID_RELEASE_KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
-        run: |
-          if [[ -z "$ANDROID_RELEASE_KEYSTORE_BASE64" ]]; then
-            echo "ANDROID_RELEASE_KEYSTORE_BASE64 is not configured" >&2
-            exit 1
-          fi
-          printf '%s' "$ANDROID_RELEASE_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/dual-sub-replay-release.jks"
-          chmod 600 "$RUNNER_TEMP/dual-sub-replay-release.jks"
-
-      - name: Build production release APK
-        if: steps.resume.outputs.build == 'true'
-        env:
-          ANDROID_RELEASE_STORE_FILE: ${{ runner.temp }}/dual-sub-replay-release.jks
-          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_STORE_PASSWORD }}
-          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
-          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
-        run: bash ./gradlew assembleRelease -PrequireReleaseSigning=true --stacktrace
-
-      - name: Verify and package official APK
-        if: steps.resume.outputs.build == 'true'
-        env:
-          EXPECTED_VERSION: ${{ needs.prepare.outputs.version }}
-          EXPECTED_CODE: ${{ needs.prepare.outputs.version_code }}
-          MINIMUM_SAFE_CODE: ${{ needs.prepare.outputs.minimum_safe_version_code }}
-        run: |
-          set -euo pipefail
-          mkdir -p release
-          source_apk="app/build/outputs/apk/release/app-release.apk"
-          release_apk="release/DualSub-Replay.apk"
-          cp "$source_apk" "$release_apk"
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$release_apk" | tee release/signing-report.txt
-          if grep -q 'CN=Android Debug' release/signing-report.txt; then
-            echo "Official APK was signed with the Android debug certificate" >&2
-            exit 1
-          fi
-          badging="$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$release_apk" | head -n 1)"
-          echo "$badging"
-          if [[ "$badging" != *"name='duosub.study'"* ]] ||
-             [[ "$badging" != *"versionName='$EXPECTED_VERSION'"* ]] ||
-             [[ "$badging" != *"versionCode='$EXPECTED_CODE'"* ]]; then
-            echo "Official APK package/version differs from the release reservation" >&2
-            exit 1
-          fi
-          sha256sum "$release_apk" | sed 's#  release/#  #' > release/DualSub-Replay.apk.sha256
-          # What the app reads once a day from the latest release (owner decision 2026-10-30).
-          python3 tools/automatic_release.py update-info --version "$EXPECTED_VERSION" \
-            --version-code "$EXPECTED_CODE" --minimum-safe-version-code "${MINIMUM_SAFE_CODE:-0}" \
-            --apk "$release_apk" --output release/update-info.json
-          cat release/update-info.json
-
-      - name: Upload verified APK and checksum to the reserved draft
-        if: steps.resume.outputs.build == 'true'
+      - name: Choose next Study version and reserve its release
+        id: version
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
-        run: >-
-          gh release upload "v${RELEASE_VERSION}"
-          release/DualSub-Replay.apk release/DualSub-Replay.apk.sha256 release/update-info.json --clobber
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          gh api "repos/${GH_REPO}/releases?per_page=100" \
+            --jq '[.[] | {tag_name,draft,prerelease,body}]' > "$RUNNER_TEMP/releases.json"
+          python3 - "$RUNNER_TEMP/releases.json" "$GITHUB_OUTPUT" <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          import sys
+          import time
 
-      - name: Publish the complete official release
-        if: steps.resume.outputs.build == 'true'
+          releases = json.load(open(sys.argv[1], encoding="utf-8"))
+          output_path = sys.argv[2]
+          source_sha = os.environ["SOURCE_SHA"]
+          source = open("app/build.gradle.kts", encoding="utf-8").read()
+          match = re.search(r'^val appVersionName = "(\d+\.\d+\.\d+)"$', source, re.M)
+          if not match:
+              raise SystemExit("Cannot read appVersionName from app/build.gradle.kts")
+          app_base = tuple(map(int, match.group(1).split(".")))
+          tag_pattern = re.compile(r"^study-(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?$")
+          tagged = []
+          for release in releases:
+              parsed = tag_pattern.fullmatch(release["tag_name"])
+              if parsed:
+                  numbers = tuple(int(value or 0) for value in parsed.groups())
+                  tagged.append((numbers, release))
+          if not tagged:
+              raise SystemExit("No existing Study release found")
+          latest_public = max(
+              (item for item in tagged if not item[1]["draft"] and not item[1]["prerelease"]),
+              key=lambda item: item[0],
+              default=None,
+          )
+          if latest_public is None:
+              raise SystemExit("No published Study release found")
+          newest = max(item[0] for item in tagged)
+          if newest[:3] > app_base:
+              raise SystemExit("appVersionName is older than the latest Study release")
+          matching_draft = next(
+              (
+                  item for item in tagged
+                  if item[1]["draft"] and f"<!-- study-source:{source_sha} -->" in (item[1].get("body") or "")
+              ),
+              None,
+          )
+          if matching_draft:
+              numbers = matching_draft[0]
+              tag = matching_draft[1]["tag_name"]
+              base = app_base
+              build = numbers[3]
+          else:
+              base = app_base
+              build = max((item[0][3] for item in tagged if item[0][:3] == base), default=0) + 1
+              tag = f"study-{base[0]}.{base[1]}.{base[2]}.{build}"
+          version_name = f"{base[0]}.{base[1]}.{base[2]}-study.{build}"
+          version_suffix = f"-study.{build}"
+          version_code = max(43, int(time.time()) - 1_700_000_000)
+          previous_tag = latest_public[1]["tag_name"]
+          with open(output_path, "a", encoding="utf-8") as output:
+              output.write(f"tag={tag}\nversion_name={version_name}\n")
+              output.write(
+                  f"version_suffix={version_suffix}\nversion_code={version_code}\n"
+                  f"previous_tag={previous_tag}\n"
+              )
+          notes = (
+              "Video gốc phát từng câu, sau đó đọc tiếng Việt rồi tiếng Anh đúng số lần đã chọn.\n\n"
+              f"Built from main commit {source_sha}.\n\n<!-- study-source:{source_sha} -->"
+          )
+          try:
+              current = json.loads(subprocess.check_output(
+                  ["gh", "release", "view", tag, "--json", "isDraft"],
+                  text=True,
+              ))
+          except subprocess.CalledProcessError:
+              current = None
+          if current and not current["isDraft"]:
+              raise SystemExit(f"Release {tag} already exists and is published")
+          if not current:
+              subprocess.run(
+                  [
+                      "gh", "release", "create", tag, "--draft", "--target", source_sha,
+                      "--title", f"DualSub Study {version_name}", "--notes", notes,
+                  ],
+                  check=True,
+              )
+          PY
+
+      - name: Download current Study APK
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_ID: ${{ needs.prepare.outputs.release_id }}
-        run: python3 tools/automatic_release.py publish --release-id "$RELEASE_ID"
+          GH_REPO: ${{ github.repository }}
+          PREVIOUS_TAG: ${{ steps.version.outputs.previous_tag }}
+        run: gh release download "$PREVIOUS_TAG" --pattern DualSub-Study.apk --dir "$RUNNER_TEMP/previous"
 
-      - name: Remove production signing material
-        if: always()
-        run: rm -f "$RUNNER_TEMP/dual-sub-replay-release.jks"
+      - name: Build Study APK
+        run: >-
+          bash ./gradlew assembleDebug
+          -PpreviewVersionCode=${{ steps.version.outputs.version_code }}
+          -PpreviewVersionNameSuffix=${{ steps.version.outputs.version_suffix }}
+          -PpreviewApplicationIdSuffix=.study
+
+      - name: Check package, version, and signing continuity
+        env:
+          EXPECTED_VERSION: ${{ steps.version.outputs.version_name }}
+          EXPECTED_CODE: ${{ steps.version.outputs.version_code }}
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          cp app/build/outputs/apk/debug/app-debug.apk release/DualSub-Study.apk
+          badging="$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging release/DualSub-Study.apk | head -n 1)"
+          echo "$badging"
+          if [[ "$badging" != *"name='duosub.study.study'"* ]] ||
+             [[ "$badging" != *"versionName='$EXPECTED_VERSION'"* ]] ||
+             [[ "$badging" != *"versionCode='$EXPECTED_CODE'"* ]]; then
+            echo "Study APK package or version does not match the release." >&2
+            exit 1
+          fi
+          certificate() {
+            "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs "$1" |
+              awk -F': ' '/Signer #1 certificate SHA-256 digest:/ { print tolower($2); exit }'
+          }
+          previous_certificate="$(certificate "$RUNNER_TEMP/previous/DualSub-Study.apk")"
+          new_certificate="$(certificate release/DualSub-Study.apk)"
+          if [[ -z "$previous_certificate" || "$new_certificate" != "$previous_certificate" ]]; then
+            echo "Study signing certificate differs from the current public APK." >&2
+            exit 1
+          fi
+
+      - name: Upload and publish Study APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          gh release upload "$RELEASE_TAG" release/DualSub-Study.apk --clobber
+          release_id="$(gh api "repos/${GH_REPO}/releases/tags/${RELEASE_TAG}" --jq .id)"
+          gh api "repos/${GH_REPO}/releases/${release_id}" \
+            --method PATCH --field draft=false --field prerelease=false --field make_latest=true >/dev/null
+          echo "Published https://github.com/${GH_REPO}/releases/tag/${RELEASE_TAG}" >> "$GITHUB_STEP_SUMMARY"
