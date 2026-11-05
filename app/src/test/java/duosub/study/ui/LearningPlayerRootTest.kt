@@ -28,14 +28,16 @@ class LearningPlayerRootTest {
 
     @Test
     fun overlayUsesTheActiveDualSubtitle() {
-        val state = DualSubUiState(
-            activeVideoId = "dQw4w9WgXcQ",
-            segments = listOf(
-                SubtitleSegment(1, 1_000, 2_000, "First line", "Dòng đầu tiên"),
-                SubtitleSegment(2, 2_000, 3_000, "Second line", null),
-            ),
-            currentIndex = 1,
-        )
+        val state =
+            DualSubUiState(
+                activeVideoId = "dQw4w9WgXcQ",
+                segments =
+                    listOf(
+                        SubtitleSegment(1, 1_000, 2_000, "First line", "Dòng đầu tiên"),
+                        SubtitleSegment(2, 2_000, 3_000, "Second line", null),
+                    ),
+                currentIndex = 1,
+            )
 
         assertEquals(
             LearningOverlayContent(
@@ -49,18 +51,62 @@ class LearningPlayerRootTest {
     }
 
     @Test
+    fun overlayStaysOnThePairBeingReadWhenVideoHighlightMovesAhead() {
+        val first = SubtitleSegment(1, 1_000, 2_000, "Hello", "Xin chào")
+        val next = SubtitleSegment(2, 2_000, 3_000, "Goodbye", "Tạm biệt")
+        val state =
+            DualSubUiState(
+                activeVideoId = "dQw4w9WgXcQ",
+                resolvedSourceLanguage = "en",
+                segments = listOf(first, next),
+                currentIndex = 1,
+            )
+
+        assertEquals(
+            LearningOverlayContent(
+                originalText = "Xin chào",
+                translatedText = "Hello",
+                statusText = null,
+                segment = first.copy(originalText = "Xin chào", translatedText = "Hello", words = emptyList()),
+                readingSide = ReadSide.SECONDARY,
+            ),
+            learningOverlayContent(
+                state,
+                TestUiStrings,
+                readingSegmentId = first.id,
+                readingSide = ReadSide.SECONDARY,
+            ),
+        )
+    }
+
+    @Test
+    fun pairedReadingUsesItsSegmentInsteadOfTheVideoCurrentIndex() {
+        val segments =
+            listOf(
+                SubtitleSegment(11, 1_000, 2_000, "first", "đầu"),
+                SubtitleSegment(12, 2_000, 3_000, "next", "tiếp"),
+            )
+
+        assertEquals(0, pairedReadingLineIndex(1, segments, 11))
+        assertEquals(1, pairedReadingLineIndex(1, segments, null))
+        assertEquals(1, pairedReadingLineIndex(1, segments, 99))
+    }
+
+    @Test
     fun overlayWordHighlightFollowsTheToggle() {
-        val words = listOf(
-            duosub.study.data.SubtitleWord("Second", 2_000, 2_400),
-            duosub.study.data.SubtitleWord("line", 2_400, 3_000),
-        )
+        val words =
+            listOf(
+                duosub.study.data.SubtitleWord("Second", 2_000, 2_400),
+                duosub.study.data.SubtitleWord("line", 2_400, 3_000),
+            )
         val segment = SubtitleSegment(2, 2_000, 3_000, "Second line", null, words = words)
-        val baseState = DualSubUiState(
-            activeVideoId = "dQw4w9WgXcQ",
-            segments = listOf(segment),
-            currentIndex = 0,
-            activeWordIndex = 1,
-        )
+        val baseState =
+            DualSubUiState(
+                activeVideoId = "dQw4w9WgXcQ",
+                segments = listOf(segment),
+                currentIndex = 0,
+                activeWordIndex = 1,
+            )
 
         assertEquals(
             1,
@@ -258,14 +304,16 @@ class LearningPlayerRootTest {
         val screenHeight = 800
 
         val lockedTop = portraitLearningOverlayTopPaddingDp(screenWidth, position = 0f, screenHeightDp = screenHeight, lockToVideo = true)
-        val lockedBottom = portraitLearningOverlayTopPaddingDp(screenWidth, position = 1f, screenHeightDp = screenHeight, lockToVideo = true)
+        val lockedBottom =
+            portraitLearningOverlayTopPaddingDp(screenWidth, position = 1f, screenHeightDp = screenHeight, lockToVideo = true)
         assertTrue(lockedTop >= 84)
         assertTrue(lockedBottom <= 320)
 
-        val unlockedTop = portraitLearningOverlayTopPaddingDp(screenWidth, position = 0f, screenHeightDp = screenHeight, lockToVideo = false)
-        val unlockedBottom = portraitLearningOverlayTopPaddingDp(screenWidth, position = 1f, screenHeightDp = screenHeight, lockToVideo = false)
+        val unlockedTop =
+            portraitLearningOverlayTopPaddingDp(screenWidth, position = 0f, screenHeightDp = screenHeight, lockToVideo = false)
+        val unlockedBottom =
+            portraitLearningOverlayTopPaddingDp(screenWidth, position = 1f, screenHeightDp = screenHeight, lockToVideo = false)
         assertEquals(84, unlockedTop)
         assertTrue("Unlocked bottom padding should reach lower screen area, was $unlockedBottom", unlockedBottom > 600)
     }
 }
-

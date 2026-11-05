@@ -34,6 +34,16 @@ internal data class PairReadProgress(
     val side: ReadSide,
 )
 
+/** Keeps the sentence being spoken selected even if the page's playback clock has moved ahead. */
+internal fun pairedReadingLineIndex(
+    currentIndex: Int,
+    segments: List<SubtitleSegment>,
+    readingSegmentId: Long?,
+): Int {
+    val readingIndex = readingSegmentId?.let { id -> segments.indexOfFirst { it.id == id } } ?: -1
+    return readingIndex.takeIf { it >= 0 } ?: currentIndex
+}
+
 /** A pause between the two sides, so the pair does not blur into one sound. */
 internal const val PAIR_READ_GAP_MS = 280L
 
@@ -118,6 +128,8 @@ internal class PairedLineReaderHost(
     var times: Int = DEFAULT_PAIR_READ_COUNT
     var progress by mutableStateOf<PairReadProgress?>(null)
         private set
+    var readingSegmentId by mutableStateOf<Long?>(null)
+        private set
     private var generation = 0
 
     /**
@@ -132,21 +144,25 @@ internal class PairedLineReaderHost(
             controller.play()
             return
         }
-        read(pair, resumeAfter = true)
+        read(pair, resumeAfter = true, segmentId = segmentId)
     }
 
     fun readCurrent(resumeAfter: Boolean) {
-        val pair = state?.let(::currentSpokenPair) ?: return
-        read(pair, resumeAfter)
+        val current = state ?: return
+        val pair = currentSpokenPair(current) ?: return
+        val segmentId = current.segments.getOrNull(current.currentIndex)?.id
+        read(pair, resumeAfter, segmentId)
     }
 
     fun read(
         pair: SpokenPair,
         resumeAfter: Boolean,
+        segmentId: Long? = null,
     ) {
         if (pair.primary.isBlank() && pair.secondary.isBlank()) return
         val ticket = ++generation
         controller.pause()
+        readingSegmentId = segmentId
         progress = null
         pronouncer.readPair(
             pair = pair,
@@ -155,6 +171,7 @@ internal class PairedLineReaderHost(
             onFinished = {
                 if (ticket != generation) return@readPair
                 progress = null
+                readingSegmentId = null
                 if (resumeAfter) controller.play()
             },
         )

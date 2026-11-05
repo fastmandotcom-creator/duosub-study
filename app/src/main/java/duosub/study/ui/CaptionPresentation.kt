@@ -17,6 +17,8 @@ internal data class LearningOverlayContent(
     val words: List<SubtitleWord> = segment?.words.orEmpty(),
     /** Settings → Languages → Third line, under the translation; null while off or not translated yet. */
     val thirdText: String? = null,
+    /** The side currently spoken by paired reading, if this overlay is showing that sentence. */
+    val readingSide: ReadSide? = null,
 )
 
 /** Looks up the app's own texts, so plain JVM tests can pass a stub instead of Android resources. */
@@ -38,14 +40,24 @@ internal fun Resources.uiStrings(): UiStrings =
 
 /** [learningOverlayContent] with the app's own texts in the interface language. */
 @Composable
-internal fun learningOverlayContent(state: DualSubUiState): LearningOverlayContent? =
-    learningOverlayContent(state, LocalResources.current.uiStrings())
+internal fun learningOverlayContent(state: DualSubUiState): LearningOverlayContent? {
+    val reader = LocalPairedReading.current
+    val readingSegmentId = reader?.readingSegmentId
+    return learningOverlayContent(
+        state,
+        LocalResources.current.uiStrings(),
+        readingSegmentId = readingSegmentId,
+        readingSide = reader?.progress?.side.takeIf { readingSegmentId != null },
+    )
+}
 
 internal fun learningOverlayContent(
     state: DualSubUiState,
     strings: UiStrings,
+    readingSegmentId: Long? = null,
+    readingSide: ReadSide? = null,
 ): LearningOverlayContent? {
-    val content = unfilteredLearningOverlayContent(state, strings) ?: return null
+    val content = unfilteredLearningOverlayContent(state, strings, readingSegmentId, readingSide) ?: return null
     return content.copy(
         originalText = content.originalText.takeIf { state.showOriginal() },
         translatedText = content.translatedText.takeIf { state.showTranslation() },
@@ -57,6 +69,8 @@ internal fun learningOverlayContent(
 private fun unfilteredLearningOverlayContent(
     state: DualSubUiState,
     strings: UiStrings,
+    readingSegmentId: Long?,
+    readingSide: ReadSide?,
 ): LearningOverlayContent? {
     if (state.activeVideoId == null) return null
     if (state.liveFallback) {
@@ -68,15 +82,17 @@ private fun unfilteredLearningOverlayContent(
             statusText = strings.get(R.string.player_live_subtitles_status, state.statusMessage.orEmpty()),
         )
     }
-    val active = state.segments.getOrNull(state.currentIndex)?.let(state::studyLine)
+    val activeIndex = pairedReadingLineIndex(state.currentIndex, state.segments, readingSegmentId)
+    val active = state.segments.getOrNull(activeIndex)?.let(state::studyLine)
     if (active != null) {
         return LearningOverlayContent(
             originalText = active.originalText,
             translatedText = active.translatedText ?: strings.get(pendingTranslationTextRes(false, state.translationError != null)),
             statusText = null,
-            activeWordIndex = if (state.wordHighlightEnabled) state.activeWordIndex else -1,
+            activeWordIndex = if (readingSide == null && state.wordHighlightEnabled) state.activeWordIndex else -1,
             segment = active,
             thirdText = state.thirdLineFor(active),
+            readingSide = readingSide.takeIf { readingSegmentId != null },
         )
     }
     val status =

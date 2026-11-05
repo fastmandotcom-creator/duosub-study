@@ -21,6 +21,24 @@ class PairedReadingTest {
     }
 
     @Test
+    fun defaultVietnameseEnglishPairSpeaksVietnameseBeforeEnglish() {
+        val state =
+            DualSubUiState(
+                sourcePreference = "vi",
+                targetLanguage = "en",
+                resolvedSourceLanguage = "en",
+            )
+        val segment = SubtitleSegment(1, 0, 1_000, "Hello", "Xin chào")
+
+        val pair = spokenPairOf(state, segment)!!
+
+        assertEquals("Xin chào", pair.primary)
+        assertEquals("vi", pair.primaryLanguage)
+        assertEquals("Hello", pair.secondary)
+        assertEquals("en", pair.secondaryLanguage)
+    }
+
+    @Test
     fun aFailedSideStopsThePair() =
         runBlocking {
             val spoken = mutableListOf<ReadSide>()

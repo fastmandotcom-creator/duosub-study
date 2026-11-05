@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -73,6 +74,7 @@ internal fun CompactSubtitleCard(
     showOriginal: Boolean = true,
     showTranslation: Boolean = true,
     translationPosition: TranslationPosition = TranslationPosition.BELOW,
+    readingSide: ReadSide? = null,
     /** Goes before the row's click, for a focus requester (TV layout). */
     focusModifier: Modifier = Modifier,
     /** Settings → Languages → Third line: plain text under the other lines; null shows nothing. */
@@ -130,51 +132,129 @@ internal fun CompactSubtitleCard(
                 // true marks the translation line.
                 val lines = subtitleLineOrder(false.takeIf { showOriginal }, true.takeIf { showTranslation }, translationPosition)
                 lines.forEach { translated ->
-                    if (translated) {
-                        TranslatedCardText(
-                            segment,
-                            active,
-                            activeWordIndex,
-                            fontScale,
-                            originalColor,
-                            translatedColor,
-                            highlightColor,
-                            wordLearningEnabled,
-                            wordLearningTarget,
-                            isSentenceEligibleForPos,
-                            tapToLearnEnabled,
-                            resolvedSourceLanguage,
-                            targetLanguage,
-                            stringResource(pendingTranslationTextRes(isDownloadingTranslationModel, translationUnavailable)),
-                            onWordClick,
-                            onReplay,
-                        )
-                    } else {
-                        OriginalCardText(
-                            segment,
-                            active,
-                            activeWordIndex,
-                            fontScale,
-                            originalColor,
-                            translatedColor,
-                            highlightColor,
-                            wordLearningEnabled,
-                            wordLearningTarget,
-                            isSentenceEligibleForPos,
-                            tapToLearnEnabled,
-                            resolvedSourceLanguage,
-                            targetLanguage,
-                            isDownloadingTranslationModel,
-                            onWordClick,
-                            onReplay,
-                        )
-                    }
+                    val readingFocus = readingSide == if (translated) ReadSide.SECONDARY else ReadSide.PRIMARY
+                    CompactCardSubtitleLine(
+                        segment = segment,
+                        translated = translated,
+                        active = active,
+                        activeWordIndex = activeWordIndex,
+                        fontScale = fontScale,
+                        originalColor = originalColor,
+                        translatedColor = translatedColor,
+                        highlightColor = highlightColor,
+                        wordLearningEnabled = wordLearningEnabled,
+                        wordLearningTarget = wordLearningTarget,
+                        isSentenceEligibleForPos = isSentenceEligibleForPos,
+                        tapToLearnEnabled = tapToLearnEnabled,
+                        resolvedSourceLanguage = resolvedSourceLanguage,
+                        targetLanguage = targetLanguage,
+                        isDownloadingTranslationModel = isDownloadingTranslationModel,
+                        translationUnavailable = translationUnavailable,
+                        onWordClick = onWordClick,
+                        onReplay = onReplay,
+                        readingFocus = readingFocus,
+                    )
                 }
                 thirdText?.let { ThirdLineText(it, fontScale, translatedColor, Modifier.padding(top = 2.dp)) }
             }
         }
     }
 }
+
+@Composable
+private fun CompactCardSubtitleLine(
+    segment: SubtitleSegment,
+    translated: Boolean,
+    active: Boolean,
+    activeWordIndex: Int,
+    fontScale: Float,
+    originalColor: Color,
+    translatedColor: Color,
+    highlightColor: Color,
+    wordLearningEnabled: Boolean,
+    wordLearningTarget: String,
+    isSentenceEligibleForPos: Boolean,
+    tapToLearnEnabled: Boolean,
+    resolvedSourceLanguage: String?,
+    targetLanguage: String,
+    isDownloadingTranslationModel: Boolean,
+    translationUnavailable: Boolean,
+    onWordClick: (WordTap) -> Unit,
+    onReplay: () -> Unit,
+    readingFocus: Boolean,
+) {
+    PairedReadingFocusLine(
+        focused = readingFocus,
+        testTag = if (translated) "read_pair_focus_secondary" else "read_pair_focus_primary",
+    ) {
+        val focusScale = if (readingFocus) READ_PAIR_FOCUS_SCALE else 1f
+        if (translated) {
+            TranslatedCardText(
+                segment,
+                active,
+                activeWordIndex,
+                fontScale * focusScale,
+                originalColor,
+                translatedColor,
+                highlightColor,
+                wordLearningEnabled,
+                wordLearningTarget,
+                isSentenceEligibleForPos,
+                tapToLearnEnabled,
+                resolvedSourceLanguage,
+                targetLanguage,
+                stringResource(pendingTranslationTextRes(isDownloadingTranslationModel, translationUnavailable)),
+                onWordClick,
+                onReplay,
+                readingFocus,
+            )
+        } else {
+            OriginalCardText(
+                segment,
+                active,
+                activeWordIndex,
+                fontScale * focusScale,
+                originalColor,
+                translatedColor,
+                highlightColor,
+                wordLearningEnabled,
+                wordLearningTarget,
+                isSentenceEligibleForPos,
+                tapToLearnEnabled,
+                resolvedSourceLanguage,
+                targetLanguage,
+                isDownloadingTranslationModel,
+                onWordClick,
+                onReplay,
+                readingFocus,
+            )
+        }
+    }
+}
+
+@Composable
+internal fun PairedReadingFocusLine(
+    focused: Boolean,
+    testTag: String,
+    content: @Composable () -> Unit,
+) {
+    if (focused) {
+        Surface(
+            modifier = Modifier.fillMaxWidth().testTag(testTag),
+            shape = RoundedCornerShape(8.dp),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+        ) {
+            Box(Modifier.fillMaxWidth().padding(horizontal = 7.dp, vertical = 5.dp)) {
+                content()
+            }
+        }
+    } else {
+        content()
+    }
+}
+
+private const val READ_PAIR_FOCUS_SCALE = 1.2f
 
 /** The third line: plain text (no word taps) in the translation's color, a little smaller; right to left by its own script. */
 @Composable
@@ -227,6 +307,7 @@ private fun OriginalCardText(
     isDownloadingTranslationModel: Boolean,
     onWordClick: (WordTap) -> Unit,
     onReplay: () -> Unit,
+    readingFocus: Boolean,
 ) {
     val shouldHighlightPos =
         wordLearningEnabled && isSentenceEligibleForPos && (wordLearningTarget == "original" || wordLearningTarget == "both")
@@ -249,7 +330,12 @@ private fun OriginalCardText(
                 TextStyle(
                     fontSize = (17 * fontScale).sp,
                     lineHeight = (22 * fontScale).sp,
-                    fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
+                    fontWeight =
+                        when {
+                            readingFocus -> FontWeight.Bold
+                            active -> FontWeight.SemiBold
+                            else -> FontWeight.Normal
+                        },
                     color = originalColor,
                 ),
             languageCode = resolvedSourceLanguage,
@@ -266,7 +352,12 @@ private fun OriginalCardText(
             style = LocalTextStyle.current.inLineDirection(),
             fontSize = (17 * fontScale).sp,
             lineHeight = (22 * fontScale).sp,
-            fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
+            fontWeight =
+                when {
+                    readingFocus -> FontWeight.Bold
+                    active -> FontWeight.SemiBold
+                    else -> FontWeight.Normal
+                },
             color = originalColor,
         )
     }
@@ -291,6 +382,7 @@ private fun TranslatedCardText(
     fallbackText: String,
     onWordClick: (WordTap) -> Unit,
     onReplay: () -> Unit,
+    readingFocus: Boolean,
 ) {
     val shouldHighlightTrans =
         wordLearningEnabled && isSentenceEligibleForPos && (wordLearningTarget == "translation" || wordLearningTarget == "both")
@@ -328,6 +420,7 @@ private fun TranslatedCardText(
                 TextStyle(
                     fontSize = (14 * fontScale).sp,
                     lineHeight = (18 * fontScale).sp,
+                    fontWeight = if (readingFocus) FontWeight.Bold else FontWeight.Normal,
                     color = translatedColor,
                 ),
             languageCode = targetLanguage,
@@ -345,6 +438,7 @@ private fun TranslatedCardText(
             style = LocalTextStyle.current.inLineDirection(),
             fontSize = (14 * fontScale).sp,
             lineHeight = (18 * fontScale).sp,
+            fontWeight = if (readingFocus) FontWeight.Bold else FontWeight.Normal,
             color = translatedColor,
         )
     }

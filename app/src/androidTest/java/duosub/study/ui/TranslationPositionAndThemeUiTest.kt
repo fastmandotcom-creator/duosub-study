@@ -82,6 +82,51 @@ class TranslationPositionAndThemeUiTest {
     }
 
     @Test
+    fun pairedReadingVisiblyEmphasizesOnlyTheSideBeingSpoken() {
+        preferences.edit().putString(APP_COLOR_THEME_PREFERENCE, AppColorThemeOption.DEEP_TEAL.key).commit()
+        var side by mutableStateOf(ReadSide.PRIMARY)
+        val segment = SubtitleSegment(1, 0, 2_000, "Xin chào", "Hello")
+        composeRule.setContent {
+            DualSubTheme {
+                Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    Column(Modifier.padding(12.dp)) {
+                        CompactSubtitleCard(
+                            segment = segment,
+                            active = true,
+                            fontScale = 1f,
+                            onReplay = {},
+                            readingSide = side,
+                            translationPosition = TranslationPosition.BELOW,
+                        )
+                        LearningSubtitleOverlay(
+                            content = LearningOverlayContent("Xin chào", "Hello", null, segment = segment, readingSide = side),
+                            fontScale = 1f,
+                            translationPosition = TranslationPosition.BELOW,
+                            onSettings = {},
+                            onClose = {},
+                        )
+                    }
+                }
+            }
+        }
+
+        composeRule.onNodeWithTag("read_pair_focus_primary").assertExists()
+        composeRule.onNodeWithTag("read_pair_focus_secondary").assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_primary").assertExists()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary").assertDoesNotExist()
+        saveUiEvidence("paired-reading-primary-focus", composeRule.onRoot().captureToImage())
+
+        preferences.edit().putString(APP_COLOR_THEME_PREFERENCE, AppColorThemeOption.LIGHT.key).commit()
+        composeRule.runOnIdle { side = ReadSide.SECONDARY }
+        composeRule.waitForIdle()
+        composeRule.onNodeWithTag("read_pair_focus_primary").assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_focus_secondary").assertExists()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_primary").assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary").assertExists()
+        saveUiEvidence("paired-reading-secondary-focus", composeRule.onRoot().captureToImage())
+    }
+
+    @Test
     fun theSettingsPageChangesTheTranslationPositionAndTheWholeAppColors() {
         var position = TranslationPosition.BELOW
         var background = 0f

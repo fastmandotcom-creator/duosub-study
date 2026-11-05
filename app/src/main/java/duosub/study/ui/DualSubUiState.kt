@@ -268,6 +268,17 @@ internal fun usesVietnameseEnglishPair(
 
 internal fun DualSubUiState.usesVietnameseEnglishPair(): Boolean = usesVietnameseEnglishPair(sourcePreference, targetLanguage)
 
+/** Keeps the spoken pair's visual order aligned with its primary-then-secondary reading order. */
+internal fun effectiveStudyTranslationPosition(
+    state: DualSubUiState,
+    readingPairActive: Boolean,
+): TranslationPosition =
+    if (state.usesVietnameseEnglishPair() && (state.studyPlayMode == StudyPlayMode.READ_PAIR || readingPairActive)) {
+        TranslationPosition.BELOW
+    } else {
+        state.translationPosition
+    }
+
 /** Where to translate the loaded track so the pair can be Vietnamese then English. */
 internal fun studyTranslationTarget(sourceLanguage: String?): String =
     if (sourceLanguage?.substringBefore('-')?.equals("vi", ignoreCase = true) == true) "en" else "vi"

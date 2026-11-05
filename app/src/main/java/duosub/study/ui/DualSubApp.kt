@@ -1,7 +1,6 @@
 package duosub.study.ui
 
 import android.content.res.Configuration
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -25,8 +24,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -45,7 +44,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import duosub.study.data.WordTap
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -55,6 +53,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.State
@@ -66,8 +65,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -78,8 +77,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -87,15 +86,16 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import duosub.study.R
 import duosub.study.data.SubtitleSegment
+import duosub.study.data.WordTap
 import duosub.study.translation.TranslationLanguages
 import duosub.study.ui.theme.DualSubTheme
-import java.util.Locale
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -146,7 +146,11 @@ fun DualSubApp(
                 DualSubExperience(
                     state = state,
                     webController = webController,
-                    onVocabulary = { viewModel.selectLearningWord(null); webController.pause(); showVocabulary = true },
+                    onVocabulary = {
+                        viewModel.selectLearningWord(null)
+                        webController.pause()
+                        showVocabulary = true
+                    },
                     onProgress = {
                         viewModel.selectLearningWord(null)
                         webController.pause()
@@ -204,25 +208,29 @@ fun DualSubApp(
             state.selectedLearningWord?.let { selection ->
                 SelectedWordDialog(selection, state, savedWords, viewModel, webController, pronouncer)
             }
-            if (showVocabulary) SavedWordsScreen(
-                repository = viewModel.vocabulary,
-                onOnline = { word ->
-                    pronouncer.stop()
-                    if (state.activeVideoId != word.videoId) {
-                        viewModel.acceptSharedText("https://www.youtube.com/watch?v=${word.videoId}")
-                    }
-                    webController.replayClip(word)
-                },
-                onPause = { webController.pause() },
-                onDismiss = { showVocabulary = false },
-            )
-            if (showProgress) ProgressScreen(
-                repository = viewModel.immersion,
-                savedWords = savedWords,
-                goalMinutes = state.dailyGoalMinutes,
-                onGoalChange = viewModel::setDailyGoal,
-                onDismiss = { showProgress = false },
-            )
+            if (showVocabulary) {
+                SavedWordsScreen(
+                    repository = viewModel.vocabulary,
+                    onOnline = { word ->
+                        pronouncer.stop()
+                        if (state.activeVideoId != word.videoId) {
+                            viewModel.acceptSharedText("https://www.youtube.com/watch?v=${word.videoId}")
+                        }
+                        webController.replayClip(word)
+                    },
+                    onPause = { webController.pause() },
+                    onDismiss = { showVocabulary = false },
+                )
+            }
+            if (showProgress) {
+                ProgressScreen(
+                    repository = viewModel.immersion,
+                    savedWords = savedWords,
+                    goalMinutes = state.dailyGoalMinutes,
+                    onGoalChange = viewModel::setDailyGoal,
+                    onDismiss = { showProgress = false },
+                )
+            }
         }
     }
 }
@@ -241,7 +249,13 @@ private fun SelectedWordDialog(
             onDispose { pronouncer.stop() }
         }
         val context = LocalContext.current
-        val existingWord = savedWords.firstOrNull { it.id == duosub.study.data.savedWordFrom(selection, "", false).id }
+        val existingWord =
+            savedWords.firstOrNull {
+                it.id ==
+                    duosub.study.data
+                        .savedWordFrom(selection, "", false)
+                        .id
+            }
         val namedDecks = remember(savedWords) { duosub.study.data.namedDecks(savedWords) }
         var deck by remember(selection) {
             mutableStateOf(
@@ -655,39 +669,43 @@ private fun SubtitlePanel(
     var panelHeightPx by remember { mutableFloatStateOf(0f) }
     val minimumDismissDistancePx = with(LocalDensity.current) { 72.dp.toPx() }
     val scope = rememberCoroutineScope()
-    val dragState = rememberDraggableState { delta ->
-        val maximum = panelHeightPx.takeIf { it > 0f } ?: Float.MAX_VALUE
-        panelOffsetY = (panelOffsetY + delta).coerceIn(0f, maximum)
-    }
-    val headerDragModifier = Modifier
-        .testTag("subtitle_panel_drag_handle")
-        .draggable(
-            state = dragState,
-            orientation = Orientation.Vertical,
-            onDragStopped = { velocity ->
-                val hide = shouldHideSubtitlePanel(
-                    dragOffsetPx = panelOffsetY,
-                    panelHeightPx = panelHeightPx,
-                    velocityPxPerSecond = velocity,
-                    minimumDistancePx = minimumDismissDistancePx,
-                )
-                scope.launch {
-                    val target = if (hide) panelHeightPx.coerceAtLeast(panelOffsetY) else 0f
-                    animate(
-                        initialValue = panelOffsetY,
-                        targetValue = target,
-                        animationSpec = tween(durationMillis = if (hide) 160 else 220),
-                    ) { value, _ -> panelOffsetY = value }
-                    if (hide) onHide()
-                }
-            },
-        )
+    val dragState =
+        rememberDraggableState { delta ->
+            val maximum = panelHeightPx.takeIf { it > 0f } ?: Float.MAX_VALUE
+            panelOffsetY = (panelOffsetY + delta).coerceIn(0f, maximum)
+        }
+    val headerDragModifier =
+        Modifier
+            .testTag("subtitle_panel_drag_handle")
+            .draggable(
+                state = dragState,
+                orientation = Orientation.Vertical,
+                onDragStopped = { velocity ->
+                    val hide =
+                        shouldHideSubtitlePanel(
+                            dragOffsetPx = panelOffsetY,
+                            panelHeightPx = panelHeightPx,
+                            velocityPxPerSecond = velocity,
+                            minimumDistancePx = minimumDismissDistancePx,
+                        )
+                    scope.launch {
+                        val target = if (hide) panelHeightPx.coerceAtLeast(panelOffsetY) else 0f
+                        animate(
+                            initialValue = panelOffsetY,
+                            targetValue = target,
+                            animationSpec = tween(durationMillis = if (hide) 160 else 220),
+                        ) { value, _ -> panelOffsetY = value }
+                        if (hide) onHide()
+                    }
+                },
+            )
 
     Surface(
-        modifier = modifier
-            .onSizeChanged { panelHeightPx = it.height.toFloat() }
-            .offset { IntOffset(0, panelOffsetY.roundToInt()) }
-            .shadow(18.dp, RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp)),
+        modifier =
+            modifier
+                .onSizeChanged { panelHeightPx = it.height.toFloat() }
+                .offset { IntOffset(0, panelOffsetY.roundToInt()) }
+                .shadow(18.dp, RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp)),
         shape = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp),
         color = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground,
@@ -696,15 +714,17 @@ private fun SubtitlePanel(
         Column(Modifier.fillMaxSize()) {
             Column(headerDragModifier) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(20.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Surface(
-                        modifier = Modifier
-                            .width(36.dp)
-                            .height(4.dp),
+                        modifier =
+                            Modifier
+                                .width(36.dp)
+                                .height(4.dp),
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.outline,
                     ) {}
@@ -782,10 +802,11 @@ internal fun shouldUseLandscapeSplit(
     subtitlePanelVisible: Boolean,
     hasActiveVideo: Boolean,
     orientation: Int,
-): Boolean = splitEnabled &&
-    subtitlePanelVisible &&
-    hasActiveVideo &&
-    orientation == Configuration.ORIENTATION_LANDSCAPE
+): Boolean =
+    splitEnabled &&
+        subtitlePanelVisible &&
+        hasActiveVideo &&
+        orientation == Configuration.ORIENTATION_LANDSCAPE
 
 internal const val LANDSCAPE_VIDEO_FRACTION_PREFERENCE = "landscape_video_fraction"
 internal const val DEFAULT_LANDSCAPE_VIDEO_FRACTION = 0.75f
@@ -807,18 +828,18 @@ private fun LandscapeSplitDivider(
 ) {
     val splitState = stringResource(R.string.player_video_split_state, (videoFraction * 100).roundToInt())
     Box(
-        modifier = Modifier
-            .width(12.dp)
-            .fillMaxHeight()
-            .semantics {
-                stateDescription = splitState
-            }
-            .testTag("landscape_split_divider")
-            .draggable(
-                state = dragState,
-                orientation = Orientation.Horizontal,
-                onDragStopped = { onDragStopped() },
-            ),
+        modifier =
+            Modifier
+                .width(12.dp)
+                .fillMaxHeight()
+                .semantics {
+                    stateDescription = splitState
+                }.testTag("landscape_split_divider")
+                .draggable(
+                    state = dragState,
+                    orientation = Orientation.Horizontal,
+                    onDragStopped = { onDragStopped() },
+                ),
         contentAlignment = Alignment.Center,
     ) {
         Surface(
@@ -835,8 +856,9 @@ internal fun shouldCollapseSidePanel(
     dragOffsetPx: Float,
     velocityPxPerSecond: Float,
     minimumDistancePx: Float,
-): Boolean = dragOffsetPx >= minimumDistancePx ||
-    velocityPxPerSecond >= SIDE_PANEL_SWIPE_VELOCITY_THRESHOLD
+): Boolean =
+    dragOffsetPx >= minimumDistancePx ||
+        velocityPxPerSecond >= SIDE_PANEL_SWIPE_VELOCITY_THRESHOLD
 
 @Composable
 private fun SideSubtitlePanel(
@@ -853,36 +875,40 @@ private fun SideSubtitlePanel(
     var panelWidthPx by remember { mutableFloatStateOf(0f) }
     val minimumDismissDistancePx = with(LocalDensity.current) { 72.dp.toPx() }
     val scope = rememberCoroutineScope()
-    val dragState = rememberDraggableState { delta ->
-        val maximum = panelWidthPx.takeIf { it > 0f } ?: Float.MAX_VALUE
-        panelOffsetX = (panelOffsetX + delta).coerceIn(0f, maximum)
-    }
-    val headerDragModifier = Modifier
-        .draggable(
-            state = dragState,
-            orientation = Orientation.Horizontal,
-            onDragStopped = { velocity ->
-                val hide = shouldCollapseSidePanel(
-                    dragOffsetPx = panelOffsetX,
-                    velocityPxPerSecond = velocity,
-                    minimumDistancePx = minimumDismissDistancePx,
-                )
-                scope.launch {
-                    val target = if (hide) panelWidthPx.coerceAtLeast(panelOffsetX) else 0f
-                    animate(
-                        initialValue = panelOffsetX,
-                        targetValue = target,
-                        animationSpec = tween(durationMillis = if (hide) 160 else 220),
-                    ) { value, _ -> panelOffsetX = value }
-                    if (hide) onHide()
-                }
-            },
-        )
+    val dragState =
+        rememberDraggableState { delta ->
+            val maximum = panelWidthPx.takeIf { it > 0f } ?: Float.MAX_VALUE
+            panelOffsetX = (panelOffsetX + delta).coerceIn(0f, maximum)
+        }
+    val headerDragModifier =
+        Modifier
+            .draggable(
+                state = dragState,
+                orientation = Orientation.Horizontal,
+                onDragStopped = { velocity ->
+                    val hide =
+                        shouldCollapseSidePanel(
+                            dragOffsetPx = panelOffsetX,
+                            velocityPxPerSecond = velocity,
+                            minimumDistancePx = minimumDismissDistancePx,
+                        )
+                    scope.launch {
+                        val target = if (hide) panelWidthPx.coerceAtLeast(panelOffsetX) else 0f
+                        animate(
+                            initialValue = panelOffsetX,
+                            targetValue = target,
+                            animationSpec = tween(durationMillis = if (hide) 160 else 220),
+                        ) { value, _ -> panelOffsetX = value }
+                        if (hide) onHide()
+                    }
+                },
+            )
 
     Surface(
-        modifier = modifier
-            .onSizeChanged { panelWidthPx = it.width.toFloat() }
-            .offset { IntOffset(panelOffsetX.roundToInt(), 0) },
+        modifier =
+            modifier
+                .onSizeChanged { panelWidthPx = it.width.toFloat() }
+                .offset { IntOffset(panelOffsetX.roundToInt(), 0) },
         shape = RectangleShape,
         color = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground,
@@ -951,15 +977,21 @@ internal fun SubtitleTimeline(
     // When the panel is recreated after being closed, start the lazy list at the
     // current transcript row instead of item 0. This prevents long videos from
     // visibly walking through hundreds of rows before catching up.
-    val initialItemIndex = state.currentIndex
-        .coerceAtLeast(0)
-        .coerceAtMost(state.segments.lastIndex.coerceAtLeast(0))
+    val initialItemIndex =
+        state.currentIndex
+            .coerceAtLeast(0)
+            .coerceAtMost(state.segments.lastIndex.coerceAtLeast(0))
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialItemIndex)
     val browsing = rememberLearnerBrowsing(listState)
+    val pairedReader = LocalPairedReading.current
+    val readingSegmentId = pairedReader?.readingSegmentId
+    val readingSide = pairedReader?.progress?.side.takeIf { readingSegmentId != null }
+    val displayIndex = pairedReadingLineIndex(state.currentIndex, state.segments, readingSegmentId)
+    val translationPosition = effectiveStudyTranslationPosition(state, readingPairActive = readingSegmentId != null)
     val centre = state.transcriptFollow == TranscriptFollow.CENTER
-    FollowPlayingRow(listState, state, browsing, centre)
+    FollowPlayingRow(listState, displayIndex, state.segments, browsing, centre)
 
-    KeepActiveRowOnScreen(listState, state.currentIndex)
+    KeepActiveRowOnScreen(listState, displayIndex)
     PrepareUpcomingTokens(
         segments = state.segments,
         currentIndex = state.currentIndex,
@@ -975,7 +1007,7 @@ internal fun SubtitleTimeline(
     var tvLine by remember { mutableStateOf<SubtitleSegment?>(null) }
     val activeRowFocus = remember { FocusRequester() }
     val fontScale = if (tvLayout) state.fontScale * TV_TEXT_SCALE else state.fontScale
-    BindTvPanelFocus(tvLayout, activeRowFocus, state.currentIndex)
+    BindTvPanelFocus(tvLayout, activeRowFocus, displayIndex)
     val onLight = appThemeIsLight()
     val originalColor = effectiveOriginalColor(state, onLight)
     val translatedColor = effectiveTranslatedColor(state, onLight)
@@ -984,24 +1016,27 @@ internal fun SubtitleTimeline(
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(6.dp),
+            contentPadding =
+                androidx.compose.foundation.layout
+                    .PaddingValues(6.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             itemsIndexed(state.segments, key = { _, segment -> segment.id }) { index, segment ->
-                val active = index == state.currentIndex
+                val active = index == displayIndex
                 val shown = state.studyLine(segment)
                 CompactSubtitleCard(
                     segment = shown,
                     showOriginal = showOriginal,
                     showTranslation = showTranslation,
-                    translationPosition = state.translationPosition,
+                    translationPosition = translationPosition,
                     active = active,
                     fontScale = fontScale,
                     onReplay = { if (tvLayout) tvLine = segment else onReplay(segment) },
                     focusModifier = if (active) Modifier.focusRequester(activeRowFocus) else Modifier,
                     // Only the active row draws the spoken word. Giving the others a constant lets them
                     // skip recomposition each time the highlighted word moves.
-                    activeWordIndex = if (active) activeWordIndex else -1,
+                    activeWordIndex = if (active && readingSegmentId == null) activeWordIndex else -1,
+                    readingSide = readingSide.takeIf { segment.id == readingSegmentId },
                     originalColor = originalColor,
                     translatedColor = translatedColor,
                     highlightColor = highlightColor,
@@ -1014,14 +1049,21 @@ internal fun SubtitleTimeline(
                     isDownloadingTranslationModel = state.isDownloadingTranslationModel,
                     translationUnavailable = state.translationError != null,
                     onWordClick = onWordClick,
-                    thirdText = if (showTranslation && shown.translatedText != state.thirdLineFor(segment)) state.thirdLineFor(segment) else null,
+                    thirdText =
+                        if (showTranslation &&
+                            shown.translatedText != state.thirdLineFor(segment)
+                        ) {
+                            state.thirdLineFor(segment)
+                        } else {
+                            null
+                        },
                 )
             }
         }
         JumpBackPill(
             listState = listState,
-            target = state.currentIndex,
-            startMs = state.segments.getOrNull(state.currentIndex)?.startMs,
+            target = displayIndex,
+            startMs = state.segments.getOrNull(displayIndex)?.startMs,
             modifier = Modifier.align(Alignment.BottomCenter),
             browsing = browsing,
             centre = centre,
@@ -1037,25 +1079,27 @@ internal fun SubtitleTimeline(
 @Composable
 private fun FollowPlayingRow(
     listState: LazyListState,
-    state: DualSubUiState,
+    currentIndex: Int,
+    segments: List<SubtitleSegment>,
     browsing: State<Boolean>,
     centre: Boolean,
 ) {
     val previousIndex = remember { mutableIntStateOf(-1) }
-    LaunchedEffect(state.currentIndex, state.segments.firstOrNull()?.id, centre) {
-        val target = state.currentIndex
+    LaunchedEffect(currentIndex, segments.firstOrNull()?.id, centre) {
+        val target = currentIndex
         if (target < 0) return@LaunchedEffect
         // IDs remain global when the local window shifts or jumps hours ahead.
-        val globalIndex = state.segments.getOrNull(target)?.id?.toInt() ?: return@LaunchedEffect
+        val globalIndex = segments.getOrNull(target)?.id?.toInt() ?: return@LaunchedEffect
         val lastIndex = previousIndex.intValue
         previousIndex.intValue = globalIndex
         if (listState.isScrollInProgress) {
             snapshotFlow { listState.isScrollInProgress }.first { !it }
         }
         if (listState.isScrollInProgress) return@LaunchedEffect
-        val visibleItemIndices = snapshotFlow {
-            listState.layoutInfo.visibleItemsInfo.map { it.index }
-        }.first { it.isNotEmpty() }
+        val visibleItemIndices =
+            snapshotFlow {
+                listState.layoutInfo.visibleItemsInfo.map { it.index }
+            }.first { it.isNotEmpty() }
 
         when {
             // First placement after opening/reopening should always be an instant
@@ -1231,7 +1275,10 @@ internal const val SUBTITLE_INSTANT_SCROLL_DISTANCE = 40
  * follows the active paragraph immediately instead of waiting for it to reach
  * the bottom of the panel.
  */
-internal fun shouldFollowPlaybackSeek(previousIndex: Int, currentIndex: Int): Boolean {
+internal fun shouldFollowPlaybackSeek(
+    previousIndex: Int,
+    currentIndex: Int,
+): Boolean {
     if (previousIndex < 0 || currentIndex < 0) return false
     return currentIndex < previousIndex || currentIndex - previousIndex > 1
 }
@@ -1258,7 +1305,10 @@ internal fun TranslatedSubtitleTimeline(
 }
 
 @Composable
-private fun CompactErrorPanel(message: String, onRetry: () -> Unit) {
+private fun CompactErrorPanel(
+    message: String,
+    onRetry: () -> Unit,
+) {
     Box(Modifier.fillMaxSize().padding(18.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(message, color = MaterialTheme.colorScheme.error)
@@ -1272,7 +1322,10 @@ private fun CompactErrorPanel(message: String, onRetry: () -> Unit) {
     }
 }
 
-internal data class LanguageChoice(val code: String, val label: String)
+internal data class LanguageChoice(
+    val code: String,
+    val label: String,
+)
 
 @Composable
 internal fun LanguagePickerDialog(
@@ -1315,13 +1368,14 @@ internal fun LanguagePickerDialog(
         first: Boolean = false,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .then(if (tvLayout && first) Modifier.focusRequester(firstRowFocus) else Modifier)
-                .tvFocusRing()
-                .clickable { onChoice(choice) }
-                .testTag(tag)
-                .padding(horizontal = 8.dp, vertical = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .then(if (tvLayout && first) Modifier.focusRequester(firstRowFocus) else Modifier)
+                    .tvFocusRing()
+                    .clickable { onChoice(choice) }
+                    .testTag(tag)
+                    .padding(horizontal = 8.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(shown, modifier = Modifier.weight(1f))
@@ -1365,7 +1419,13 @@ internal fun LanguagePickerDialog(
                         item(key = "all_heading") { GroupHeading(stringResource(R.string.player_all_languages)) }
                     }
                     itemsIndexed(filteredChoices, key = { _, item -> item.first.code }) { index, (choice, shown) ->
-                        ChoiceRow(choice, shown, "language_option_${testTagPrefix}_${choice.code}", first = index == 0 && recentChoices.isEmpty())
+                        ChoiceRow(
+                            choice,
+                            shown,
+                            "language_option_${testTagPrefix}_${choice.code}",
+                            first =
+                                index == 0 && recentChoices.isEmpty(),
+                        )
                     }
                 }
             }
@@ -1397,21 +1457,23 @@ internal fun localizedLanguageLabel(
 private fun sourceDescription(state: DualSubUiState): String {
     val resources = LocalResources.current
     val interfaceLocale = currentInterfaceLocale()
-    val source = state.resolvedSourceLanguage?.let { resolved ->
-        // YouTube's own name of the loaded track already says when it is auto-generated.
-        state.availableSourceLanguages.firstOrNull { state.loadedTrackId.isNotBlank() && it.trackId == state.loadedTrackId }?.name
-            ?: run {
-                val sameLanguage = state.availableSourceLanguages.filter {
-                    TranslationLanguages.normalize(it.code) == TranslationLanguages.normalize(resolved)
+    val source =
+        state.resolvedSourceLanguage?.let { resolved ->
+            // YouTube's own name of the loaded track already says when it is auto-generated.
+            state.availableSourceLanguages.firstOrNull { state.loadedTrackId.isNotBlank() && it.trackId == state.loadedTrackId }?.name
+                ?: run {
+                    val sameLanguage =
+                        state.availableSourceLanguages.filter {
+                            TranslationLanguages.normalize(it.code) == TranslationLanguages.normalize(resolved)
+                        }
+                    val name =
+                        (sameLanguage.firstOrNull { it.generated == state.generatedCaptions } ?: sameLanguage.firstOrNull())?.name
+                            ?: TranslationLanguages.displayName(resolved)
+                    captionTrackLabel(localizedLanguageLabel(resolved, name, interfaceLocale), state.generatedCaptions) {
+                        resources.getString(R.string.player_caption_track_auto_generated, it)
+                    }
                 }
-                val name =
-                    (sameLanguage.firstOrNull { it.generated == state.generatedCaptions } ?: sameLanguage.firstOrNull())?.name
-                        ?: TranslationLanguages.displayName(resolved)
-                captionTrackLabel(localizedLanguageLabel(resolved, name, interfaceLocale), state.generatedCaptions) {
-                    resources.getString(R.string.player_caption_track_auto_generated, it)
-                }
-            }
-    } ?: stringResource(R.string.player_finding_captions)
+        } ?: stringResource(R.string.player_finding_captions)
     return stringResource(R.string.player_source_to_target, source, languageDisplayName(state.targetLanguage, interfaceLocale))
 }
 

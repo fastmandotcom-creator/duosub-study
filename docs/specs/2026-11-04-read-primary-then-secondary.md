@@ -48,3 +48,20 @@ Play modes still only pause, play, or seek the one YouTube page video. Speech us
 ## Release intent
 
 Patch. The change is in the app and reaches the APK. No exact version; the owner labels the PR.
+
+## Paired-reading focus correction (2026-11-05)
+
+The preview check found that the transcript highlight could advance to the next subtitle while
+the current sentence was still being read aloud. The timeline and overlay now keep the spoken
+segment selected by its stable subtitle ID until speech finishes. The side currently being read
+gets a larger, bold face and a theme-colored focus surface; the other side stays visible without
+the focus treatment.
+
+For the default Vietnamese-English pair, paired-reading mode keeps Vietnamese above English,
+even if the general translation-position preference is set to show translations above originals.
+Other play modes and other language pairs keep honoring that preference. The original video still
+plays each sentence before pausing for its pair, and the pair count still defaults to two.
+
+Validation adds unit coverage for pinning the overlay to the spoken segment and preserving the
+Vietnamese-first order, plus a Compose screenshot test for each spoken side. Device playback and
+the screenshots still need a managed or physical device run.

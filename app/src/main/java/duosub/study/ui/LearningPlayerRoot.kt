@@ -481,7 +481,9 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
         }
     }
 
+    val pairedReader = LocalPairedReading.current
     val overlayContent = learningOverlayContent(state)
+    val translationPosition = effectiveStudyTranslationPosition(state, readingPairActive = pairedReader?.readingSegmentId != null)
     val controlsLiftDp =
         playerControlsAvoidanceLiftDp(
             enabled = autoAvoidPlayerControls,
@@ -532,7 +534,7 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
                     originalLanguageCode = state.resolvedSourceLanguage ?: state.sourcePreference,
                     targetLanguageCode = state.targetLanguage,
                     lockToVideo = state.lockOverlayToVideo,
-                    translationPosition = state.translationPosition,
+                    translationPosition = translationPosition,
                     onWordClick = viewModel::selectLearningWord,
                     modifier =
                         Modifier
@@ -632,7 +634,7 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
                         originalLanguageCode = state.resolvedSourceLanguage ?: state.sourcePreference,
                         targetLanguageCode = state.targetLanguage,
                         lockToVideo = state.lockOverlayToVideo,
-                        translationPosition = state.translationPosition,
+                        translationPosition = translationPosition,
                         onWordClick = viewModel::selectLearningWord,
                         modifier = overlayModifier,
                         onPositionChange = ::updateOverlayPosition,
@@ -811,6 +813,7 @@ internal fun LearningSubtitleOverlay(
                 val originalLine: (@Composable () -> Unit)? =
                     content.originalText?.let { original ->
                         {
+                            val readingFocus = content.readingSide == ReadSide.PRIMARY
                             val shouldHighlightPos =
                                 wordLearningEnabled && (wordLearningTarget == "original" || wordLearningTarget == "both")
                             val annotated =
@@ -824,45 +827,56 @@ internal fun LearningSubtitleOverlay(
                                     languageCode = originalLanguageCode,
                                     markNewWords = true,
                                 )
-                            if (wordLearningEnabled && tapToLearnEnabled) {
-                                SelectableSubtitleText(
-                                    text = original,
-                                    annotated = annotated,
-                                    style =
-                                        TextStyle(
-                                            fontSize = (17f * fontScale).sp,
-                                            lineHeight = (21f * fontScale).sp,
-                                            fontWeight = FontWeight.Medium,
-                                            color = originalColor,
-                                        ),
-                                    languageCode = originalLanguageCode,
-                                    segment = content.segment,
-                                    translated = false,
-                                    highlightColor = highlightColor,
-                                    onWordClick = onWordClick,
-                                    onBlankTap = { overlayActionsVisible = !overlayActionsVisible },
-                                    overflow = TextOverflow.Ellipsis,
-                                    centered = isFullscreen,
-                                )
-                            } else {
-                                Text(
-                                    text = annotated,
-                                    modifier = if (isFullscreen) Modifier else Modifier.lineSide(annotated, LocalLayoutDirection.current),
-                                    style = LocalTextStyle.current.inLineDirection(),
-                                    textAlign = if (isFullscreen) TextAlign.Center else TextAlign.Unspecified,
-                                    fontSize = (17f * fontScale).sp,
-                                    lineHeight = (21f * fontScale).sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = originalColor,
-                                    maxLines = Int.MAX_VALUE,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
+                            PairedReadingFocusLine(readingFocus, "read_pair_overlay_focus_primary") {
+                                if (wordLearningEnabled && tapToLearnEnabled) {
+                                    SelectableSubtitleText(
+                                        text = original,
+                                        annotated = annotated,
+                                        style =
+                                            TextStyle(
+                                                fontSize = (17f * fontScale * if (readingFocus) 1.2f else 1f).sp,
+                                                lineHeight = (21f * fontScale * if (readingFocus) 1.2f else 1f).sp,
+                                                fontWeight = if (readingFocus) FontWeight.Bold else FontWeight.Medium,
+                                                color = originalColor,
+                                            ),
+                                        languageCode = originalLanguageCode,
+                                        segment = content.segment,
+                                        translated = false,
+                                        highlightColor = highlightColor,
+                                        onWordClick = onWordClick,
+                                        onBlankTap = { overlayActionsVisible = !overlayActionsVisible },
+                                        overflow = TextOverflow.Ellipsis,
+                                        centered = isFullscreen,
+                                    )
+                                } else {
+                                    Text(
+                                        text = annotated,
+                                        modifier =
+                                            if (isFullscreen) {
+                                                Modifier
+                                            } else {
+                                                Modifier.lineSide(
+                                                    annotated,
+                                                    LocalLayoutDirection.current,
+                                                )
+                                            },
+                                        style = LocalTextStyle.current.inLineDirection(),
+                                        textAlign = if (isFullscreen) TextAlign.Center else TextAlign.Unspecified,
+                                        fontSize = (17f * fontScale * if (readingFocus) 1.2f else 1f).sp,
+                                        lineHeight = (21f * fontScale * if (readingFocus) 1.2f else 1f).sp,
+                                        fontWeight = if (readingFocus) FontWeight.Bold else FontWeight.Medium,
+                                        color = originalColor,
+                                        maxLines = Int.MAX_VALUE,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
                             }
                         }
                     }
                 val translationLine: (@Composable () -> Unit)? =
                     content.translatedText?.let { translated ->
                         {
+                            val readingFocus = content.readingSide == ReadSide.SECONDARY
                             val shouldHighlightPos =
                                 wordLearningEnabled && (wordLearningTarget == "translation" || wordLearningTarget == "both")
                             val revision = tokenizerRevision()
@@ -885,38 +899,50 @@ internal fun LearningSubtitleOverlay(
                                 } else {
                                     AnnotatedString(translated)
                                 }
-                            if (wordLearningEnabled && tapToLearnEnabled) {
-                                SelectableSubtitleText(
-                                    text = translated,
-                                    annotated = annotated,
-                                    style =
-                                        TextStyle(
-                                            fontSize = (14f * fontScale).sp,
-                                            lineHeight = (18f * fontScale).sp,
-                                            color = translatedColor,
-                                        ),
-                                    languageCode = targetLanguageCode,
-                                    segment = content.segment,
-                                    translated = true,
-                                    highlightColor = highlightColor,
-                                    onWordClick = onWordClick,
-                                    onBlankTap = { overlayActionsVisible = !overlayActionsVisible },
-                                    alignedOriginalTokens = origTokens,
-                                    overflow = TextOverflow.Ellipsis,
-                                    centered = isFullscreen,
-                                )
-                            } else {
-                                Text(
-                                    text = annotated,
-                                    modifier = if (isFullscreen) Modifier else Modifier.lineSide(annotated, LocalLayoutDirection.current),
-                                    style = LocalTextStyle.current.inLineDirection(),
-                                    textAlign = if (isFullscreen) TextAlign.Center else TextAlign.Unspecified,
-                                    fontSize = (14f * fontScale).sp,
-                                    lineHeight = (18f * fontScale).sp,
-                                    color = translatedColor,
-                                    maxLines = Int.MAX_VALUE,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
+                            PairedReadingFocusLine(readingFocus, "read_pair_overlay_focus_secondary") {
+                                if (wordLearningEnabled && tapToLearnEnabled) {
+                                    SelectableSubtitleText(
+                                        text = translated,
+                                        annotated = annotated,
+                                        style =
+                                            TextStyle(
+                                                fontSize = (14f * fontScale * if (readingFocus) 1.2f else 1f).sp,
+                                                lineHeight = (18f * fontScale * if (readingFocus) 1.2f else 1f).sp,
+                                                fontWeight = if (readingFocus) FontWeight.Bold else FontWeight.Normal,
+                                                color = translatedColor,
+                                            ),
+                                        languageCode = targetLanguageCode,
+                                        segment = content.segment,
+                                        translated = true,
+                                        highlightColor = highlightColor,
+                                        onWordClick = onWordClick,
+                                        onBlankTap = { overlayActionsVisible = !overlayActionsVisible },
+                                        alignedOriginalTokens = origTokens,
+                                        overflow = TextOverflow.Ellipsis,
+                                        centered = isFullscreen,
+                                    )
+                                } else {
+                                    Text(
+                                        text = annotated,
+                                        modifier =
+                                            if (isFullscreen) {
+                                                Modifier
+                                            } else {
+                                                Modifier.lineSide(
+                                                    annotated,
+                                                    LocalLayoutDirection.current,
+                                                )
+                                            },
+                                        style = LocalTextStyle.current.inLineDirection(),
+                                        textAlign = if (isFullscreen) TextAlign.Center else TextAlign.Unspecified,
+                                        fontSize = (14f * fontScale * if (readingFocus) 1.2f else 1f).sp,
+                                        lineHeight = (18f * fontScale * if (readingFocus) 1.2f else 1f).sp,
+                                        fontWeight = if (readingFocus) FontWeight.Bold else FontWeight.Normal,
+                                        color = translatedColor,
+                                        maxLines = Int.MAX_VALUE,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
                             }
                         }
                     }

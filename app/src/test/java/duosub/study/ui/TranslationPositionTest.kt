@@ -24,4 +24,23 @@ class TranslationPositionTest {
         assertEquals(TranslationPosition.BELOW, storedTranslationPosition("sideways"))
         assert(TRANSLATION_POSITION_PREFERENCE in RESETTABLE_SETTING_KEYS)
     }
+
+    @Test
+    fun pairedReadingKeepsTheDefaultVietnameseEnglishPairInPrimaryThenSecondaryOrder() {
+        val state =
+            DualSubUiState(
+                studyPlayMode = StudyPlayMode.READ_PAIR,
+                translationPosition = TranslationPosition.ABOVE,
+            )
+
+        assertEquals(TranslationPosition.BELOW, effectiveStudyTranslationPosition(state, readingPairActive = false))
+        assertEquals(
+            TranslationPosition.ABOVE,
+            effectiveStudyTranslationPosition(state.copy(studyPlayMode = StudyPlayMode.NORMAL), readingPairActive = false),
+        )
+        assertEquals(
+            TranslationPosition.BELOW,
+            effectiveStudyTranslationPosition(state.copy(studyPlayMode = StudyPlayMode.NORMAL), readingPairActive = true),
+        )
+    }
 }
