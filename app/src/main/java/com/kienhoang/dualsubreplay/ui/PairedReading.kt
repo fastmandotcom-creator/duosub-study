@@ -5,7 +5,6 @@ import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,6 +14,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.kienhoang.dualsubreplay.R
 import com.kienhoang.dualsubreplay.data.LearningWordSelection
+import com.kienhoang.dualsubreplay.data.SubtitleSegment
 import kotlinx.coroutines.delay
 
 /** One side of a reading pair: the original line, then its translation. */
@@ -36,9 +36,6 @@ internal data class PairReadProgress(
 
 /** A pause between the two sides, so the pair does not blur into one sound. */
 internal const val PAIR_READ_GAP_MS = 280L
-
-/** How long a line waits for its translation before the pair is read with the original only. */
-internal const val PAIR_READ_TRANSLATION_WAIT_MS = 2_000L
 
 internal data class SpokenPair(
     val primary: String,
@@ -74,10 +71,24 @@ internal fun currentSpokenPair(state: DualSubUiState): SpokenPair? {
         if (primary.isEmpty()) return null
         return SpokenPair(primary, source, state.liveTranslated?.trim().orEmpty(), state.targetLanguage)
     }
-    val line = state.segments.getOrNull(state.currentIndex)?.let(state::studyLine) ?: return null
+    return state.segments.getOrNull(state.currentIndex)?.let { spokenPairOf(state, it) }
+}
+
+/** [segment] as the pair shown for it (line 1 then line 2), or null when its first line is blank. */
+internal fun spokenPairOf(
+    state: DualSubUiState,
+    segment: SubtitleSegment,
+): SpokenPair? {
+    val line = state.studyLine(segment)
     val primary = line.originalText.trim()
     if (primary.isEmpty()) return null
-    return SpokenPair(primary, DEFAULT_SOURCE_LANGUAGE, line.translatedText?.trim().orEmpty(), DEFAULT_TARGET_LANGUAGE)
+    val vietnameseEnglish = state.usesVietnameseEnglishPair()
+    return SpokenPair(
+        primary,
+        if (vietnameseEnglish) DEFAULT_SOURCE_LANGUAGE else state.resolvedSourceLanguage ?: DEFAULT_SOURCE_LANGUAGE,
+        line.translatedText?.trim().orEmpty(),
+        if (vietnameseEnglish) DEFAULT_TARGET_LANGUAGE else state.targetLanguage,
+    )
 }
 
 /**
@@ -107,12 +118,21 @@ internal class PairedLineReaderHost(
     var times: Int = DEFAULT_PAIR_READ_COUNT
     var progress by mutableStateOf<PairReadProgress?>(null)
         private set
-    val clipPlaying: Boolean get() = controller.clipPlaying
     private var generation = 0
 
-    /** Stops the video so the spoken lines can be heard. */
-    fun hold() {
-        controller.pause()
+    /**
+     * The line [segmentId] has played to its end and the video is paused: read its pair, then play on
+     * into the next line, which is read the same way when it ends.
+     */
+    fun readEndedLine(segmentId: Long) {
+        val current = state ?: return
+        val segment = current.segments.firstOrNull { it.id == segmentId } ?: return
+        val pair = spokenPairOf(current, segment)
+        if (pair == null) {
+            controller.play()
+            return
+        }
+        read(pair, resumeAfter = true)
     }
 
     fun readCurrent(resumeAfter: Boolean) {
@@ -123,7 +143,6 @@ internal class PairedLineReaderHost(
     fun read(
         pair: SpokenPair,
         resumeAfter: Boolean,
-        advanceAfter: Boolean = false,
     ) {
         if (pair.primary.isBlank() && pair.secondary.isBlank()) return
         val ticket = ++generation
@@ -136,47 +155,8 @@ internal class PairedLineReaderHost(
             onFinished = {
                 if (ticket != generation) return@readPair
                 progress = null
-                if (resumeAfter) controller.play() else if (advanceAfter) advance()
+                if (resumeAfter) controller.play()
             },
-        )
-    }
-
-    /** After the pair has been read, stop on the next line so that line is read next. No play tap. */
-    private fun advance() {
-        val current = state ?: return
-        val next = current.segments.getOrNull(current.currentIndex + 1) ?: return
-        controller.seekPaused((next.startMs + 20L) / 1000f)
-    }
-}
-
-/** The play mode: each new line is read as the pair, then the video continues. */
-@Composable
-internal fun PairedLineAutoReader(
-    host: PairedLineReaderHost,
-    state: DualSubUiState,
-    mode: StudyPlayMode,
-) {
-    val line = state.segments.getOrNull(state.currentIndex)
-    val shown = line?.let(state::studyLine)
-    val translated = !shown?.translatedText.isNullOrBlank()
-    LaunchedEffect(state.activeVideoId, line?.id, mode, translated, state.translationError) {
-        if (mode != StudyPlayMode.READ_PAIR || state.liveFallback || shown == null || shown.originalText.isBlank()) return@LaunchedEffect
-        if (host.clipPlaying) return@LaunchedEffect
-        host.hold()
-        if (!translated && state.translationError == null && state.translatedVisibility != CaptionVisibility.NEVER) {
-            delay(PAIR_READ_TRANSLATION_WAIT_MS)
-        }
-        val latest = host.state?.segments?.getOrNull(host.state?.currentIndex ?: -1)?.let { host.state?.studyLine(it) } ?: shown
-        val pair = host.state?.usesVietnameseEnglishPair() == true
-        host.read(
-            SpokenPair(
-                latest.originalText.trim(),
-                if (pair) DEFAULT_SOURCE_LANGUAGE else host.state?.resolvedSourceLanguage ?: DEFAULT_SOURCE_LANGUAGE,
-                latest.translatedText?.trim().orEmpty(),
-                if (pair) DEFAULT_TARGET_LANGUAGE else host.state?.targetLanguage ?: DEFAULT_TARGET_LANGUAGE,
-            ),
-            resumeAfter = false,
-            advanceAfter = true,
         )
     }
 }

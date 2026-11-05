@@ -127,7 +127,10 @@ fun DualSubApp(
         pairReader.state = state
         pairReader.times = pairSettings.pairReadCount
     }
-    PairedLineAutoReader(pairReader, state, pairSettings.playMode)
+    DisposableEffect(studyRunner, pairReader) {
+        studyRunner.onReadPair = pairReader::readEndedLine
+        onDispose { studyRunner.onReadPair = null }
+    }
     var showVocabulary by remember { mutableStateOf(false) }
     var showProgress by remember { mutableStateOf(false) }
 

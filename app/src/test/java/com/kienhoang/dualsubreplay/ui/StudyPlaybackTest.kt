@@ -202,9 +202,14 @@ class StudyPlaybackTest {
     }
 
     @Test
-    fun readPairLeavesPlaybackToTheReader() {
+    fun readPairPlaysEachLineThenPausesOnceAtItsEndToBeRead() {
         val settings = StudySettings(playMode = StudyPlayMode.READ_PAIR, pairReadCount = 2)
-        assertEquals(emptyList<StudyAction>(), play(StudyPlaybackDriver(), settings, 900, 11_000).map { it.second })
+        val asked = play(StudyPlaybackDriver(), settings, 900, 11_000)
+        assertEquals(
+            listOf(StudyAction.PauseToReadPair(1), StudyAction.PauseToReadPair(2), StudyAction.PauseToReadPair(3)),
+            asked.map { it.second },
+        )
+        assertEquals(3_000 - STUDY_PAUSE_LEAD_MS, asked[0].first, 33.0)
         assertEquals(2, storedPairReadCount(2))
         assertEquals(DEFAULT_PAIR_READ_COUNT, storedPairReadCount(4))
     }

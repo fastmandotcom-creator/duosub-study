@@ -60,6 +60,11 @@ internal sealed interface StudyAction {
 
     /** Brings back the user's own speed. */
     data object NormalSpeed : StudyAction
+
+    /** Pauses at the end of line [segmentId] so its pair is read; the reader plays on afterwards. */
+    data class PauseToReadPair(
+        val segmentId: Long,
+    ) : StudyAction
 }
 
 /** One playback tick, as the page reports it every 33 ms. */
@@ -226,7 +231,8 @@ internal class StudyPlaybackDriver {
             StudyPlayMode.NEW_WORD_LINES -> StudyAction.Pause.takeIf { line in tick.newWordLines }
             StudyPlayMode.READ_FIRST -> readNext(tick.segments, line + 1) ?: StudyAction.Pause
             StudyPlayMode.REPEAT_LINE -> repeat(tick, line)
-            StudyPlayMode.READ_PAIR, StudyPlayMode.NORMAL -> null
+            StudyPlayMode.READ_PAIR -> StudyAction.PauseToReadPair(id)
+            StudyPlayMode.NORMAL -> null
         }
     }
 
@@ -365,6 +371,9 @@ internal class StudyPlaybackRunner(
 
     @Volatile var newWordLines: Set<Int> = emptySet()
 
+    /** Told when a line has played to its end in Read primary, then secondary; it reads that line's pair. */
+    @Volatile var onReadPair: ((Long) -> Unit)? = null
+
     /** A line the learner tapped: see [StudyPlaybackDriver.learnerSeek]. */
     fun onLearnerSeek(second: Float) {
         driver.learnerSeek((second * MS_PER_SECOND).toLong())
@@ -412,6 +421,10 @@ internal class StudyPlaybackRunner(
             is StudyAction.PauseAt -> controller.seekPaused(action.ms / MS_PER_SECOND)
             is StudyAction.GapSpeed -> controller.setGapSpeed(action.rate, action.safetyMs)
             StudyAction.NormalSpeed -> controller.setGapSpeed(null, 0L)
+            is StudyAction.PauseToReadPair -> {
+                controller.pause()
+                onReadPair?.invoke(action.segmentId)
+            }
             null -> Unit
         }
     }

@@ -31,13 +31,14 @@ Play modes still only pause, play, or seek the one YouTube page video. Speech us
 
 - `pairedReadSteps` builds primary, secondary, repeated `times` times.
 - `WordPronouncer.readPair` speaks that sequence and replays a recorded side instead of fetching it again.
-- The play mode starts the sequence when the current line changes, then plays the page video again.
+- The play mode lets the page video play each line. `StudyPlaybackDriver` pauses just before the line's end (`StudyAction.PauseToReadPair`); `PairedLineReaderHost.readEndedLine` then reads that line's pair and plays the video on into the next line (corrected 2026-11-05: an earlier build paused when a line began, so the original video never played).
 
 ## Acceptance criteria
 
 - [x] Two times is primary, secondary, primary, secondary.
 - [x] The stored count defaults to 2 and rejects a count outside 1, 2, 3, 5.
-- [x] The play mode does not also pause or repeat the line in `StudyPlaybackDriver`.
+- [x] The play mode does not repeat the line in `StudyPlaybackDriver`; it only pauses once at the end of each line that played (`StudyPlaybackTest`).
+- [ ] On a device: the original video plays the line, then pauses and reads line 1, line 2 N times, then plays the next line.
 
 ## Validation
 
