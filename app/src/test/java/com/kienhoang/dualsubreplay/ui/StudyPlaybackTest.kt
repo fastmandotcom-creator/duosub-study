@@ -46,7 +46,8 @@ class StudyPlaybackTest {
 
     @Test
     fun normalPlayAsksForNothing() {
-        assertEquals(emptyList<Pair<Long, StudyAction>>(), play(StudyPlaybackDriver(), StudySettings(playMode = StudyPlayMode.NORMAL), 0, 11_000))
+        val settings = StudySettings(playMode = StudyPlayMode.NORMAL)
+        assertEquals(emptyList<Pair<Long, StudyAction>>(), play(StudyPlaybackDriver(), settings, 0, 11_000))
     }
 
     @Test
