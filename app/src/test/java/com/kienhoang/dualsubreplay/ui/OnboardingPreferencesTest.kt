@@ -1,5 +1,6 @@
 package com.kienhoang.dualsubreplay.ui
 
+import com.kienhoang.dualsubreplay.data.SubtitleSegment
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -30,10 +31,10 @@ class OnboardingPreferencesTest {
         assertEquals(false, usesVietnameseEnglishPair("ja", "en"))
         assertEquals("en", studyTranslationTarget("vi"))
         assertEquals("vi", studyTranslationTarget("en"))
-        val english = com.kienhoang.dualsubreplay.data.SubtitleSegment(1, 0, 1, "hello", "xin chào")
+        val english = SubtitleSegment(1, 0, 1, "hello", "xin chào")
         assertEquals("xin chào", english.asStudyPair("en", "vi").originalText)
         assertEquals("hello", english.asStudyPair("en", "vi").translatedText)
-        val japanese = com.kienhoang.dualsubreplay.data.SubtitleSegment(2, 0, 1, "こんにちは", "xin chào")
+        val japanese = SubtitleSegment(2, 0, 1, "こんにちは", "xin chào")
         val shown = japanese.asStudyPair("ja", "vi", "hello")
         assertEquals("xin chào", shown.originalText)
         assertEquals("hello", shown.translatedText)
