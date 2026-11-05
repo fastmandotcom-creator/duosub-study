@@ -1572,6 +1572,7 @@ class AppViewModel internal constructor(
                         directory = subtitleDirectory,
                         format = format,
                         natural = natural,
+                        generated = source.second,
                     )
             }
             val store = checkNotNull(displayStore)

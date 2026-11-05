@@ -111,6 +111,50 @@ class TranslationCoordinatorTest {
         )
     }
 
+    @Test fun generatedAsrCaptionsWithAMidSentencePauseJoinIntoOneUnit() {
+        // ASR (auto) track without punctuation: the speaker paused ~2 s mid-sentence, so the two pieces
+        // must join into a single unit for context-aware translation. The default 1.2 s join pause would
+        // keep them apart and tear the sentence apart.
+        val rows =
+            listOf(
+                SubtitleSegment(0, 0, 2000, "the price is"),
+                SubtitleSegment(1, 4000, 6000, "very low right now"),
+            )
+        assertEquals(listOf("the price is", "very low right now"), sentenceCaptionUnits(rows, rows, true).map { it.text })
+        assertEquals("the price is very low right now", sentenceCaptionUnits(rows, rows, true, generated = true).single().text)
+    }
+
+    @Test fun generatedAsrJoiningStillStopsAtAPausePastTheAsrLimit() {
+        val rows =
+            listOf(
+                SubtitleSegment(0, 0, 1000, "I gave up"),
+                SubtitleSegment(1, 3000, 4000, "because it was raining."),
+            )
+        assertEquals("I gave up because it was raining.", sentenceCaptionUnits(rows, rows, true, generated = true).single().text)
+        val longPause =
+            listOf(
+                SubtitleSegment(0, 0, 1000, "I gave up"),
+                SubtitleSegment(1, 4000, 5000, "because it was raining."),
+            )
+        assertEquals(listOf("I gave up", "because it was raining."), sentenceCaptionUnits(longPause, longPause, true, generated = true).map { it.text })
+    }
+
+    @Test fun generatedAsrJoiningGrowsTheReadableSizeCap() {
+        // Two unpunctuated ASR pieces whose combined text exceeds the readable cap: only the ASR cap
+        // keeps them one unit. The boundary is placed on a word edge, matching how pieces are joined.
+        val left = "a single unbroken run of words that goes on and on and on and on and on and on and on"
+        val right = "and on and on and on and on, so it keeps going like this"
+        val rows =
+            listOf(
+                SubtitleSegment(0, 0, 5000, left),
+                SubtitleSegment(1, 5000, 10_000, right),
+            )
+        val joined = sentenceCaptionUnits(rows, rows, true, generated = true).single()
+        assertEquals("$left $right", joined.text)
+        // The two pieces together exceed MAX_UNIT_CHARACTERS, so only the ASR cap keeps them joined.
+        assertTrue(left.length + right.length > MAX_UNIT_CHARACTERS)
+    }
+
     @Test fun shortPhraseRowsRememberTheirWholeSentence() {
         val text = "Though the catacombs did offer a space where inconvenient bodies could disappear."
         val display = captionDisplaySegments(listOf(SubtitleSegment(0, 0, 6000, text)), CaptionFormat.SHORT_PHRASES, natural = true)

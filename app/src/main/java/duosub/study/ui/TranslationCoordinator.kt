@@ -30,11 +30,30 @@ internal const val MAX_JOIN_PAUSE_MS = 1_200L
  */
 internal const val MAX_UNFINISHED_PAUSE_MS = 3_000L
 
-/** Display splitting must not remove the sentence context passed to ML Kit. */
+/**
+ * Punctuation-free auto-generated (ASR) Latin captions: a pause under this length is mid-speech, not a
+ * sentence boundary, so an unfinished piece joins the next ("…misleading in" + "a way."). This is what
+ * keeps one spoken sentence un-torn apart when the recognizer inserts a short pause.
+ */
+internal const val MAX_AS_JOIN_PAUSE_MS = 2_400L
+
+/** The longest one-sentence unit a punctuation-free ASR track may grow into before we stop joining. */
+internal const val MAX_AS_UNIT_CHARACTERS = 200
+
+/** The longest one-sentence unit a punctuation-free ASR track may span before we stop joining. */
+internal const val MAX_AS_UNIT_DURATION_MS = 12_000L
+
+/**
+ * Display splitting must not remove the sentence context passed to ML Kit.
+ *
+ * [generated] marks a punctuation-free auto-generated track: without it a short pause would tear one
+ * spoken sentence across several units, so those join across a longer pause and grow to a bigger cap.
+ */
 internal fun sentenceCaptionUnits(
     display: List<SubtitleSegment>,
     source: List<SubtitleSegment>,
     natural: Boolean,
+    generated: Boolean = false,
 ): List<CaptionTranslationUnit> {
     if (!natural) return display.mapIndexed { index, segment -> CaptionTranslationUnit(segment.originalText, listOf(index)) }
     val ordered =
@@ -48,7 +67,17 @@ internal fun sentenceCaptionUnits(
     val marksEnds = marksCjkSentenceEnds(display)
     ordered.forEach { next ->
         val previous = coherent.lastOrNull()
-        val pauseLimit = if (marksEnds && isCjk(previous?.text?.trim()?.lastOrNull())) MAX_UNFINISHED_PAUSE_MS else MAX_JOIN_PAUSE_MS
+        val previousLast = previous?.text?.trim()?.lastOrNull()
+        val cjkUnfinished = marksEnds && isCjk(previousLast)
+        val unpunctuatedLatinAsr = generated && !marksEnds && !isCjk(previousLast)
+        val pauseLimit =
+            when {
+                cjkUnfinished -> MAX_UNFINISHED_PAUSE_MS
+                unpunctuatedLatinAsr -> MAX_AS_JOIN_PAUSE_MS
+                else -> MAX_JOIN_PAUSE_MS
+            }
+        val unitCapCharacters = if (unpunctuatedLatinAsr) MAX_AS_UNIT_CHARACTERS else MAX_UNIT_CHARACTERS
+        val unitCapDuration = if (unpunctuatedLatinAsr) MAX_AS_UNIT_DURATION_MS else MAX_UNIT_DURATION_MS
         // Auto-caption lines overlap in time (a negative gap), which means continuous speech.
         val continues =
             previous != null && !sentenceEnd.containsMatchIn(previous.text.trim()) &&
@@ -56,8 +85,8 @@ internal fun sentenceCaptionUnits(
                 display[next.indices.first()].startMs - display[previous.indices.last()].endMs <= pauseLimit
         val fits =
             previous != null &&
-                display[next.indices.last()].endMs - display[previous.indices.first()].startMs <= MAX_UNIT_DURATION_MS &&
-                previous.text.length + next.text.length <= MAX_UNIT_CHARACTERS
+                display[next.indices.last()].endMs - display[previous.indices.first()].startMs <= unitCapDuration &&
+                previous.text.length + next.text.length <= unitCapCharacters
         val join = continues && (fits || isSentenceTail(next.text, sentenceEnd))
         if (join) {
             val left = checkNotNull(previous).text

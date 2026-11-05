@@ -25,16 +25,21 @@ internal fun storedCaptionFormat(
     CaptionFormat.entries.firstOrNull { it.storageValue == raw }
         ?: if (raw == null && !legacySplit) CaptionFormat.WHOLE_SENTENCE else CaptionFormat.SHORT_PHRASES
 
-/** Both presentations share source words; translation is applied only after grouping. */
+/**
+ * Both presentations share source words; translation is applied only after grouping.
+ * [generated] marks a punctuation-free auto-generated track, so its pieces join across a longer pause
+ * into one whole sentence (see [sentenceCaptionUnits]).
+ */
 internal fun captionDisplaySegments(
     source: List<SubtitleSegment>,
     format: CaptionFormat,
     natural: Boolean,
+    generated: Boolean = false,
 ): List<SubtitleSegment> {
     val pieces = sentencePieces(source, natural)
     return captionDisplaySegments(
         source = pieces,
-        units = sentenceCaptionUnits(pieces, pieces, natural),
+        units = sentenceCaptionUnits(pieces, pieces, natural, generated),
         format = format,
     )
 }
@@ -97,6 +102,7 @@ internal suspend fun prepareCaptionDisplayStore(
     directory: File,
     format: CaptionFormat,
     natural: Boolean,
+    generated: Boolean = false,
     batchSize: Int = CAPTION_PREPARATION_BATCH_SIZE,
 ): SubtitleStore {
     require(batchSize > 0) { "Caption preparation batch size must be positive." }
@@ -108,7 +114,7 @@ internal suspend fun prepareCaptionDisplayStore(
             val end = minOf(cursor + batchSize, source.size)
             val buffered = carry + sentencePieces(source.read(cursor until end), natural)
             val finalBatch = end == source.size
-            val units = sentenceCaptionUnits(buffered, buffered, natural)
+            val units = sentenceCaptionUnits(buffered, buffered, natural, generated)
             val readyUnits =
                 if (natural && !finalBatch && units.isNotEmpty()) {
                     units.dropLast(1)
