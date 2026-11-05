@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import tempfile
 import time
@@ -225,12 +226,16 @@ def main():
         if signing_certificate(apksigner, apk) != signing_certificate(apksigner, previous_apk):
             raise RuntimeError("Local signing key does not match the currently published Study APK.")
 
+        upload_directory = directory / "upload"
+        upload_directory.mkdir()
+        upload_apk = upload_directory / APK_NAME
+        shutil.copyfile(apk, upload_apk)
         command(
             "gh",
             "release",
             "upload",
             tag,
-            str(apk),
+            str(upload_apk),
             "--repo",
             REPOSITORY,
             "--clobber",
