@@ -232,6 +232,15 @@ private fun CompactCardSubtitleLine(
     }
 }
 
+/**
+ * The read-pair highlight: the focused line gets a background + border, but the text keeps the
+ * same font size and line height it had unfocused. Owner report 2026-11-06: zooming the focused
+ * line (the old 1.2x) and switching its weight made the bilingual pair squish and jump as the
+ * highlight moved between the original and translated line.
+ *
+ * The padding is the same focused or not, so the line's height is identical either way — only the
+ * background and border appear on the focused line.
+ */
 @Composable
 internal fun PairedReadingFocusLine(
     focused: Boolean,
@@ -250,11 +259,19 @@ internal fun PairedReadingFocusLine(
             }
         }
     } else {
-        content()
+        Box(
+            modifier = Modifier.fillMaxWidth().testTag(testTag).padding(horizontal = 7.dp, vertical = 5.dp),
+        ) {
+            content()
+        }
     }
 }
 
-private const val READ_PAIR_FOCUS_SCALE = 1.2f
+/**
+ * No longer scales the focused line: the highlight is a background + border only, so the bilingual
+ * pair never squishes or reflows as the highlight moves between lines.
+ */
+internal const val READ_PAIR_FOCUS_SCALE = 1f
 
 /** The third line: plain text (no word taps) in the translation's color, a little smaller; right to left by its own script. */
 @Composable
@@ -332,7 +349,6 @@ private fun OriginalCardText(
                     lineHeight = (22 * fontScale).sp,
                     fontWeight =
                         when {
-                            readingFocus -> FontWeight.Bold
                             active -> FontWeight.SemiBold
                             else -> FontWeight.Normal
                         },
@@ -354,7 +370,6 @@ private fun OriginalCardText(
             lineHeight = (22 * fontScale).sp,
             fontWeight =
                 when {
-                    readingFocus -> FontWeight.Bold
                     active -> FontWeight.SemiBold
                     else -> FontWeight.Normal
                 },
@@ -420,7 +435,7 @@ private fun TranslatedCardText(
                 TextStyle(
                     fontSize = (14 * fontScale).sp,
                     lineHeight = (18 * fontScale).sp,
-                    fontWeight = if (readingFocus) FontWeight.Bold else FontWeight.Normal,
+                    fontWeight = FontWeight.Normal,
                     color = translatedColor,
                 ),
             languageCode = targetLanguage,
@@ -438,7 +453,7 @@ private fun TranslatedCardText(
             style = LocalTextStyle.current.inLineDirection(),
             fontSize = (14 * fontScale).sp,
             lineHeight = (18 * fontScale).sp,
-            fontWeight = if (readingFocus) FontWeight.Bold else FontWeight.Normal,
+            fontWeight = FontWeight.Normal,
             color = translatedColor,
         )
     }
