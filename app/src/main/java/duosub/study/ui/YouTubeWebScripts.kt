@@ -598,7 +598,7 @@ internal fun parseWebPlaybackSnapshot(rawValue: String?): WebPlaybackSnapshot? {
         if (!isYouTubeWebUrl(json.optString("url"))) return@runCatching null
         val liveCaption =
             json.optJSONObject("liveCaption")?.let { live ->
-                val text = live.optString("text").replace(Regex("\\s+"), " ").trim()
+                val text = SubtitleTextSanitizer.sanitize(live.optString("text"))
                 val revision = live.optLong("revision", -1L)
                 val mediaSecond = live.optDouble("mediaSecond", Double.NaN)
                 if (

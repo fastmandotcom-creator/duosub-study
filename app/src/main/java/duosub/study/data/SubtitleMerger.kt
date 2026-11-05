@@ -221,11 +221,7 @@ object SubtitleMerger {
         return matchedCharacters.toFloat() / visibleCharacters >= MIN_TIMED_WORD_TEXT_COVERAGE
     }
 
-    private fun clean(text: String): String =
-        text
-            .replace(Regex("<[^>]+>"), "")
-            .replace(Regex("\\s+"), " ")
-            .trim()
+    private fun clean(text: String): String = SubtitleTextSanitizer.sanitize(text)
 
     private fun separator(
         left: Char?,
