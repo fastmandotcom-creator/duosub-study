@@ -69,13 +69,13 @@
       "uncompressed_bytes": 35823
     }
   ],
-  "package_name": "com.kienhoang.dualsubreplay.MainActivity",
+  "package_name": "com.duosub.study.MainActivity",
   "permissions": [
     "android.permission.ACCESS_NETWORK_STATE",
     "android.permission.BIND_JOB_SERVICE",
     "android.permission.DUMP",
     "android.permission.INTERNET",
-    "com.kienhoang.dualsubreplay.qualityqa.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+    "com.duosub.study.qualityqa.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
   ],
   "forbidden_permissions_found": [],
   "forbidden_components_found": []

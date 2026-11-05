@@ -1,7 +1,7 @@
 Applications Memory Usage (in Kilobytes):
 Uptime: 2462390 Realtime: 2462390
 
-** MEMINFO in pid 10463 [com.kienhoang.dualsubreplay.qualityqa] **
+** MEMINFO in pid 10463 [com.duosub.study.qualityqa] **
                    Pss  Private  Private     Swap      Rss     Heap     Heap     Heap
                  Total    Dirty    Clean    Dirty    Total     Size    Alloc     Free
                 ------   ------   ------   ------   ------   ------   ------   ------
@@ -58,7 +58,7 @@ Uptime: 2462390 Realtime: 2462390
  DATABASES
       pgsz     dbsz   Lookaside(b) cache hits cache misses cache size  Dbname
 PER CONNECTION STATS
-         4       20             23     1    16     2  /data/user/0/com.kienhoang.dualsubreplay.qualityqa/databases/vocabulary.db
+         4       20             23     1    16     2  /data/user/0/com.duosub.study.qualityqa/databases/vocabulary.db
 POOL STATS
      cache hits  cache misses    cache size  Dbname
-              1            17            18  /data/user/0/com.kienhoang.dualsubreplay.qualityqa/databases/vocabulary.db
+              1            17            18  /data/user/0/com.duosub.study.qualityqa/databases/vocabulary.db

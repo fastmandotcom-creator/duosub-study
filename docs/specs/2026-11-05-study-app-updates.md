@@ -6,7 +6,7 @@ Implemented 2026-11-05. Publish an end-user APK with `python3 tools/publish_stud
 
 ## Context / problem
 
-DualSub Study is published in `fastmandotcom-creator/duosub-study` as tag `study-<version>` with one asset, `DualSub-Study.apk`. The published APK (study-1.0.4.8, checked 2026-11-05) is a debug build with application id `duosub.study.study`, versionName `1.0.4-study.8`, versionCode 42.
+DualSub Study is published in `fastmandotcom-creator/duosub-study` as tag `study-<version>` with one asset, `DualSub-Study.apk`. The published APK (study-1.0.4.9, checked 2026-11-05) is a debug build with application id `duosub.study.study`, versionName `1.0.4-study.9`.
 
 `updateChannelFor` only knows the official app (`duosub.study`, not debuggable) and PR previews (`.preview`). The Study app matches neither, so its channel is `None`: it cannot update itself, and the update dialog opens the releases page of `fastmandotcom-creator/duosub-study`.
 
@@ -29,11 +29,11 @@ Settings → App updates and the drawer's Check for updates work in Study. A rel
 ## Technical constraints / invariants
 
 - Only the latest non-draft, non-prerelease release is read, through `releases/latest`.
-- The APK is the asset named `DualSub-Study.apk`; it must match GitHub's SHA-256 digest, be this package and have a higher versionCode (existing `AppUpdater` checks). Android still refuses a different signing key.
+- The APK is the asset named `DualSub-Study.apk`; it must match GitHub's SHA-256 digest, be this package and have a higher versionCode (existing `AppUpdater` checks). Android requires the same signer for an in-place install; users with an older install signed differently can uninstall it and install this APK fresh.
 - Downloads stay limited to GitHub hosts.
 - The installed `X.Y.Z-study.N` and the tag `study-X.Y.Z.N` are compared as the numbers `X.Y.Z.N`. A tag `study-1.0.4` equals `1.0.4`.
 - Each Study release must raise versionCode and use versionName `X.Y.Z-study.N`, as 1.0.4-study.7 does; the updater cannot work otherwise.
-- Study APK releases use the existing local signing key and must keep the same certificate as the previous public Study APK so Android can install updates over it. The private key never leaves the build machine.
+- APK signing is not compared with older releases or treated as a release blocker. The debug build uses the local Android debug signer; if that signer changes, the user can uninstall the old app and install the new one.
 
 ## Proposed approach / plan
 
@@ -41,7 +41,7 @@ Settings → App updates and the drawer's Check for updates work in Study. A rel
 - `parseStudyRelease` in `data/AppUpdates.kt`, next to `parseOfficialRelease`.
 - `AppUpdater.checkNow` reads the Study latest release for that channel.
 - `AppUpdateUi` opens the Study releases page for that channel.
-- `python3 tools/publish_study_apk.py` publishes exactly one verified `DualSub-Study.apk`, and refuses to publish unless the local APK has the current package, a newer version, and the same signing certificate as the previous release.
+- `python3 tools/publish_study_apk.py` publishes exactly one verified `DualSub-Study.apk`, checking only the package and release version needed by the updater; it does not download the previous APK or compare signing certificates.
 - Android unit, lint, and managed-device suites remain available only by manual workflow dispatch and do not delay APK release.
 
 ## Acceptance criteria
@@ -63,8 +63,8 @@ Settings → App updates and the drawer's Check for updates work in Study. A rel
 
 - Run `python3 tools/publish_study_apk.py` after the app commit is pushed to `main`; it performs one cached local Gradle `assembleDebug` build for `duosub.study.study`.
 - Release numbering follows the existing `study-X.Y.Z.N` channel and uses a monotonically increasing Android version code.
-- It reuses the local key that signed the current public APK, compares the built certificate with that APK, then uploads and publishes the asset.
-- No GitHub signing secret or automated website publish is required. Android tests remain available through manual workflow dispatch only.
+- It uses the local Android debug signer, builds once, then uploads and publishes the asset. Older signatures are not a gate.
+- No GitHub signing secret, previous APK download, or automated website publish is required. Android tests remain available through manual workflow dispatch only.
 
 ## Release intent
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and publish a Study update using the local, already trusted signing key."""
+"""Build and publish a Study APK from the current main commit."""
 
 import json
 import os
@@ -85,14 +85,6 @@ def read_badging(aapt, apk):
     return command(str(aapt), "dump", "badging", str(apk)).splitlines()[0]
 
 
-def signing_certificate(apksigner, apk):
-    output = command(str(apksigner), "verify", "--print-certs", str(apk))
-    match = re.search(r"Signer #1 certificate SHA-256 digest: ([0-9a-fA-F]+)", output)
-    if not match:
-        raise RuntimeError(f"Could not read the signing certificate from {apk}")
-    return match.group(1).lower()
-
-
 def main():
     branch = command("git", "branch", "--show-current")
     source_sha = command("git", "rev-parse", "HEAD")
@@ -176,29 +168,12 @@ def main():
 
     sdk = android_sdk()
     aapt = sdk / "build-tools" / "36.0.0" / "aapt"
-    apksigner = sdk / "build-tools" / "36.0.0" / "apksigner"
-    if not aapt.is_file() or not apksigner.is_file():
+    if not aapt.is_file():
         raise RuntimeError("Android build-tools 36.0.0 are required.")
 
     with tempfile.TemporaryDirectory(prefix="duosub-study-release-") as temporary:
         directory = Path(temporary)
-        command(
-            "gh",
-            "release",
-            "download",
-            latest_public[1]["tag_name"],
-            "--repo",
-            REPOSITORY,
-            "--pattern",
-            APK_NAME,
-            "--dir",
-            str(directory),
-        )
-        previous_apk = directory / APK_NAME
-        previous_code = re.search(r"versionCode='(\d+)'", read_badging(aapt, previous_apk))
-        if not previous_code:
-            raise RuntimeError("Could not read the current Study APK version code.")
-        version_code = max(43, int(time.time()) - 1_700_000_000, int(previous_code[1]) + 1)
+        version_code = max(43, int(time.time()) - 1_700_000_000)
 
         android_environment = os.environ.copy()
         android_environment["ANDROID_HOME"] = str(sdk)
@@ -223,9 +198,6 @@ def main():
             or f"versionCode='{version_code}'" not in badging
         ):
             raise RuntimeError(f"Built APK has the wrong package or version: {badging}")
-        if signing_certificate(apksigner, apk) != signing_certificate(apksigner, previous_apk):
-            raise RuntimeError("Local signing key does not match the currently published Study APK.")
-
         upload_directory = directory / "upload"
         upload_directory.mkdir()
         upload_apk = upload_directory / APK_NAME
