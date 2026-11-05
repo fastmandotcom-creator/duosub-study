@@ -21,7 +21,7 @@
 
 <p align="center">
   Android 8.0 or newer · No account · No ads<br>
-  Want to try changes before they are released? <a href="https://github.com/fastmandotcom-creator/duosub-study/releases/tag/preview">Get a preview build</a> of an open pull request (may be less stable).
+  Want to try a change before it is released? <a href="https://github.com/fastmandotcom-creator/duosub-study/releases/tag/preview">Get a preview build</a> from the last run on <code>main</code> (may be less stable).
 </p>
 
 ### How to install
@@ -218,13 +218,13 @@ See the [technical context](docs/project/tech-stack.md) for the invariants that 
 
 ### CI, releases, and the website
 
-Pull requests run formatting, complexity, unit, lint, build, and managed-device checks, and publish a numbered test APK to the rolling preview release. Merges by the owner publish an official release automatically. See [Continuous integration and releases](docs/releasing.md) for versioning, release labels, and recovery.
+Development happens directly on `main` — there are no feature branches or pull requests in this project. Each change is committed straight to `main` and pushed. The Study APK is published with one local command, `python3 tools/publish_study_apk.py`, after the commit reaches `main`; it publishes to [GitHub Releases](https://github.com/fastmandotcom-creator/duosub-study/releases). The Android test suites (unit, lint, build, managed-device) are available through the [manual `Android build` workflow](https://github.com/fastmandotcom-creator/duosub-study/actions/workflows/android.yml) for extra evidence and are not a gate for the Study release. See [Continuous integration and releases](docs/releasing.md) and [Update DualSub Study from its own releases](docs/specs/2026-11-05-study-app-updates.md) for versioning and recovery.
 
 The landing page in `site/` (English and Vietnamese) deploys to GitHub Pages when `site/` or `docs/images/` changes on `main`. The demo video, README GIF, poster and social card are rendered from code in [tools/promo-video](tools/promo-video/README.md).
 
 ## Contributing and roadmap
 
-Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md), and the compact [roadmap](ROADMAP.md) before opening a pull request. Humans and coding agents share the [project context](docs/project/mission.md), [technical context](docs/project/tech-stack.md), and [lightweight spec workflow](docs/specs/README.md); [AGENTS.md](AGENTS.md) gives operational instructions.
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md), and the compact [roadmap](ROADMAP.md) before committing. Humans and coding agents share the [project context](docs/project/mission.md), [technical context](docs/project/tech-stack.md), and [lightweight spec workflow](docs/specs/README.md); [AGENTS.md](AGENTS.md) gives operational instructions.
 
 ## License
 

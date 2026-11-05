@@ -17,34 +17,40 @@ Android app (`:app`, package `duosub.study`) with a separate test-only `:benchma
 
 ## Development workflow
 
+This project does not use feature branches or pull requests. All development happens directly on `main`: commit the focused change on `main`, push it, and publish the Study APK from the same commit with `python3 tools/publish_study_apk.py`.
+
 1. Before significant work, read [mission](docs/project/mission.md), [technical context](docs/project/tech-stack.md), [ROADMAP.md](ROADMAP.md), relevant specs, and relevant source/tests. Stable intent belongs in the repository, not only chat history.
-2. Create/update a [feature spec](docs/specs/README.md) with acceptance criteria, a small plan, and validation scenarios **before coding**. New features, significant/risky fixes, architecture, migrations, CI/release changes, and measurable performance work need specs; trivial changes need only a clear PR and acceptance criteria.
-3. Record release intent before implementation where possible and resolve it before opening the PR. Existing owner authorization covers the agreed implementation; do not add a redundant approval round or invent approval. Ask about unresolved material scope/product decisions.
+2. Create/update a [feature spec](docs/specs/README.md) with acceptance criteria, a small plan, and validation scenarios **before coding**. New features, significant/risky fixes, architecture, migrations, CI/release changes, and measurable performance work need specs; trivial changes need only a clear commit message and acceptance criteria.
+3. Record release intent in the spec before implementation where possible. Existing owner authorization covers the agreed implementation; do not add a redundant approval round or invent approval. Ask about unresolved material scope/product decisions.
 4. Implement the smallest coherent solution and validate against the criteria. Record actual implementation, deviations, and passed/failed/unverified checks in the spec. Offline tests do not establish physical-device or live-YouTube success.
-5. Update relevant permanent docs in the same PR when an authorized decision changes architecture or conventions. Keep ROADMAP.md directional and each implementation plan inside its feature spec; keep QA evidence in docs/qa/.
-6. Open a focused PR against `main` linking the spec (or explaining why none is needed). Open it ready for review, never as a draft: the owner wants to test and merge without extra GitHub steps, and a draft needs an extra click before merging (CI does not re-run on ready for review). The owner remains final merge authority; do not merge, enable auto-merge, or publish releases unless explicitly instructed.
+5. Update relevant permanent docs in the same commit when an authorized decision changes architecture or conventions. Keep ROADMAP.md directional and each implementation plan inside its feature spec; keep QA evidence in docs/qa/.
+6. Commit on `main` linking the spec (or explaining why none is needed) in the commit body, then push. The owner remains final authority on shipping; do not publish a release unless the owner instructed it, and only through the [Study publish command](tools/publish_study_apk.py).
 
-## Preparing PRs for owner merge
+## Publishing a Study release from main
 
-- Read `.github/workflows/release-on-main.yml` and `tools/automatic_release.py` before handoff; they define actual automation. Use the [release-intent mapping](docs/specs/README.md#release-intent-is-a-decision-not-automation).
-- Follow explicit owner release intent; otherwise preserve **patch** for any change that reaches the APK. Recommend alternatives if useful, but do not silently infer minor/major. **Standing owner decision (2026-10-28, widening the 2026-10-04 docs-only and 2026-10-17 website rules): apply `release:skip` without asking when the shipped APK cannot change**, that is, no changed file is in `app/src/main/**`, `app/build.gradle.kts`, `app/proguard-rules.pro`, `build.gradle.kts`, `settings.gradle.kts`, `gradle.properties` or `gradle/**` (version catalog, wrapper). Docs, site, promo media, workflows, release tools, `tools/**`, tests (`app/src/test/**`, `app/src/androidTest/**`), `benchmark/**` and lint/quality config all qualify. If any of those APK files changes or you are unsure, keep patch and ask.
-- Apply and verify the actual GitHub label or standalone exact-version PR-body directive. Prose/specs/checkboxes do not apply labels. Keep at most one release label OR one directive; remove superseded overrides without disturbing unrelated labels. If required metadata cannot be applied, report the missing action and do not call the PR ready to merge.
-- State intent, reason, and expected version (or why skipped/unavailable). Inspect stable tags, releases including draft reservations, and the Gradle baseline before estimating. Bump-derived numbers are estimates until reserved; exact versions must exceed all existing/reserved stable versions. Do not manually change Gradle versions or create release tags in normal PRs.
-- When the final-head CI passes, send the owner the preview release page link, https://github.com/fastmandotcom-creator/duosub-study/releases/tag/preview, so they can test on a phone before merging. **Never send a direct `.apk` download link** (owner decision 2026-10-08): the owner can't download from it and downloads the APK from the release page themselves. `pr-preview-auto.yml` uploads it to that rolling `preview` release as `DualSub-Replay-PR<N>-build<run>-preview.apk`, so name the asset to pick; a newer build of the same PR replaces the older asset.
-- Before calling a PR ready to merge, verify its latest final-head Android CI run: both jobs (`verify-build`, `managed-device-tests`) must succeed. New commits need fresh checks; report pending/failed/skipped/unavailable checks explicitly.
-- Handoff: owner reviews the preview and green checks, then manually merges; existing automation publishes unless skipped. Green PR CI is not proof of release publication. Verify the release workflow/assets if asked to confirm publication; use existing reservation/retry recovery below.
+The Study channel (`duosub.study.study`, tag `study-X.Y.Z.N`) is the current way to ship the app to end users:
 
-## Releases happen automatically after an approved PR merge
+```powershell
+git push origin main
+python3 tools/publish_study_apk.py
+```
 
-- When `fastmandotcom-creator` merges a PR into `main`, `release-on-main.yml` checks the latest Android CI run for the PR's final head and requires both Android CI jobs (`verify-build`, `managed-device-tests`) to succeed. Direct pushes and other mergers do not release. Android CI also runs on every push to `main` so `setup-gradle` saves fresh caches for PR runs; those runs never count as PR CI.
-- Default: bump the highest existing/reserved stable patch version and monotonically increase Android `versionCode`. **Do not manually bump Gradle version constants in feature PRs.**
-- Before merge, apply at most one GitHub label (`release:patch`, `release:minor`, `release:major`, `release:skip`) OR a standalone `Release-Version: X.Y.Z` in the PR description. Conflicting instructions fail closed. `release:skip` publishes nothing.
-- Release versions live in a release-only commit/tag based on the exact merge; only the two Gradle version constants change. `main` keeps development defaults. No bot commits to `main` or branch-protection bypass is needed.
-- Draft release metadata reserves version/name/code/source before building. Retry failed runs (or dispatch with a merged PR number) to resume that reservation. Never delete reservations or edit their hidden marker to retry. Published merges are a no-op.
-- Production signature, package, and version are verified before upload; the draft is published only with both APK and checksum present. Release notes are generated automatically. Queued runs cannot allocate the same version, and older retries cannot replace a newer Latest release.
-- Merges into `main` publish no preview APK (owner decision 2026-10-18); the `preview` release holds only open PRs' `DualSub-Replay-PR<N>-build<run>-preview.apk` builds. The PR CI artifact stays `DualSub-Replay-preview`, the name `pr-preview-auto.yml` downloads.
-- Release builds require the four `ANDROID_RELEASE_*` env vars plus `-PrequireReleaseSigning=true`. Never commit signing material (`*.jks`/`*.keystore` are gitignored).
-- Test workflow changes with `python3 -m unittest discover -s tools/tests -p 'test_*.py' -v` and validate workflow YAML/shell. These tests also run in Android PR CI.
+`publish_study_apk.py` reads `appVersionName` from `app/build.gradle.kts`, builds one cached `assembleDebug` with `-PpreviewApplicationIdSuffix=.study` and a monotonically increasing Android `versionCode`, verifies the package id, version, size and permissions, and publishes the asset `DualSub-Study.apk` to a [GitHub Release](https://github.com/fastmandotcom-creator/duosub-study/releases). It does not download the previous APK, does not require a signed keychain, and does not run the test suite; run [the manual `Android build` workflow](.github/workflows/android.yml) first when you want extra evidence.
+
+The command refines the `study-X.Y.Z.N` channel: each release increments `N` on the current `appVersionName` major.minor.patch base and uses a fresh timestamp-derived `versionCode` (Android requires the app's own `versionCode` to grow for in-place updates). Older releases stay listed; `releases/latest` points to the newest public one.
+
+- **Never skip or loosen a test** to get a green run. Run the manual Android build workflow (`workflow_dispatch`) to collect evidence before publishing; it is not a gate, but a failing check should be understood and fixed.
+- **Never commit signing material** (`*.jks`/`*.keystore` are gitignored). The local Android debug signer is used for the Study channel.
+- **Security fixes** (owner decision 2026-10-30, [spec](docs/specs/2026-10-30-scale-readiness.md)) are still flagged with a separate label `security:critical` on the release when the fix applies; the Study publish flow records it in the release notes.
+- Test workflow changes with `python3 -m unittest discover -s tools/tests -p 'test_*.py' -v` and validate workflow YAML/shell. These tests also run in the manual Android workflow.
+
+The legacy `release-on-main` pipeline (PR labels + `tools/automatic_release.py` +
+`update-info.json` security-fix gating) remains available for the `main` app release
+(`duosub.study`, tag `vX.Y.Z`). It is the fallback when the Study channel is not the
+right target (for example, a security-fix release with `update-info.json` gating, or
+a change that only touches `duosub.study` and not `duosub.study.study`). Direct
+pushes and other mergers to `main` do not trigger it; it only fires on a PR merge.
+See [Continuous integration and releases](docs/releasing.md) for versioning and recovery.
 
 ## Architecture invariants (enforced by tests)
 
@@ -77,14 +83,14 @@ Android app (`:app`, package `duosub.study`) with a separate test-only `:benchma
 - `unitTests.isReturnDefaultValues = true`: Android framework calls return defaults instead of throwing in unit tests.
 - Instrumented tests build Compose UI in isolation (`createComposeRule`) and WebView fixtures run offline — tests never hit the live YouTube site.
 
-## AI agents opening or updating pull requests
+## AI agents coding directly on `main`
 
-These rules apply to any coding agent (Claude, Copilot, Codex, Cursor and others), whether it works for an outside contributor or for the owner. The human process is in [CONTRIBUTING.md](CONTRIBUTING.md#how-review-works); agents follow it too.
+These rules apply to any coding agent (Claude, Copilot, Codex, Cursor and others), whether it works for an outside contributor or for the owner. The human process is in [CONTRIBUTING.md](CONTRIBUTING.md); agents follow it too.
 
-- One focused change per PR, from its own branch. Outside contributors open it from a fork with **Allow edits by maintainers** ticked. Say in the PR body that an agent wrote or changed the code, and fill in the PR template honestly: not run is not passed.
-- Never commit or paste secrets: API keys, tokens, `*.jks`/`*.keystore`, `ANDROID_RELEASE_*` values, `local.properties`, personal YouTube data, or caption/video dumps. Do not print secrets in logs or PR text. Keep test fixtures offline and synthetic.
-- Do not bump the Gradle version constants, create tags or releases, or edit `.github/workflows/**`, `tools/automatic_release.py` or signing setup unless that is the agreed change.
-- Release labels: an agent working for an outside contributor never adds, changes or removes `release:*` labels or a `Release-Version:` line; it only states the expected release in the template. An agent working for the owner follows "Preparing PRs for owner merge" above.
-- Review is a loop the PR's author drives. Read every review comment and failed CI check, then push a new commit that fixes it or reply saying why not; keep going until review is done and both Android CI jobs pass on the latest commit. Push new commits rather than force-pushing after review has started, and leave resolving a comment thread to the reviewer.
-- Never merge, enable auto-merge, approve your own PR, close and reopen to re-run CI, push empty commits, or skip, disable or loosen a test to get green.
-- The owner's agents reviewing an outside contributor's PR (owner decision 2026-10-28): review the code, security and privacy, and leave specific comments or suggested changes; the contributor changes their own PR. Do not rewrite their branch or open a competing PR unless the owner asks. Use **Allow edits by maintainers** only for small mechanical fixes (merging `main`, a conflict, a typo) and say so in a comment. The owner decides when to merge, once everyone agrees and the app works on a phone.
+- One focused change per commit, on `main`. No feature branches, no forks, no pull requests. Say in the commit message that an agent wrote or changed the code, and link the spec (or state why none is needed). Record validation results in the spec: not run is not passed.
+- Never commit or paste secrets: API keys, tokens, `*.jks`/`*.keystore`, `ANDROID_RELEASE_*` values, `local.properties`, personal YouTube data, or caption/video dumps. Do not print secrets in logs or commit text. Keep test fixtures offline and synthetic.
+- Do not bump the Gradle version constants, create tags or releases, or edit `.github/workflows/**`, `tools/automatic_release.py` or `tools/publish_study_apk.py` signing setup unless that is the agreed change.
+- The Study publish flow (`python3 tools/publish_study_apk.py`) is the normal way to ship; it does not need a GitHub label. The legacy `release-on-main` pipeline (owner merge) still applies labels and reads `Release-Version:` from the PR body; agents working for an outside contributor never add, change or remove those labels or that directive — they only state the expected release in the commit or PR body.
+- Verification loop: run the manual `Android build` workflow (`workflow_dispatch`) after pushing a commit that reaches the APK, and read its two jobs (`verify-build`, `managed-device-tests`). Fix failures with a new commit on `main`, do not force-push, and do not loosen or skip a test to get green.
+- Never skip, disable or loosen a test; never push empty commits. The owner remains final authority on publishing; an agent only publishes when explicitly instructed, through `publish_study_apk.py` (or the legacy `release-on-main` pipeline for `duosub.study`).
+- Outside contributors' code is reviewed and suggested on their own commit history; the owner's agents may apply small mechanical fixes (a typo, a conflict with `main`) with a comment.

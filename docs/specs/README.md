@@ -22,7 +22,7 @@ WebView/caption/playback work, persistence/migrations, CI/CD or release changes,
 and performance work with measurable targets.
 
 Typos, tiny documentation edits, and obvious small fixes without architectural impact
-do not need a full spec. State `Not required — <reason>` in the PR and give brief,
+do not need a full spec. State `Not required — <reason>` in the commit message and give brief,
 checkable acceptance criteria. Risk and behavior matter more than line count.
 
 ## Start and lifecycle
@@ -37,15 +37,16 @@ checkable acceptance criteria. Risk and behavior matter more than line count.
    implementation plan before coding. Revise these when investigation changes scope.
 4. Implement the smallest coherent solution, validate, and record actual results and
    deviations. Update lasting product/architecture/convention decisions in the relevant
-   permanent docs in the same PR.
-5. Link the spec in the PR. Apply/verify release metadata, report CI/preview status,
-   and leave review and manual merge to the owner. Existing automation handles release.
+   permanent docs in the same commit.
+5. Commit on `main`, linking the spec in the commit body. Push, then publish the
+   Study release with `python3 tools/publish_study_apk.py` when the owner asked for
+   a new APK. The manual `Android build` workflow is available for extra evidence
+   but does not gate publication.
 
-Lifecycle: idea → feature spec (including plan and release intent) → focused branch →
-implementation → tests/validation → PR → green final-head CI and preview review →
-owner manually merges → automatic version bump and official release (or nothing
-when skipped). Put spec changes on the feature branch too; an already-active focused
-branch can be used while drafting. Feedback can return work to earlier stages.
+Lifecycle: idea → feature spec (including plan and release intent) → implementation
+on `main` → tests/validation → commit on `main` → push → owner runs
+`python3 tools/publish_study_apk.py` for the Study APK. Put spec changes in the same
+commit as the code change. Feedback can return work to earlier stages.
 
 | Status | Meaning |
 | --- | --- |
@@ -65,39 +66,28 @@ each significant change owns its plan and results in its feature spec. Existing
 
 ## Release intent is a decision, not automation
 
-Record one intent and its reason before implementation where possible, and resolve it
-before opening the PR. Follow explicit owner instructions; otherwise preserve the
-existing patch default for changes that reach the APK. Recommend alternatives when
-appropriate, but do not silently change the owner's release policy.
+Record one intent and its reason before implementation where possible. Follow explicit
+owner instructions; the Study publish flow (`python3 tools/publish_study_apk.py`)
+ships the Study channel without a label, while the legacy `release-on-main` pipeline
+(owner merge) still honors GitHub labels and `Release-Version:` directives.
 
-Standing owner decision (2026-10-28, widening the 2026-10-04 docs-only and 2026-10-17
-website rules): a PR gets `release:skip` without asking when the shipped APK cannot
-change, that is, no changed file is in `app/src/main/**`, `app/build.gradle.kts`, `app/proguard-rules.pro`, `build.gradle.kts`, `settings.gradle.kts`, `gradle.properties` or `gradle/**` (version catalog, wrapper).
-Docs, site, promo media, workflows, release tools, `tools/**`, tests, `benchmark/**` and
-lint/quality config all qualify. A change to any of those APK files keeps the patch default.
-
-| Intent in spec | Actual PR metadata |
+| Spec intent | How it applies |
 | --- | --- |
-| `release:patch` | No override (default patch), or the single GitHub label `release:patch` |
-| `release:minor` | Single GitHub label `release:minor` |
-| `release:major` | Single GitHub label `release:major` |
-| `release:skip` | Single GitHub label `release:skip`; nothing is published |
-| `Release-Version: X.Y.Z` | One standalone exact-version line in the PR body, outside HTML comments and code fences; no release label |
+| Study channel (default) | Push to `main`, run `python3 tools/publish_study_apk.py`. The command numbers `study-X.Y.Z.N` from the current `appVersionName` and increments `N`. |
+| Legacy official app (`duosub.study`) | Owner merges a PR and applies one GitHub label (`release:patch`/`release:minor`/`release:major`/`release:skip`) OR a standalone `Release-Version: X.Y.Z` in the PR body. |
+| Documentation / tooling / tests only | No release. Push to `main`; the next Study publish picks up the change as part of the next `study-X.Y.Z.N` release. |
 
-The [release parser](../../tools/automatic_release.py) reads GitHub labels and exact
-PR-body directives, not specs, checkboxes, PR titles, or descriptive release prose.
-Use at most one release label OR one directive, never both. Remove superseded overrides
-when intent changes without touching unrelated labels, and verify saved metadata.
-If a required label cannot be applied, report the missing action explicitly and do
-not call the PR ready to merge: writing `release:skip` in its body still defaults to patch.
+Never commit signing material (`*.jks`/`*.keystore` are gitignored). The Study publish
+flow uses the local Android debug signer. For the legacy pipeline, release labels and
+`Release-Version:` directives are applied on the PR, not in code; the parser
+([tools/automatic_release.py](../../tools/automatic_release.py)) reads them from the PR
+body and labels. Do not manually edit `appVersionName` or `appVersionCode` in normal
+commits; both channels compute their next version from existing releases.
 
-Choose the release *type* early. Patch/minor/major numbers are estimates until reserved,
-since intervening releases/reservations can advance the baseline. Inspect tags, published
-and draft releases, and the Gradle baseline before estimating; report unavailable
-history instead of promising a number. An exact version must exceed all existing/reserved
-stable versions. Do not manually edit `appVersionName` or `appVersionCode` in normal PRs.
-Once reserved, use the existing [retry procedure](../releasing.md#automatic-official-releases);
-editing intent does not change a reservation.
+Security fixes (owner decision 2026-10-30, [spec](../releasing.md)): when a commit
+fixes a security problem, say so in the commit message and in the Study release notes;
+the release page's "What's new" carries the same wording the app's Security update
+dialog would show.
 
 ## Evidence proportional to the change
 
@@ -107,4 +97,5 @@ lint/build, emulator/managed-device, physical-device, live YouTube, and performa
 checks establish different things; offline fixtures cannot satisfy live validation.
 For performance work include baseline, target, device/build, and repeatable measurement.
 For docs-only work check links, consistency, and affected template behavior; do not
-claim Android runtime validation. Existing PR CI still runs its configured checks.
+claim Android runtime validation. Run the manual `Android build` workflow for extra
+evidence when the change reaches the APK.

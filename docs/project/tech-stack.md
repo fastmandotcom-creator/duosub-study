@@ -229,10 +229,13 @@ unit tests, lint, APK builds, optimized-build checks, and managed-device tests.
 [PR previews](../../.github/workflows/pr-preview-auto.yml) publish successful PR artifacts,
 including fork PRs, and clean up closed-PR previews.
 
-After an owner merge, [release-on-main.yml](../../.github/workflows/release-on-main.yml)
-and [automatic_release.py](../../tools/automatic_release.py) verify final-head PR CI,
-reserve monotonic versions, and build from the exact merge via a release-only commit.
-Production signature/package/version checks, APK/checksum publication, serialized
-reservations and retries are existing safeguards. A skip label publishes nothing. See
-[release operation and recovery](../releasing.md#automatic-official-releases)
-and [PR preparation](../../AGENTS.md#preparing-prs-for-owner-merge); specs do not control automation.
+The Study channel is published from a commit on `main` with
+`python3 tools/publish_study_apk.py` (one local command, no PR, no label, no
+test-suite gate). The legacy official channel (owner PR merge into `main`) still
+uses [tools/automatic_release.py](../../tools/automatic_release.py): it verifies
+final-head PR CI, reserves monotonic versions, and builds from the exact merge via
+a release-only commit. Production signature/package/version checks, APK/checksum
+publication, serialized reservations and retries are existing safeguards. A skip
+label publishes nothing. See [release operation and recovery](../releasing.md)
+and [owner-merge preparation](../../AGENTS.md#publishing-a-study-release-from-main);
+specs do not control automation.
