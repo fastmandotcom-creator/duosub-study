@@ -11,12 +11,14 @@ import org.junit.Test
 
 class PairedReadingTest {
     @Test
-    fun twoTimesIsPrimaryThenSecondaryTwice() {
+    fun thePrimaryIsReadOnceAndTheSecondaryTimesRepeat() {
+        // Owner decision 2026-11-06: primary is a fixed single read; only the secondary repeats n times.
         assertEquals(
-            listOf(ReadSide.PRIMARY, ReadSide.SECONDARY, ReadSide.PRIMARY, ReadSide.SECONDARY),
+            listOf(ReadSide.PRIMARY, ReadSide.SECONDARY, ReadSide.SECONDARY),
             pairedReadSteps(2),
         )
         assertEquals(listOf(ReadSide.PRIMARY, ReadSide.SECONDARY), pairedReadSteps(1))
+        assertEquals(listOf(ReadSide.PRIMARY, ReadSide.SECONDARY), pairedReadSteps(0))
         assertEquals(DEFAULT_PAIR_READ_COUNT, storedPairReadCount(0))
     }
 
@@ -43,12 +45,33 @@ class PairedReadingTest {
         runBlocking {
             val spoken = mutableListOf<ReadSide>()
             val ok =
-                playPairedReading(times = 2, speak = { side ->
+                playPairedReading(secondaryTimes = 2, speak = { side ->
                     spoken += side
                     side == ReadSide.PRIMARY
                 }, gapMs = 0)
             assertTrue(!ok)
             assertEquals(listOf(ReadSide.PRIMARY, ReadSide.SECONDARY), spoken)
+        }
+
+    @Test
+    fun theProgressCountsTheSecondaryReadsOutOfTheSecondaryTimes() =
+        runBlocking {
+            val progress = mutableListOf<PairReadProgress>()
+            playPairedReading(
+                secondaryTimes = 3,
+                speak = { true },
+                onProgress = { progress += it },
+                gapMs = 0,
+            )
+            assertEquals(
+                listOf(
+                    PairReadProgress(1, 3, ReadSide.PRIMARY),
+                    PairReadProgress(2, 3, ReadSide.SECONDARY),
+                    PairReadProgress(3, 3, ReadSide.SECONDARY),
+                    PairReadProgress(4, 3, ReadSide.SECONDARY),
+                ),
+                progress,
+            )
         }
 
     @Test

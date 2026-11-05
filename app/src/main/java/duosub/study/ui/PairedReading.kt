@@ -21,16 +21,21 @@ import kotlinx.coroutines.delay
 internal enum class ReadSide { PRIMARY, SECONDARY }
 
 /**
- * One pass is primary then secondary. Two times, the default, is hello, xin chào, hello, xin chào.
- * A blank side is still listed; the speaker skips it.
+ * The primary side (the language the learner already reads) is read once; the secondary side
+ * (the language being learned) is read [secondaryTimes] times. Owner decision 2026-11-06: only the
+ * secondary repeats — primary is a fixed single read, so the default ("n = 2") is primary,
+ * secondary, secondary. A blank side is still listed; the speaker skips it.
  */
-internal fun pairedReadSteps(times: Int): List<ReadSide> =
-    List(times.coerceAtLeast(1)) { listOf(ReadSide.PRIMARY, ReadSide.SECONDARY) }.flatten()
+internal fun pairedReadSteps(secondaryTimes: Int): List<ReadSide> =
+    listOf(ReadSide.PRIMARY) + List(secondaryTimes.coerceAtLeast(1)) { ReadSide.SECONDARY }
 
-/** Which pass is being read, so the panel can show "Primary 1/2". */
+/**
+ * Which step is being read, so the panel can show "Secondary 2/3". [step] is 1-based over
+ * [pairedReadSteps]; [secondarySteps] is how many secondary reads the setting asks for.
+ */
 internal data class PairReadProgress(
-    val pass: Int,
-    val times: Int,
+    val step: Int,
+    val secondarySteps: Int,
     val side: ReadSide,
 )
 
@@ -55,18 +60,18 @@ internal data class SpokenPair(
 )
 
 /**
- * Speaks [times] pairs. [speak] returns false when that side failed; a blank side should return true.
- * [gapMs] is zero in tests.
+ * Speaks the primary once, then the secondary [secondaryTimes] times. [speak] returns false when that
+ * side failed; a blank side should return true. [gapMs] is zero in tests.
  */
 internal suspend fun playPairedReading(
-    times: Int,
+    secondaryTimes: Int,
     speak: suspend (ReadSide) -> Boolean,
     onProgress: (PairReadProgress) -> Unit = {},
     gapMs: Long = PAIR_READ_GAP_MS,
 ): Boolean {
-    val steps = pairedReadSteps(times)
+    val steps = pairedReadSteps(secondaryTimes)
     steps.forEachIndexed { index, side ->
-        onProgress(PairReadProgress(index / 2 + 1, steps.size / 2, side))
+        onProgress(PairReadProgress(index + 1, secondaryTimes, side))
         if (!speak(side)) return false
         if (index < steps.lastIndex && gapMs > 0) delay(gapMs)
     }
@@ -125,7 +130,7 @@ internal class PairedLineReaderHost(
     private val controller: YouTubeWebController,
 ) {
     var state: DuoSubUiState? = null
-    var times: Int = DEFAULT_PAIR_READ_COUNT
+    var secondaryTimes: Int = DEFAULT_PAIR_READ_COUNT
     var progress by mutableStateOf<PairReadProgress?>(null)
         private set
     var readingSegmentId by mutableStateOf<Long?>(null)
@@ -166,7 +171,7 @@ internal class PairedLineReaderHost(
         progress = null
         pronouncer.readPair(
             pair = pair,
-            times = times,
+            secondaryTimes = secondaryTimes,
             onProgress = { if (ticket == generation) progress = it },
             onFinished = {
                 if (ticket != generation) return@readPair
@@ -192,8 +197,8 @@ internal fun ReadPairButton() {
                 } else {
                     R.string.study_read_pair_secondary_progress
                 },
-                progress.pass,
-                progress.times,
+                progress.step,
+                progress.secondarySteps + 1,
             )
         }
     IconButton(onClick = { reader.readCurrent(resumeAfter = false) }, modifier = Modifier.testTag("read_pair")) {

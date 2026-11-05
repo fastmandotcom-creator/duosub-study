@@ -160,7 +160,7 @@ internal class WordPronouncer(context: Context) {
      */
     fun readPair(
         pair: SpokenPair,
-        times: Int,
+        secondaryTimes: Int,
         onProgress: (PairReadProgress) -> Unit = {},
         onFinished: () -> Unit = {},
     ) {
@@ -176,7 +176,7 @@ internal class WordPronouncer(context: Context) {
                 try {
                     val spoken =
                         playPairedReading(
-                            times,
+                            secondaryTimes,
                             speak = { side ->
                                 val text = if (side == ReadSide.PRIMARY) pair.primary else pair.secondary
                                 val language = if (side == ReadSide.PRIMARY) pair.primaryLanguage else pair.secondaryLanguage

@@ -4,6 +4,41 @@
 
 Implemented
 
+---
+
+# Read the secondary line n times, primary once (owner decision 2026-11-06)
+
+## Context / problem
+
+Settings → Study tools → Read primary, then secondary used to read the whole
+pair n times: `[P, S, P, S, …]` (default n = 2 is P, S, P, S). The user is a
+learner: the primary language is the one they already read, so repeating it is
+pointless. What they are practicing is the secondary language.
+
+## Decision
+
+- Primary side: read **once**, always.
+- Secondary side: read **n times** (`pairReadCount`, default 2, changeable in
+  Settings).
+- Resulting order for n = 2: `P, S, S`.
+
+## Changes
+
+- `pairedReadSteps(n)` → `[PRIMARY] + [SECONDARY] * n` (was `[P, S] * n`).
+- `PairReadProgress` now carries `step` (1-based) and `secondarySteps` (n);
+  the progress label shows "Primary 1/(n+1)" / "Secondary k/(n+1)".
+- `playPairedReading(secondaryTimes = …)`; `WordPronouncer.readPair` renamed
+  its parameter to `secondaryTimes`.
+- `PairedLineReaderHost.secondaryTimes` (was `times`); `DualSubApp` wires
+  `pairSettings.pairReadCount` into it.
+- `study_pair_read_count` string: "Times to read the secondary line (primary
+  is read once)" (EN + VI; other languages keep the old text until translated).
+- `PairedReadingTest` updated + new progress test.
+
+## Release intent
+
+`release:patch` — behavior fix to the study play modes; no feature change.
+
 ## Context / problem
 
 Owner report 2026-11-05 (screenshot): a displayed row "nước không văng Tung tóe," was

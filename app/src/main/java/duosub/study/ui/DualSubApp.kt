@@ -125,7 +125,7 @@ fun DuoSubApp(
     val pairSettings by rememberStudySettings()
     SideEffect {
         pairReader.state = state
-        pairReader.times = pairSettings.pairReadCount
+        pairReader.secondaryTimes = pairSettings.pairReadCount
     }
     DisposableEffect(studyRunner, pairReader) {
         studyRunner.onReadPair = pairReader::readEndedLine
