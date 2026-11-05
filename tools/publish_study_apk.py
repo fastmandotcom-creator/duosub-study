@@ -16,13 +16,17 @@ TAG_PATTERN = re.compile(r"^study-(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?$")
 
 
 def command(*args, input_text=None):
-    return subprocess.run(
+    result = subprocess.run(
         args,
         input=input_text,
         text=True,
-        check=True,
         capture_output=True,
-    ).stdout.strip()
+    )
+    if result.returncode:
+        raise RuntimeError(
+            f"Command failed ({' '.join(args)}): {result.stderr.strip() or result.stdout.strip()}"
+        )
+    return result.stdout.strip()
 
 
 def api(method, path, data):
@@ -51,8 +55,19 @@ def study_releases():
     releases = json.loads(
         command("gh", "api", f"repos/{REPOSITORY}/releases?per_page=100"),
     )
-    return [(release_version(item["tag_name"]), item) for item in releases
-            if release_version(item["tag_name"]) is not None]
+    return [(release_version(item["tag_name"]), item) for item in releases]
+
+
+def ensure_release_tag(tag, source_sha):
+    existing = command("git", "ls-remote", "origin", f"refs/tags/{tag}").split()
+    if existing:
+        if existing[0] != source_sha:
+            raise RuntimeError(f"Release tag {tag} already points to a different commit.")
+        return
+    api("POST", "git/refs", {
+        "ref": f"refs/tags/{tag}",
+        "sha": source_sha,
+    })
 
 
 def android_sdk():
@@ -94,38 +109,56 @@ def main():
     if not releases:
         raise RuntimeError("No previous Study release was found.")
     latest_public = max(
-        (item for item in releases if not item[1]["draft"] and not item[1]["prerelease"]),
+        (
+            item for item in releases
+            if item[0] is not None and not item[1]["draft"] and not item[1]["prerelease"]
+        ),
         key=lambda item: item[0],
         default=None,
     )
     if latest_public is None:
         raise RuntimeError("No published Study release was found.")
-    if max(item[0] for item in releases)[:3] > app_base:
+    tagged_releases = [item for item in releases if item[0] is not None]
+    if max(item[0] for item in tagged_releases)[:3] > app_base:
         raise RuntimeError("appVersionName is older than the latest Study release.")
 
     matching_draft = max(
-        (item for item in releases if item[1]["draft"] and item[0][:3] == app_base),
+        (
+            item for item in tagged_releases
+            if item[1]["draft"] and item[0][:3] == app_base
+        ),
         key=lambda item: item[0],
         default=None,
     )
-    if matching_draft:
+    if not matching_draft:
+        base = app_base
+        build = max(
+            (item[0][3] for item in tagged_releases if item[0][:3] == base),
+            default=0,
+        ) + 1
+        tag = f"study-{base[0]}.{base[1]}.{base[2]}.{build}"
+        version_name = f"{app_base[0]}.{app_base[1]}.{app_base[2]}-study.{build}"
+        matching_draft = next(
+            (
+                item for item in releases
+                if item[1]["draft"] and item[1]["name"] == f"DualSub Study {version_name}"
+            ),
+            None,
+        )
+    else:
         tag = matching_draft[1]["tag_name"]
         build = matching_draft[0][3]
-        draft = matching_draft[1]
-    else:
-        base = app_base
-        build = max((item[0][3] for item in releases if item[0][:3] == base), default=0) + 1
-        tag = f"study-{base[0]}.{base[1]}.{base[2]}.{build}"
-        draft = None
 
     version_name = f"{app_base[0]}.{app_base[1]}.{app_base[2]}-study.{build}"
     notes = (
         "Video gốc phát từng câu, sau đó đọc tiếng Việt rồi tiếng Anh đúng số lần đã chọn.\n\n"
         f"Built from main commit {source_sha}.\n\n<!-- study-source:{source_sha} -->"
     )
-    if draft:
-        release_id = draft["id"]
+    ensure_release_tag(tag, source_sha)
+    if matching_draft:
+        release_id = matching_draft[1]["id"]
         api("PATCH", f"releases/{release_id}", {
+            "tag_name": tag,
             "name": f"DualSub Study {version_name}",
             "body": notes,
         })
