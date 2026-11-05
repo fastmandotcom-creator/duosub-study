@@ -7,7 +7,7 @@ the fork PR will have apk file too, the same way as us do".
 
 ## Behavior
 
-- `pr-preview-auto.yml` publishes `DualSub-Replay-PR<N>-build<run>-preview.apk` to the rolling
+- `pr-preview-auto.yml` publishes `DuoSub-Replay-PR<N>-build<run>-preview.apk` to the rolling
   `preview` release for fork PRs as well as same-repository PRs.
 - GitHub leaves `workflow_run.pull_requests` empty for runs from forks, so the PR is found by
   the run's head commit among open PRs. A run is published only while its PR is open and its head

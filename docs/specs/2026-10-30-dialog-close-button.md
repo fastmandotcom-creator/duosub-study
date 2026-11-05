@@ -48,7 +48,7 @@ the top right.
 
 ## Technical constraints / invariants
 
-- Dialogs keep the app theme (`DualSubTheme`) and take colors from `MaterialTheme.colorScheme`.
+- Dialogs keep the app theme (`DuoSubTheme`) and take colors from `MaterialTheme.colorScheme`.
 - The X's text is `dialog_close` in `strings_dialogs.xml` in all 8 languages; the discard strings are in the same file.
 - Test tags: the X is `dialog_close` unless a screen passes its own (dialogs that can sit on top of
   another use their own tag).

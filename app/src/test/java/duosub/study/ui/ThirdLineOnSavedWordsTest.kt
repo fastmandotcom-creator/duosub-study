@@ -52,7 +52,7 @@ class ThirdLineOnSavedWordsTest {
         LearningWordSelection(AnalyzedToken("Hund", 4, 8, PartOfSpeech.NOUN), "de", "en", videoId, row, false)
 
     private fun state(videoId: String = "dQw4w9WgXcQ") =
-        DualSubUiState(
+        DuoSubUiState(
             activeVideoId = videoId,
             resolvedSourceLanguage = "de",
             targetLanguage = "en",

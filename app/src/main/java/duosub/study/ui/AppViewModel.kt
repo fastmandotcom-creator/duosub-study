@@ -209,7 +209,7 @@ class AppViewModel internal constructor(
 
     private val _state =
         MutableStateFlow(
-            DualSubUiState(
+            DuoSubUiState(
                 browserUrl = tabStore.value.active?.url ?: YOUTUBE_HOME_URL,
                 browserTabs = tabStore.value,
                 originalVisibility = storedCaptionVisibility(preferences.getString(ORIGINAL_VISIBILITY, null)),
@@ -325,7 +325,7 @@ class AppViewModel internal constructor(
                 aiTranslationThinking = storedAiTranslationThinking(preferences.getString(AI_TRANSLATION_THINKING_PREFERENCE, null)),
             ),
         )
-    val state: StateFlow<DualSubUiState> = _state.asStateFlow()
+    val state: StateFlow<DuoSubUiState> = _state.asStateFlow()
 
     private val thirdLineTranslation =
         ThirdLineTranslation(_state, playbackRequests, googleTranslator, translator, ::currentGoogleWaitMs, ::isCurrentLoad)
@@ -377,7 +377,7 @@ class AppViewModel internal constructor(
 
     /** Credits watched time to the language being learned; see [ImmersionTimeTracker]. */
     private fun trackImmersion(
-        current: DualSubUiState,
+        current: DuoSubUiState,
         videoId: String,
         timeMs: Long,
         seek: Boolean,
@@ -530,7 +530,7 @@ class AppViewModel internal constructor(
     }
 
     private fun updateTranscriptPlayback(
-        current: DualSubUiState,
+        current: DuoSubUiState,
         liveCaption: LiveCaptionSample?,
         timeMs: Long,
     ) {
@@ -1102,7 +1102,7 @@ class AppViewModel internal constructor(
 
     /**
      * Google failed even after its retries: this video translates on the device now (the translation
-     * flow follows [DualSubUiState.onDeviceFallback]) and the top-right icon explains why.
+     * flow follows [DuoSubUiState.onDeviceFallback]) and the top-right icon explains why.
      */
     private fun fallBackToOnDevice(error: Exception) {
         rememberGoogleFailure()
@@ -2082,7 +2082,7 @@ class AppViewModel internal constructor(
     private fun mobileWatchUrl(videoId: String): String = "https://m.youtube.com/watch?v=$videoId"
 
     private fun isCurrentLoad(
-        state: DualSubUiState,
+        state: DuoSubUiState,
         videoId: String,
         generation: Long,
     ): Boolean = generation == loadGeneration && state.activeVideoId == videoId

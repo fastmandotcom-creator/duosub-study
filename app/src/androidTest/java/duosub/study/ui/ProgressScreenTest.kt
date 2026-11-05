@@ -9,7 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import duosub.study.data.ImmersionDay
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Rule
@@ -31,7 +31,7 @@ class ProgressScreenTest {
                 ImmersionDay(LocalDate.of(2025, 6, 1), "en", 90 * 60_000L, 3),
             )
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 ProgressContent(
                     days = days,
                     savedWordsByLanguage = mapOf("ja" to 4),
@@ -60,7 +60,7 @@ class ProgressScreenTest {
 
     @Test fun emptyHistoryExplainsHowToStart() {
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 ProgressContent(
                     days = emptyList(),
                     savedWordsByLanguage = emptyMap(),
@@ -83,7 +83,7 @@ class ProgressScreenTest {
         val goal = mutableIntStateOf(0)
         val changes = mutableListOf<Int>()
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 ProgressContent(
                     days = listOf(ImmersionDay(today, "ja", 30 * 60_000L, 1)),
                     savedWordsByLanguage = emptyMap(),
@@ -112,7 +112,7 @@ class ProgressScreenTest {
     @Test fun firstLaunchGoalStepCanBeSetOrSkipped() {
         var result: Int? = -1
         compose.setContent {
-            DualSubTheme { DailyGoalSetupScreen(onFinish = { result = it }) }
+            DuoSubTheme { DailyGoalSetupScreen(onFinish = { result = it }) }
         }
         compose.onNodeWithTag("daily_goal_setup").assertIsDisplayed()
         saveUiEvidence("daily-goal-setup")
@@ -123,7 +123,7 @@ class ProgressScreenTest {
     @Test fun firstLaunchGoalStepReturnsTheChosenMinutes() {
         var result: Int? = null
         compose.setContent {
-            DualSubTheme { DailyGoalSetupScreen(onFinish = { result = it }) }
+            DuoSubTheme { DailyGoalSetupScreen(onFinish = { result = it }) }
         }
         compose.onNodeWithTag("daily_goal_30").performClick()
         compose.onNodeWithTag("daily_goal_confirm").performClick()

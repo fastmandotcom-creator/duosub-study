@@ -365,7 +365,7 @@ internal class StudyPlaybackRunner(
     private val driver = StudyPlaybackDriver()
     private var paused = false
 
-    @Volatile var state: DualSubUiState? = null
+    @Volatile var state: DuoSubUiState? = null
 
     @Volatile var settings = StudySettings()
 
@@ -436,7 +436,7 @@ private const val MS_PER_SECOND = 1_000f
 @Composable
 internal fun rememberStudyPlaybackRunner(
     controller: YouTubeWebController,
-    state: DualSubUiState,
+    state: DuoSubUiState,
 ): StudyPlaybackRunner {
     val runner = remember(controller) { StudyPlaybackRunner(controller) }
     DisposableEffect(controller, runner) {

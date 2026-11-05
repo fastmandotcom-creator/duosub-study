@@ -134,7 +134,7 @@ completely in More settings.
 2. `AiAssistantController` holds the panel state and actions; `AiAssistantViewModel` wires it to
    Android (Keystore, preferences, files, OkHttp) and is provided through `LocalAiAssistant` (null
    in the F-Droid build).
-3. UI: `AiAssistantButton` in the top bar, `AiAssistantPanel` over `DualSubExperience`,
+3. UI: `AiAssistantButton` in the top bar, `AiAssistantPanel` over `DuoSubExperience`,
    `AiAssistantSettings` as a new `MoreSettingsSection.AI_ASSISTANT` (GitHub build only); the
    settings page can open straight on that section from the panel.
 4. Backup rules, strings in 8 languages, docs: mission, tech stack, PRIVACY.md, AGENTS.md, README.
@@ -147,7 +147,7 @@ completely in More settings.
   link, and Paste key; nothing is sent.
 - [ ] A new key, model or address must pass the key check before the input box appears; a network
   timeout during a later check keeps an earlier pass, a rejected key does not.
-- [ ] The panel uses the app theme's colors, also where it is drawn outside `DualSubApp`.
+- [ ] The panel uses the app theme's colors, also where it is drawn outside `DuoSubApp`.
 - [ ] The panel's gear opens the AI settings inside the panel; Back returns to the chat.
 - [ ] A saved key is stored only encrypted, shows as "ending in abcd", survives an app restart, and
   Remove deletes it. Backup rules exclude `ai_assistant_keys.xml` and `ai-chats/`.
@@ -225,15 +225,15 @@ PR 1 of the plan, as approved:
 - Deviations: the custom address must be HTTPS, so a local Ollama server over plain HTTP is not
   supported yet. "Reset all settings" leaves the assistant's settings, keys, and chats alone.
   The panel shows the AI settings itself instead of opening More settings, which keeps
-  `DualSubApp` unchanged apart from the top-right button.
+  `DuoSubApp` unchanged apart from the top-right button.
 
 ## Changes after the owner's first phone test (2026-10-08)
 
 The owner tried preview build 383 with a real key and reported three problems and three requests.
 
-- **Light purple panel.** `LearningPlayerRoot` draws the panel beside `DualSubApp`, outside
-  `DualSubTheme`, so Material's light defaults showed. `AiAssistantOverlay` now wraps itself in
-  `DualSubTheme`, the scrim and problem colors come from the theme, and AGENTS.md has a new "UI
+- **Light purple panel.** `LearningPlayerRoot` draws the panel beside `DuoSubApp`, outside
+  `DuoSubTheme`, so Material's light defaults showed. `AiAssistantOverlay` now wraps itself in
+  `DuoSubTheme`, the scrim and problem colors come from the theme, and AGENTS.md has a new "UI
   conventions" section so later features follow the theme.
 - **Saved key never worked** ("Testing…" forever, then `InterruptedIOException` in chat). With
   fake keys all three services answer within about 1 s from a server, so the address and request

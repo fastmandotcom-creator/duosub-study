@@ -66,7 +66,7 @@ class AiAssistantPromptTest {
     @Test
     fun thePromptCarriesTheReplyLanguageAndCurrentSettings() {
         val state =
-            DualSubUiState(
+            DuoSubUiState(
                 resolvedSourceLanguage = "ja",
                 targetLanguage = "en",
                 fontScale = 1.25f,
@@ -90,7 +90,7 @@ class AiAssistantPromptTest {
 
     @Test
     fun translationStatusExplainsTheFallback() {
-        val google = DualSubUiState(translationEngine = TranslationEngine.GOOGLE_WEB)
+        val google = DuoSubUiState(translationEngine = TranslationEngine.GOOGLE_WEB)
         assertEquals("Google Translate (online)", aiTranslationStatus(google))
         assertTrue("Google Translate failed" in aiTranslationStatus(google.copy(onDeviceFallback = true)))
         assertTrue("timed out" in aiTranslationStatus(google.copy(translationError = "timed out")))
@@ -100,7 +100,7 @@ class AiAssistantPromptTest {
 
     @Test
     fun theSnapshotHoldsNoVideoOrPersonalData() {
-        val state = DualSubUiState(activeVideoId = "abcdefghijk", resolvedSourceLanguage = "ja")
+        val state = DuoSubUiState(activeVideoId = "abcdefghijk", resolvedSourceLanguage = "ja")
         val prompt = aiSystemPrompt(guide, aiAppSnapshot(state, PlayerExperienceMode.SCROLL_FRIENDLY_OVERLAY, Locale.ENGLISH, "1.0"))
         assertFalse("abcdefghijk" in prompt)
         assertTrue("Reply language: English" in prompt)

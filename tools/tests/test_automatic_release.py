@@ -27,7 +27,7 @@ class FakeGitHub:
                       "status": "completed", "conclusion": "success"}]
         self.jobs = [{"name": name, "conclusion": "success"} for name in release.REQUIRED_JOBS]
         self.assets = [{"name": name, "size": 100} for name in
-                       ("DualSub-Replay.apk", "DualSub-Replay.apk.sha256", "update-info.json")]
+                       ("DuoSub-Replay.apk", "DuoSub-Replay.apk.sha256", "update-info.json")]
         self.writes = []
         self.associated_prs = [PR]
 
@@ -309,11 +309,11 @@ class ReleaseTests(unittest.TestCase):
     def test_update_info_describes_the_apk(self):
         import tempfile
         with tempfile.TemporaryDirectory() as folder:
-            apk = Path(folder) / "DualSub-Replay.apk"
+            apk = Path(folder) / "DuoSub-Replay.apk"
             apk.write_bytes(b"apk bytes")
             info = release.update_info("1.0.5", 36, 30, apk)
         self.assertEqual(info, {"schema": 1, "version": "1.0.5", "version_code": 36,
-                                "minimum_safe_version_code": 30, "apk": "DualSub-Replay.apk",
+                                "minimum_safe_version_code": 30, "apk": "DuoSub-Replay.apk",
                                 "sha256": release.hashlib.sha256(b"apk bytes").hexdigest(),
                                 "size": 9})
 

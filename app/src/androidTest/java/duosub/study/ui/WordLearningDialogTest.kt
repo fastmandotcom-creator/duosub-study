@@ -5,7 +5,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import duosub.study.data.*
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -29,7 +29,7 @@ class WordLearningDialogTest {
         var spoken = 0
         var saved: Pair<String, Boolean>? = null
         val recompose = mutableStateOf<String?>(null)
-        compose.setContent { DualSubTheme {
+        compose.setContent { DuoSubTheme {
             WordLearningDialog(selection, true, { "từ" }, { meaning, online -> saved = Pair(meaning, online) },
                 { spoken++ }, recompose.value, {})
         } }
@@ -53,7 +53,7 @@ class WordLearningDialogTest {
         val went = LanguageAwareTokenizer.tokenize("We went home.", "en").first { it.text == "went" }
         val wentSelection = selection.copy(token = went)
         compose.setContent {
-            DualSubTheme { WordLearningDialog(wentSelection, false, { "đi" }, { _, _ -> }, {}, null, {}) }
+            DuoSubTheme { WordLearningDialog(wentSelection, false, { "đi" }, { _, _ -> }, {}, null, {}) }
         }
         compose.onNodeWithTag("dictionary_form").assertTextEquals("Dictionary form: go")
         compose.onNodeWithContentDescription("Word level: CEFR A1").assertIsDisplayed()
@@ -62,7 +62,7 @@ class WordLearningDialogTest {
 
     @Test fun manualSpeechWorksWhenAutomaticSpeechIsDisabled() {
         var spoken = 0
-        compose.setContent { DualSubTheme {
+        compose.setContent { DuoSubTheme {
             WordLearningDialog(selection, false, { "từ" }, { _, _ -> }, { spoken++ }, null, {})
         } }
         compose.waitForIdle()
@@ -73,7 +73,7 @@ class WordLearningDialogTest {
 
     @Test fun liveWordCanBeSavedWithoutOfferingUnreliableClipExamples() {
         var saved: Pair<String, Boolean>? = null
-        compose.setContent { DualSubTheme {
+        compose.setContent { DuoSubTheme {
             WordLearningDialog(selection.copy(videoId = null, segment = null), false, { "từ" },
                 { meaning, online -> saved = Pair(meaning, online) }, {}, null, {})
         } }
@@ -89,7 +89,7 @@ class WordLearningDialogTest {
         var settingsOpened = 0
         var spoken = 0
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 WordLearningDialog(
                     selection = selection,
                     autoPronounce = false,
@@ -126,7 +126,7 @@ class WordLearningDialogTest {
         val spokenParts = mutableListOf<String>()
         var dismissed = 0
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 WordLearningDialog(
                     selection = phrase,
                     autoPronounce = false,
@@ -164,7 +164,7 @@ class WordLearningDialogTest {
                 segment = SubtitleSegment(1, 1000, 3000, "葉っぱが落ちた", null),
             )
         compose.setContent {
-            DualSubTheme { WordLearningDialog(leaf, false, { "lá cây" }, { _, _ -> }, {}, null, {}) }
+            DuoSubTheme { WordLearningDialog(leaf, false, { "lá cây" }, { _, _ -> }, {}, null, {}) }
         }
         compose.onNodeWithTag("word_meaning_panel").assertIsDisplayed()
         compose.onNodeWithTag("word_meaning_text").assertTextEquals("lá cây")
@@ -205,7 +205,7 @@ class WordLearningDialogTest {
                 segment = SubtitleSegment(1, 1000, 3000, "树叶掉了", null),
             )
         compose.setContent {
-            DualSubTheme { WordLearningDialog(leaves, false, { "lá cây" }, { _, _ -> }, {}, null, {}) }
+            DuoSubTheme { WordLearningDialog(leaves, false, { "lá cây" }, { _, _ -> }, {}, null, {}) }
         }
         compose.waitUntil(10_000) { compose.onAllNodes(hasTestTag("hanzi_row_叶")).fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithTag("hanzi_row_树").performScrollTo().assertIsDisplayed()

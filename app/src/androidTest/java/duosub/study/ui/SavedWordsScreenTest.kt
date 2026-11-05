@@ -4,7 +4,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import duosub.study.data.*
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
@@ -23,7 +23,7 @@ class SavedWordsScreenTest {
             "dQw4w9WgXcQ", SubtitleSegment(1, 1000, 3000, "Learn a word", "Học một từ"), false), "học", false)
         runBlocking { repository.save(word) }
         try {
-            compose.setContent { DualSubTheme { if (visible.value) SavedWordsScreen(repository, {}, {}, {}) } }
+            compose.setContent { DuoSubTheme { if (visible.value) SavedWordsScreen(repository, {}, {}, {}) } }
             compose.waitForIdle()
             saveUiEvidence("saved-words")
             compose.onNodeWithTag("practice_words").performClick()
@@ -63,7 +63,7 @@ class SavedWordsScreenTest {
             )
         runBlocking { repository.save(savedWordFrom(selection, "dog", false)) }
         try {
-            compose.setContent { DualSubTheme { if (visible.value) SavedWordsScreen(repository, {}, {}, {}) } }
+            compose.setContent { DuoSubTheme { if (visible.value) SavedWordsScreen(repository, {}, {}, {}) } }
             compose.waitForIdle()
             compose.onNodeWithTag("practice_words").performClick()
             compose.onNodeWithTag("word_third_sentence").assertDoesNotExist()

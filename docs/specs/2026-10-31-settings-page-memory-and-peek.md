@@ -58,7 +58,7 @@ picker reset the scroll position too.
    scroll to the jump section.
 3. `ui/SettingsPeek.kt`: peek state (eye button press/hold, slider interaction sources), the
    see-through window, the "Back to settings" overlay, and `PanelSettingsButton` (tap + long press).
-4. `DualSubApp` keeps one `SettingsPageMemory` and passes `MoreSettingsSection.LAYOUT` on long press.
+4. `DuoSubApp` keeps one `SettingsPageMemory` and passes `MoreSettingsSection.LAYOUT` on long press.
 
 ## Acceptance criteria
 

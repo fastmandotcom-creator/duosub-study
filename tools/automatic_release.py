@@ -19,7 +19,7 @@ REQUIRED_JOBS = {"verify-build", "managed-device-tests"}
 # A release that fixes a security problem (owner decision 2026-10-30): apps older than it are
 # told at once, and this stays true after later ordinary releases. Separate from release:* labels.
 SECURITY_LABEL = "security:critical"
-APK_NAME = "DualSub-Replay.apk"
+APK_NAME = "DuoSub-Replay.apk"
 # The first lines of a security release's notes; the app's Security update dialog links to this page.
 SECURITY_NOTE = ("🔒 **This release fixes a security problem.** Please update. "
                  "Older versions show a Security update message until they do.\n\n")
@@ -255,7 +255,7 @@ def prepare(api, pr):
         notes_request["previous_tag_name"] = max(previous, key=lambda tag: version_tuple(tag[1:]))
     notes = api.api("releases/generate-notes", notes_request)["body"]
     body = ((SECURITY_NOTE if meta["security"] else "")
-            + "Download **DualSub-Replay.apk** below to install or update the official app. "
+            + "Download **DuoSub-Replay.apk** below to install or update the official app. "
             "Preview builds install separately. The `.sha256` file verifies the download.\n\n"
             f"Built from merged PR #{pr['number']} (`{merge}`), with automatic release versioning.\n\n"
             + notes + "\n\n<!-- automatic-release-v1 " + json.dumps(meta, sort_keys=True) + " -->\n")

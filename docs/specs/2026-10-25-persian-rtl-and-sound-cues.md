@@ -66,7 +66,7 @@ letters with apostrophes and hyphens.
    which fills the width only when the line's direction differs from the screen's, so the line
    starts on its own side and left-to-right lines keep today's layout and tap areas.
 2. Use them in `SelectableSubtitleText` and the plain-text fallbacks in `SubtitleCard.kt` and
-   `LearningPlayerRoot.kt`; give `DualSubTheme` a type scale with `TextDirection.Content`.
+   `LearningPlayerRoot.kt`; give `DuoSubTheme` a type scale with `TextDirection.Content`.
 3. Allow U+200C inside words in `LanguageAwareTokenizer` (both word patterns).
 4. `data/SoundCues.kt`: `strip(text)` and `filter(cues)` (timed words inside brackets dropped too).
    Applied in `AppViewModel.persistCaptionTrack`, `liveTranslationKey` and before

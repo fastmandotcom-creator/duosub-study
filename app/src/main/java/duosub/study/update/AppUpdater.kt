@@ -567,7 +567,7 @@ internal object AppUpdater {
                 .Builder()
                 .url(url)
                 .header("Accept", if ("api.github.com" in url) "application/vnd.github+json" else "application/octet-stream")
-                .header("User-Agent", "DualSub-Replay/${BuildConfig.VERSION_NAME}")
+                .header("User-Agent", "DuoSub-Replay/${BuildConfig.VERSION_NAME}")
                 .build()
         if (!isAllowedUpdateHost(request.url.host) || !request.url.isHttps) {
             throw UpdateException(UpdateProblem.GITHUB_ERROR, "Not a GitHub address")

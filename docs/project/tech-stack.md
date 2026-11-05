@@ -25,7 +25,7 @@ version snapshot here drifts, and update relevant documentation with lasting cha
 Paths below are relative to
 [`app/src/main/java/duosub/study`](../../app/src/main/java/duosub/study).
 
-- `ui/DualSubApp.kt` and `ui/LearningPlayerRoot.kt` compose the learning interface.
+- `ui/DuoSubApp.kt` and `ui/LearningPlayerRoot.kt` compose the learning interface.
   `ui/AppViewModel.kt` coordinates selection, caption loading, translation, playback
   state, and preferences rather than owning another video player.
 - `ui/YouTubeBrowserScreen.kt` owns `SingleYouTubePage`, the persistent WebView.
@@ -115,7 +115,7 @@ Paths below are relative to
   (`translatePlaybackWindow`'s `prefetch`) and retrying short outages; `AppViewModel.translateText` routes every
   translation through the chosen engine. `prefetchInBackground` translates minutes 2 to 5 one request
   at a time while the video plays; the window itself (the next minute) is translated also while paused. A line Google leaves blank is asked again alone and, if still blank, translated on the
-  device by itself. A failure moves that video off Google (`DualSubUiState.onDeviceFallback`): the
+  device by itself. A failure moves that video off Google (`DuoSubUiState.onDeviceFallback`): the
   page fetches YouTube's own translation of the caption track (`data/PageTranslationSource.kt`,
   `webPageTranslationScript`, matched to rows by `ui/YouTubeTranslation.kt`; see the
   [YouTube translation spec](../specs/2026-10-19-youtube-translation-fallback.md)) and rows it does

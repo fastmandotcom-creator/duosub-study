@@ -18,7 +18,7 @@ import duosub.study.data.PartOfSpeech
 import duosub.study.data.SavedWord
 import duosub.study.data.SubtitleSegment
 import duosub.study.data.VocabularyRepository
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -74,7 +74,7 @@ class PracticeDecksUiTest {
             repository.save(word("3", "ar", "Egyptian Arabic"))
         }
         try {
-            compose.setContent { DualSubTheme { if (visible) SavedWordsScreen(repository, {}, {}, {}) } }
+            compose.setContent { DuoSubTheme { if (visible) SavedWordsScreen(repository, {}, {}, {}) } }
             compose.waitForIdle()
             saveUiEvidence("practice-decks")
             // Newest deck first: the named deck, then Arabic, then Japanese.
@@ -117,7 +117,7 @@ class PracticeDecksUiTest {
             repository.save(word("2", "ar"))
         }
         try {
-            compose.setContent { DualSubTheme { if (visible) SavedWordsScreen(repository, {}, {}, {}) } }
+            compose.setContent { DuoSubTheme { if (visible) SavedWordsScreen(repository, {}, {}, {}) } }
             compose.onNodeWithTag("deck_0").performClick()
             compose.onNodeWithTag("saved_word_2").performClick()
             compose.onNodeWithTag("word_deck").performScrollTo().performClick()
@@ -144,7 +144,7 @@ class PracticeDecksUiTest {
         var deck by mutableStateOf<String?>(null)
         var savedDeck: String? = "not saved"
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 WordLearningDialog(
                     selection,
                     false,

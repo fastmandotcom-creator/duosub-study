@@ -35,7 +35,7 @@ data class ThirdLineChoice(
     val shownLanguage: String? get() = language.takeIf { enabled }
 }
 
-internal val DualSubUiState.thirdLine: ThirdLineChoice get() = ThirdLineChoice(thirdLineEnabled, thirdLanguage)
+internal val DuoSubUiState.thirdLine: ThirdLineChoice get() = ThirdLineChoice(thirdLineEnabled, thirdLanguage)
 
 /** The saved third language, or null (off, the default) when nothing valid is saved. */
 internal fun storedThirdLanguage(raw: String?): String? =
@@ -63,7 +63,7 @@ internal fun thirdLineLanguage(
 }
 
 /** Row [segment]'s third line, only for the open video and the language chosen now; null until it arrives. */
-internal fun DualSubUiState.thirdLineFor(segment: SubtitleSegment?): String? {
+internal fun DuoSubUiState.thirdLineFor(segment: SubtitleSegment?): String? {
     if (segment == null || liveFallback) return null
     val language = thirdLineLanguage(thirdLine.shownLanguage, resolvedSourceLanguage, targetLanguage) ?: return null
     return thirdLines
@@ -74,7 +74,7 @@ internal fun DualSubUiState.thirdLineFor(segment: SubtitleSegment?): String? {
 }
 
 /** [selection] with its line's third subtitle line, when it has none yet and that line is on screen for its video. */
-internal fun DualSubUiState.withThirdLineOnScreen(selection: LearningWordSelection): LearningWordSelection {
+internal fun DuoSubUiState.withThirdLineOnScreen(selection: LearningWordSelection): LearningWordSelection {
     if (selection.thirdText != null || selection.videoId == null || selection.videoId != activeVideoId) return selection
     val text = thirdLineFor(selection.segment) ?: return selection
     return selection.copy(thirdText = text, thirdLanguage = thirdLines.language)
@@ -87,12 +87,12 @@ internal fun DualSubUiState.withThirdLineOnScreen(selection: LearningWordSelecti
  * stops this line until the next "Retry translation": the other two lines never wait for it.
  */
 internal class ThirdLineTranslation(
-    private val state: MutableStateFlow<DualSubUiState>,
+    private val state: MutableStateFlow<DuoSubUiState>,
     private val requests: StateFlow<CaptionPlaybackRequest>,
     private val google: GoogleWebTranslator,
     private val onDevice: OnDeviceTranslator,
     private val googleWaitMs: () -> Long,
-    private val isCurrentLoad: (DualSubUiState, String, Long) -> Boolean,
+    private val isCurrentLoad: (DuoSubUiState, String, Long) -> Boolean,
 ) {
     suspend fun follow(
         store: SubtitleStore,

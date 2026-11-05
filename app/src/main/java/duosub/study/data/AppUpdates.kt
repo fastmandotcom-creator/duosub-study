@@ -10,7 +10,7 @@ internal const val UPDATE_PREVIEW_RELEASE_URL = "https://api.github.com/repos/$U
 internal const val UPDATE_RELEASES_PAGE_URL = "https://github.com/$UPDATE_REPOSITORY/releases"
 internal const val UPDATE_PREVIEW_PAGE_URL = "$UPDATE_RELEASES_PAGE_URL/tag/preview"
 internal const val UPDATE_INFO_URL = "$UPDATE_RELEASES_PAGE_URL/latest/download/update-info.json"
-internal const val OFFICIAL_APK_NAME = "DualSub-Replay.apk"
+internal const val OFFICIAL_APK_NAME = "DuoSub-Replay.apk"
 internal const val OFFICIAL_APK_CHECKSUM_NAME = "$OFFICIAL_APK_NAME.sha256"
 internal const val OFFICIAL_APPLICATION_ID = "duosub.study"
 
@@ -18,7 +18,7 @@ internal const val STUDY_APPLICATION_ID = "$OFFICIAL_APPLICATION_ID.study"
 internal const val STUDY_UPDATE_REPOSITORY = UPDATE_REPOSITORY
 internal const val STUDY_LATEST_RELEASE_URL = "https://api.github.com/repos/$STUDY_UPDATE_REPOSITORY/releases/latest"
 internal const val STUDY_RELEASES_PAGE_URL = "https://github.com/$STUDY_UPDATE_REPOSITORY/releases"
-internal const val STUDY_APK_NAME = "DualSub-Study.apk"
+internal const val STUDY_APK_NAME = "DuoSub-Study.apk"
 
 /** No release APK is near this; a bigger download is refused. */
 internal const val MAX_UPDATE_BYTES = 150L * 1024 * 1024
@@ -192,7 +192,7 @@ internal fun parseStudyRelease(
     )
 }
 
-private val PREVIEW_ASSET = Regex("""^DualSub-Replay-PR(\d+)-build(\d+)-preview\.apk$""")
+private val PREVIEW_ASSET = Regex("""^DuoSub-Replay-PR(\d+)-build(\d+)-preview\.apk$""")
 
 internal fun parsePreviewRelease(
     json: String,
@@ -230,7 +230,7 @@ internal fun sha256Digest(digest: String): String? =
         .removePrefix("sha256:")
         .takeIf { digest.trim().lowercase().startsWith("sha256:") && SHA256_HEX.matches(it) }
 
-/** The checksum in a `sha256sum` line such as `<hex>  DualSub-Replay.apk`. */
+/** The checksum in a `sha256sum` line such as `<hex>  DuoSub-Replay.apk`. */
 internal fun parseSha256File(text: String): String? =
     text
         .trim()

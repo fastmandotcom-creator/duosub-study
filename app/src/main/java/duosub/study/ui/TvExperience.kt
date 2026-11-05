@@ -28,7 +28,7 @@ internal class TvLayerActions(
 
 @Composable
 internal fun TvLayer(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     webController: YouTubeWebController,
     homeShown: Boolean,
     onHomeShownChange: (Boolean) -> Unit,
@@ -80,7 +80,7 @@ internal fun TvLayer(
 /** Hands the remote's keys to the video while the TV layout is shown ([TvRemoteKeys]). */
 @Composable
 private fun BindTvRemote(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     webController: YouTubeWebController,
     homeShown: Boolean,
     showPanel: () -> Unit,
@@ -114,7 +114,7 @@ private fun BindTvRemote(
 
 private fun runTvRemoteAction(
     action: TvRemoteAction,
-    state: DualSubUiState,
+    state: DuoSubUiState,
     webController: YouTubeWebController,
     showPanel: () -> Unit,
     showHome: () -> Unit,

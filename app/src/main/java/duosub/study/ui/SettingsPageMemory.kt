@@ -12,7 +12,7 @@ internal data class SettingsPagePlace(
 /**
  * Remembers [SettingsPagePlace] between openings of the settings page, so a user who closes it to
  * check the video comes back to the same section and scroll position. It lives in memory only
- * (kept by [DualSubApp]), so restarting the app starts at the top again, and a place older than
+ * (kept by [DuoSubApp]), so restarting the app starts at the top again, and a place older than
  * [SETTINGS_PAGE_MEMORY_MILLIS] is forgotten.
  */
 internal class SettingsPageMemory {

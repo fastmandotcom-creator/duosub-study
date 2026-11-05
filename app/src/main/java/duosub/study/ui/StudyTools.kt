@@ -177,7 +177,7 @@ private val NO_COUNTS = MutableStateFlow<Map<String, Int>>(emptyMap())
 /** Keeps [StudyTools] current with the open video's subtitles, the settings and the saved words. */
 @Composable
 internal fun rememberStudyTools(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     savedWords: List<SavedWord>,
 ): StudyTools {
     val context = LocalContext.current
@@ -235,7 +235,7 @@ internal fun rememberStudyTools(
 @Composable
 private fun CountPlayedLines(
     tools: StudyTools,
-    state: DualSubUiState,
+    state: DuoSubUiState,
     language: String?,
     lineKeys: List<List<String>>?,
     learning: Set<String>,

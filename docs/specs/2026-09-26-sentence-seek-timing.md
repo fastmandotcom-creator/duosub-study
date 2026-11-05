@@ -12,7 +12,7 @@ as if the timestamp were wrong. Their screenshot shows English auto-generated ca
 short rows ("How do we give it a realistic enough scenario so" / "it doesn't think it's being
 tested?").
 
-Tapping a row seeks to `row.startMs` (`DualSubApp.kt`, `webController.replayFrom`). The first row
+Tapping a row seeks to `row.startMs` (`DuoSubApp.kt`, `webController.replayFrom`). The first row
 of a sentence starts at a real cue start. Every later row starts at the time of its first word, so
 it is only as good as the word timings.
 

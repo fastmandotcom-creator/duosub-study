@@ -36,7 +36,7 @@ internal fun translationFailureMessage(
 private const val MAX_TRANSLATION_ERROR_LENGTH = 160
 
 /** The stored captions are showing and only their translation stopped, so a retry need not reload them. */
-internal fun onlyTranslationFailed(state: DualSubUiState): Boolean =
+internal fun onlyTranslationFailed(state: DuoSubUiState): Boolean =
     state.translationError != null && state.errorMessage == null && !state.liveFallback && state.segments.isNotEmpty()
 
 /**

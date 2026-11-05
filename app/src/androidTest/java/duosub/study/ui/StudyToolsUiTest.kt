@@ -30,7 +30,7 @@ import duosub.study.data.LearningWordSelection
 import duosub.study.data.PartOfSpeech
 import duosub.study.data.SubtitleSegment
 import duosub.study.data.VideoComprehension
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -56,7 +56,7 @@ class StudyToolsUiTest {
 
     private fun showSettings() {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 SubtitleSettingsDialog(
                     sourcePreference = "auto",
                     targetLanguage = "vi",
@@ -155,7 +155,7 @@ class StudyToolsUiTest {
                     }
                 }
             CompositionLocalProvider(LocalStudyTools provides tools) {
-                DualSubTheme {
+                DuoSubTheme {
                     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                         Column(Modifier.padding(12.dp)) {
                             ComprehensionChip()
@@ -195,7 +195,7 @@ class StudyToolsUiTest {
                     }
                 }
             CompositionLocalProvider(LocalStudyTools provides tools) {
-                DualSubTheme {
+                DuoSubTheme {
                     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                         Column(Modifier.padding(12.dp)) { StudyWordActions(selection, "mèo") }
                     }
@@ -226,7 +226,7 @@ class StudyToolsUiTest {
                     }
                 }
             CompositionLocalProvider(LocalStudyTools provides tools) {
-                DualSubTheme {
+                DuoSubTheme {
                     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                         Column(Modifier.padding(12.dp)) { StudyWordActions(selection, "mèo") }
                     }
@@ -261,7 +261,7 @@ class StudyToolsUiTest {
                     ).apply { ankiInstalled = true }
                 }
             CompositionLocalProvider(LocalStudyTools provides tools) {
-                DualSubTheme {
+                DuoSubTheme {
                     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                         Column(Modifier.padding(12.dp)) { StudyWordActions(selection, "mèo") }
                     }

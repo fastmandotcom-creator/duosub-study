@@ -61,7 +61,7 @@ internal fun exportBackup(words: List<SavedWord>): String =
     JSONObject()
         .apply {
             require(words.size <= MAX_TRANSFER_RECORDS) { "Export exceeds 20,000 records." }
-            put("format", "DualSubReplay")
+            put("format", "DuoSubReplay")
             put("version", 1)
             put("words", JSONArray().apply { words.forEach { put(encodeWord(it)) } })
         }.toString(2)
@@ -71,7 +71,7 @@ internal fun parseTransfer(text: String): TransferDocument {
     val clean = text.removePrefix("\uFEFF")
     if (clean.trimStart().startsWith("{")) {
         val json = JSONObject(clean)
-        require(json.getString("format") == "DualSubReplay" && json.getInt("version") == 1) {
+        require(json.getString("format") == "DuoSubReplay" && json.getInt("version") == 1) {
             "Unsupported backup format or version."
         }
         val rows = json.getJSONArray("words")

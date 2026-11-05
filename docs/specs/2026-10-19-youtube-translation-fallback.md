@@ -71,7 +71,7 @@ only translates what YouTube does not. That authorizes this scope, not merge or 
    overlaps most and builds the sentence and row-prefix texts the window translates.
 5. `AppViewModel.runStoredTranslation`: in the Google fallback, asks the page in parallel and
    translates each row with Google's cache, then YouTube's lines, then the device;
-   `DualSubUiState.youTubeTranslationFallback` drives the icon and the assistant's status.
+   `DuoSubUiState.youTubeTranslationFallback` drives the icon and the assistant's status.
 
 ## Acceptance criteria
 

@@ -69,7 +69,7 @@ tag; Practice showed every word in one list and practised every due word togethe
 3. `data/PracticeTransfer.kt`: `deck` TSV column; import validation requires a tidy deck name.
 4. `ui/PracticeDecks.kt`: deck chip, name dialog, deck list, open-deck header, delete dialog and the
    remembered-deck preferences.
-5. `SavedWordsScreen`, `WordLearningDialog` (optional `deck` / `onDeckChange`), `DualSubApp`,
+5. `SavedWordsScreen`, `WordLearningDialog` (optional `deck` / `onDeckChange`), `DuoSubApp`,
    `AppViewModel.saveWord` and the assistant's Save to vocabulary use them.
 
 ## Acceptance criteria

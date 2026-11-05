@@ -10,7 +10,7 @@ class CaptionVisibilityTest {
             for (translation in CaptionVisibility.entries) {
                 for (paused in listOf(false, true)) {
                     val state =
-                        DualSubUiState(
+                        DuoSubUiState(
                             activeVideoId = "dQw4w9WgXcQ",
                             currentIndex = 0,
                             segments = listOf(SubtitleSegment(0, 0, 1000, "original", "translation")),

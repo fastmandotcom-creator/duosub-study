@@ -1,6 +1,6 @@
 [![Latest release](https://img.shields.io/github/v/release/fastmandotcom-creator/duosub-study?label=latest)](https://github.com/fastmandotcom-creator/duosub-study/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/fastmandotcom-creator/duosub-study/total?label=downloads&color=brightgreen)](https://github.com/fastmandotcom-creator/duosub-study/releases)
-[![Android 8+](https://img.shields.io/badge/Android-8.0%2B-3ddc84?logo=android&logoColor=white)](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk)
+[![Android 8+](https://img.shields.io/badge/Android-8.0%2B-3ddc84?logo=android&logoColor=white)](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DuoSub-Replay.apk)
 [![CI](https://github.com/fastmandotcom-creator/duosub-study/actions/workflows/android.yml/badge.svg)](https://github.com/fastmandotcom-creator/duosub-study/actions/workflows/android.yml)
 [![Source: MIT](https://img.shields.io/badge/Source-MIT-26c6da.svg)](LICENSE)
 [![App distribution: GPL-3.0](https://img.shields.io/badge/App-GPL--3.0-blue.svg)](THIRD_PARTY_NOTICES.md)
@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk"><img src="https://img.shields.io/badge/Download_for_Android-Free-3ddc84?style=for-the-badge&logo=android&logoColor=white" alt="Download DuoSub Study for Android, free" height="56"></a>
+  <a href="https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DuoSub-Replay.apk"><img src="https://img.shields.io/badge/Download_for_Android-Free-3ddc84?style=for-the-badge&logo=android&logoColor=white" alt="Download DuoSub Study for Android, free" height="56"></a>
 </p>
 
 <p align="center">
@@ -27,7 +27,7 @@
 ### How to install
 
 1. Tap the green **Download for Android** button above on your phone.
-2. When the download finishes, open the file `DualSub-Replay.apk`.
+2. When the download finishes, open the file `DuoSub-Replay.apk`.
 3. If your phone asks, allow your browser or file manager to **install unknown apps**, then tap **Install**.
 
 Android may show a warning because the app comes from GitHub instead of Google Play. This is normal for apps installed this way. Official versions update the installed app in place.
@@ -46,7 +46,7 @@ Android may show a warning because the app comes from GitHub instead of Google P
 
 <p align="center"><a href="docs/media/dualsub-replay-promo.mp4"><strong>▶ Watch the full video (50 seconds)</strong></a></p>
 
-### [Download DuoSub Study for Android](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk)
+### [Download DuoSub Study for Android](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DuoSub-Replay.apk)
 
 Free · Android 8.0 or newer · See [How to install](#how-to-install) if you need help.
 
@@ -212,7 +212,7 @@ The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`. Release
 - `SingleYouTubePage` owns the app's only WebView and keeps normal YouTube navigation and playback intact. A small JavaScript polling bridge reads the page video's time and seeks that same video for replay.
 - `YouTubeUrlParser` normalizes shared links; `YouTubeCaptionProvider` discovers and downloads timed captions; `SubtitleMerger` turns short cues into replayable sentences.
 - `OnDeviceTranslator` translates with Google ML Kit when Google Translate (online) is off or fails.
-- `AppViewModel` tracks the active video, caption loading, translation, and the current line; `DualSubApp` places the subtitle panel below the video in portrait or beside it in landscape.
+- `AppViewModel` tracks the active video, caption loading, translation, and the current line; `DuoSubApp` places the subtitle panel below the video in portrait or beside it in landscape.
 
 See the [technical context](docs/project/tech-stack.md) for the invariants that tests enforce.
 

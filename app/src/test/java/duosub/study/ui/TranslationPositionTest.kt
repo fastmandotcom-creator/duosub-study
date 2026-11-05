@@ -28,7 +28,7 @@ class TranslationPositionTest {
     @Test
     fun pairedReadingKeepsTheDefaultVietnameseEnglishPairInPrimaryThenSecondaryOrder() {
         val state =
-            DualSubUiState(
+            DuoSubUiState(
                 studyPlayMode = StudyPlayMode.READ_PAIR,
                 translationPosition = TranslationPosition.ABOVE,
             )

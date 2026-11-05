@@ -5,7 +5,7 @@ system picker chooses the document; the app requests no storage permission.
 
 Use **JSON backup** to preserve saved words, optional readings, translations,
 example sentences, YouTube references and video titles, timing, decks, your notes,
-and spaced-repetition due dates and intervals. Version 1 contains `format: "DualSubReplay"`, `version: 1`, and a
+and spaced-repetition due dates and intervals. Version 1 contains `format: "DuoSubReplay"`, `version: 1`, and a
 `words` array. Video files and browsing sessions are excluded. Keep this file
 somewhere you control; it contains your saved learning content.
 

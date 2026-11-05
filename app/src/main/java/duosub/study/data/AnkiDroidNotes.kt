@@ -22,7 +22,7 @@ internal val ANKI_FIELDS = listOf("Word", "Meaning", "Reading", "Sentence", "Tra
 /** Anki keeps a note's fields in one text, separated by this character. */
 internal const val ANKI_FIELD_SEPARATOR = "\u001f"
 
-internal const val ANKI_TAG = "DualSubReplay"
+internal const val ANKI_TAG = "DuoSubReplay"
 
 internal const val ANKI_QUESTION_FORMAT = "<div class=word>{{Word}}</div><div class=sentence>{{Sentence}}</div>"
 internal const val ANKI_ANSWER_FORMAT =

@@ -27,7 +27,7 @@ class ThirdLineAndVideoFilterTest {
     @Test fun rowsShowTheirThirdLineOnlyForTheOpenVideoAndLanguage() {
         val row = SubtitleSegment(id = 4, startMs = 0, endMs = 1_000, originalText = "Hallo", translatedText = "Hello")
         val state =
-            DualSubUiState(
+            DuoSubUiState(
                 activeVideoId = "video",
                 resolvedSourceLanguage = "de",
                 targetLanguage = "en",
@@ -46,7 +46,7 @@ class ThirdLineAndVideoFilterTest {
     }
 
     @Test fun thirdLineIsOffByDefaultAndRemembersItsLanguage() {
-        assertEquals(ThirdLineChoice(false, null), DualSubUiState().thirdLine)
+        assertEquals(ThirdLineChoice(false, null), DuoSubUiState().thirdLine)
         assertNull(ThirdLineChoice(enabled = false, language = "fa").shownLanguage)
         assertEquals("fa", ThirdLineChoice(enabled = true, language = "fa").shownLanguage)
     }

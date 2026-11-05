@@ -14,6 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "DualSubReplay"
+rootProject.name = "DuoSubReplay"
 include(":app")
 include(":benchmark")

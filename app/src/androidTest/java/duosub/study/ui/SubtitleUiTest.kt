@@ -29,7 +29,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import duosub.study.data.CaptionLanguage
 import duosub.study.data.SubtitleSegment
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -46,7 +46,7 @@ class SubtitleUiTest {
         var selectedTarget: String? = null
         var dismissed = false
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 SubtitleSettingsDialog(
                     sourcePreference = "auto",
                     targetLanguage = "vi",
@@ -87,7 +87,7 @@ class SubtitleUiTest {
         var openedAllSettings = false
         var dismissed = false
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 QuickLanguageSettingsDialog(
                     sourcePreference = "auto",
                     targetLanguage = "vi",
@@ -121,7 +121,7 @@ class SubtitleUiTest {
     @Test
     fun translateToListShowsRecentLanguagesFirst() {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 QuickLanguageSettingsDialog(
                     sourcePreference = "auto",
                     targetLanguage = "vi",
@@ -151,7 +151,7 @@ class SubtitleUiTest {
     fun recentLanguageSwitchesInOneTap() {
         var selectedTarget: String? = null
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 QuickLanguageSettingsDialog(
                     sourcePreference = "auto",
                     targetLanguage = "vi",
@@ -174,7 +174,7 @@ class SubtitleUiTest {
     fun webPageErrorOffersReload() {
         var reloaded = false
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 WebPageErrorCard(
                     message = "Renderer stopped",
                     onReload = { reloaded = true },
@@ -192,7 +192,7 @@ class SubtitleUiTest {
     fun activeSubtitleIsIdentifiedAndReplays() {
         var replayed = false
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 CompactSubtitleCard(
                     segment = SubtitleSegment(1, 1_000, 2_000, "Active original", "Bản dịch"),
                     active = true,
@@ -212,7 +212,7 @@ class SubtitleUiTest {
     @Test
     fun inactiveSubtitleSupportsLargeTextAndVietnamese() {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 CompactSubtitleCard(
                     segment = SubtitleSegment(2, 2_000, 3_000, "Next sentence", "Câu tiếp theo"),
                     active = false,
@@ -240,7 +240,7 @@ class SubtitleUiTest {
                 )
             }
         var state by mutableStateOf(
-            DualSubUiState(
+            DuoSubUiState(
                 segments = segments,
                 currentIndex = 0,
                 translatedVisibility = CaptionVisibility.PAUSED,
@@ -249,7 +249,7 @@ class SubtitleUiTest {
             ),
         )
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 Box(Modifier.fillMaxWidth().height(360.dp).testTag("timeline_viewport")) {
                     SubtitleTimeline(state, onReplay = {})
                 }
@@ -297,7 +297,7 @@ class SubtitleUiTest {
             }
         // The video reaches its last line; the list is scrolled to its end.
         var state by mutableStateOf(
-            DualSubUiState(
+            DuoSubUiState(
                 segments = segments,
                 currentIndex = segments.lastIndex,
                 translatedVisibility = CaptionVisibility.PAUSED,
@@ -306,7 +306,7 @@ class SubtitleUiTest {
             ),
         )
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 Box(Modifier.fillMaxWidth().height(360.dp).testTag("timeline_viewport")) {
                     SubtitleTimeline(state, onReplay = {})
                 }
@@ -348,7 +348,7 @@ class SubtitleUiTest {
                 )
             }
         val state =
-            DualSubUiState(
+            DuoSubUiState(
                 segments = segments,
                 currentIndex = 4,
                 playbackPaused = true,
@@ -356,7 +356,7 @@ class SubtitleUiTest {
                 wordLearningEnabled = false,
             )
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 Box(Modifier.fillMaxWidth().height(360.dp).testTag("timeline_viewport")) {
                     SubtitleTimeline(state, onReplay = {})
                 }
@@ -399,7 +399,7 @@ class SubtitleUiTest {
                 )
             }
         var state by mutableStateOf(
-            DualSubUiState(
+            DuoSubUiState(
                 segments = segments,
                 currentIndex = 0,
                 transcriptFollow = TranscriptFollow.CENTER,
@@ -408,7 +408,7 @@ class SubtitleUiTest {
             ),
         )
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 Box(Modifier.fillMaxWidth().height(360.dp).testTag("timeline_viewport")) {
                     SubtitleTimeline(state, onReplay = {})
                 }
@@ -443,7 +443,7 @@ class SubtitleUiTest {
     fun translationFailureKeepsOriginalRowsAndOffersRetry() {
         var retries = 0
         val state =
-            DualSubUiState(
+            DuoSubUiState(
                 activeVideoId = "video",
                 segments = listOf(SubtitleSegment(0, 0, 2000, "Original line 0")),
                 currentIndex = 0,
@@ -451,7 +451,7 @@ class SubtitleUiTest {
                 translationError = "The translation model download took too long.",
             )
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 Column {
                     TranslationIssueButton(state.translationIssue(), onTryGoogleAgain = {}, onRetryTranslation = { retries++ })
                     Box(Modifier.fillMaxWidth().height(360.dp)) {

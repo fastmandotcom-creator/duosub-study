@@ -20,7 +20,7 @@ import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.platform.app.InstrumentationRegistry
 import duosub.study.data.CaptionLanguage
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -35,7 +35,7 @@ class LearningPlayerUiTest {
         var selected: PlayerExperienceMode? = null
         val portraitPanelPosition = mutableFloatStateOf(DEFAULT_PORTRAIT_PANEL_OFFSET_FRACTION)
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 SubtitleSettingsDialog(
                     sourcePreference = "auto",
                     targetLanguage = "vi",
@@ -147,7 +147,7 @@ class LearningPlayerUiTest {
         preferences.edit().remove(PRONUNCIATION_VOLUME_PREFERENCE).commit()
         try {
             composeRule.setContent {
-                DualSubTheme {
+                DuoSubTheme {
                     SubtitleSettingsDialog(
                         sourcePreference = "auto",
                         targetLanguage = "vi",
@@ -183,7 +183,7 @@ class LearningPlayerUiTest {
     @Test
     fun learningOverlayHidesActionsUntilTapped() {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 LearningSubtitleOverlay(
                     content = LearningOverlayContent(
                         originalText = "What will we discuss?",
@@ -209,7 +209,7 @@ class LearningPlayerUiTest {
         val vertical = mutableFloatStateOf(0.5f)
         val horizontal = mutableFloatStateOf(0.5f)
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 Box(Modifier.fillMaxSize()) {
                     LearningSubtitleOverlay(
                         content =

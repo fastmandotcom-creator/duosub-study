@@ -79,7 +79,7 @@ import duosub.study.data.LearningWordSelection
 import duosub.study.data.PartOfSpeech
 import duosub.study.data.SubtitleSegment
 import duosub.study.translation.TranslationEngine
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import duosub.study.ui.theme.dualSubColorScheme
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -170,7 +170,7 @@ class AiAssistantPanelUiTest {
 
     private val host by lazy { AiAssistantHost(controller) { "Guide" } }
     private val fallback =
-        DualSubUiState(
+        DuoSubUiState(
             activeVideoId = "video",
             translationEngine = TranslationEngine.GOOGLE_WEB,
             onDeviceFallback = true,
@@ -187,9 +187,9 @@ class AiAssistantPanelUiTest {
         keyStore.markChecked(AiProvider.GEMINI, id, aiCheckedSetup(settings, AiProvider.GEMINI))
     }
 
-    private fun showTopBarAndPanel(state: DualSubUiState = fallback) {
+    private fun showTopBarAndPanel(state: DuoSubUiState = fallback) {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 CompositionLocalProvider(LocalAiAssistant provides host) {
                     Box(Modifier.fillMaxSize()) {
                         val problems = appProblems(state, onTryGoogleAgain = {}, onRetry = {})
@@ -305,7 +305,7 @@ class AiAssistantPanelUiTest {
             )
         var cardClosed = false
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 CompositionLocalProvider(LocalAiAssistant provides host) {
                     Box(Modifier.fillMaxSize()) {
                         GrammarExplanations(selection) { cardClosed = true }
@@ -344,7 +344,7 @@ class AiAssistantPanelUiTest {
                 false,
             )
         composeRule.setContent {
-            DualSubTheme { CompositionLocalProvider(LocalAiAssistant provides host) { GrammarExplanations(selection) } }
+            DuoSubTheme { CompositionLocalProvider(LocalAiAssistant provides host) { GrammarExplanations(selection) } }
         }
         composeRule.onNodeWithTag("grammar_ask_ai").assertDoesNotExist()
     }
@@ -353,7 +353,7 @@ class AiAssistantPanelUiTest {
     fun stopEndsAWaitingQuestionAndTryAgainAsksIt() {
         checkedGeminiKey()
         pending = CompletableDeferred()
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.onNodeWithTag("ai_assistant_button").performClick()
         composeRule.onNodeWithTag("ai_input").performTextInput("What does に mean?")
         composeRule.onNodeWithTag("ai_send_button").performClick()
@@ -377,7 +377,7 @@ class AiAssistantPanelUiTest {
     @Test
     fun aTypedQuestionGetsAnAnswer() {
         checkedGeminiKey()
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.onNodeWithTag("ai_assistant_problem_dot", useUnmergedTree = true).assertDoesNotExist()
         composeRule.onNodeWithTag("ai_assistant_button").performClick()
         composeRule.onNodeWithText("How can I help?").assertIsDisplayed()
@@ -408,7 +408,7 @@ class AiAssistantPanelUiTest {
     @Test
     fun aKeyAddedInThePanelSettingsIsCheckedBeforeChatOpens() {
         failure = AiChatException(AiErrorKind.INVALID_KEY, "API key not valid.")
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.onNodeWithTag("ai_assistant_button").performClick()
         composeRule.onNodeWithTag("ai_settings_button").performClick()
         composeRule.onNodeWithTag("ai_settings_page").assertIsDisplayed()
@@ -464,7 +464,7 @@ class AiAssistantPanelUiTest {
         controller.appActions = actions
         replies += AiReply("", listOf(call(AI_SETTING_TOOL, """{"setting":"text_size","value":"150"}""")))
         replies += AiReply("Done! The subtitles are bigger now.")
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.onNodeWithTag("ai_assistant_button").performClick()
         composeRule.onNodeWithTag("ai_input").performTextInput("Make the subtitles bigger")
         composeRule.onNodeWithTag("ai_send_button").performClick()
@@ -494,7 +494,7 @@ class AiAssistantPanelUiTest {
         controller.appActions = actions
         replies += AiReply("", listOf(call(AI_SEARCH_TOOL, """{"query":"Japanese cooking"}""")))
         replies += AiReply("Tap Search to see the videos.")
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.onNodeWithTag("ai_assistant_button").performClick()
         composeRule.onNodeWithTag("ai_input").performTextInput("Find Japanese cooking videos")
         composeRule.onNodeWithTag("ai_send_button").performClick()
@@ -509,9 +509,9 @@ class AiAssistantPanelUiTest {
 
     @Test
     fun thePanelUsesTheAppThemeEvenOutsideTheAppScreen() {
-        // LearningPlayerRoot draws the overlay beside DualSubApp, outside its theme.
+        // LearningPlayerRoot draws the overlay beside DuoSubApp, outside its theme.
         composeRule.setContent {
-            AiAssistantOverlay(host, DualSubUiState(), PlayerExperienceMode.TRANSCRIPT_PANEL, false, onTryGoogleAgain = {}, onRetry = {})
+            AiAssistantOverlay(host, DuoSubUiState(), PlayerExperienceMode.TRANSCRIPT_PANEL, false, onTryGoogleAgain = {}, onRetry = {})
         }
         composeRule.runOnIdle { controller.openPanel() }
         val pixels = composeRule.onNodeWithTag("ai_panel").captureToImage().toPixelMap()
@@ -522,7 +522,7 @@ class AiAssistantPanelUiTest {
     @Test
     fun theBarUnderTheChatBoxChangesTheModelAndThinkingLevel() {
         checkedGeminiKey()
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.onNodeWithTag("ai_assistant_button").performClick()
         composeRule.onNodeWithTag("ai_model_button").assertTextContains("gemini-flash-lite-latest")
         composeRule.onNodeWithTag("ai_model_button").performClick()
@@ -553,7 +553,7 @@ class AiAssistantPanelUiTest {
         checkedGeminiKey()
         val pixels = Bitmap.createBitmap(64, 48, Bitmap.Config.ARGB_8888).apply { eraseColor(android.graphics.Color.BLUE) }
         val jpeg = ByteArrayOutputStream().also { pixels.compress(Bitmap.CompressFormat.JPEG, 90, it) }.toByteArray()
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.onNodeWithTag("ai_assistant_button").performClick()
         composeRule.onNodeWithTag("ai_attach_button").performClick()
         composeRule.onNodeWithTag("ai_attach_photo").assertIsDisplayed()
@@ -598,7 +598,7 @@ class AiAssistantPanelUiTest {
     @Test
     fun theAiSectionInMoreSettingsSavesAKeyAndTurnsTheAssistantOff() {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 CompositionLocalProvider(LocalAiAssistant provides host) {
                     SubtitleSettingsDialog(
                         sourcePreference = "ja",
@@ -648,7 +648,7 @@ class AiAssistantPanelUiTest {
         checkedGeminiKey("AIza-FAKE-second-key-for-unit-tests-wxyz")
         val preferences = InstrumentationRegistry.getInstrumentation().targetContext.getSharedPreferences("dual_sub_preferences", 0)
         try {
-            showTopBarAndPanel(DualSubUiState())
+            showTopBarAndPanel(DuoSubUiState())
             composeRule.runOnIdle {
                 controller.openPanel()
                 controller.showPage(AiPanelPage.SETTINGS)
@@ -687,7 +687,7 @@ class AiAssistantPanelUiTest {
         checkedGeminiKey()
         val preferences = InstrumentationRegistry.getInstrumentation().targetContext.getSharedPreferences("dual_sub_preferences", 0)
         try {
-            showTopBarAndPanel(DualSubUiState())
+            showTopBarAndPanel(DuoSubUiState())
             composeRule.runOnIdle {
                 controller.openPanel()
                 controller.showPage(AiPanelPage.SETTINGS)
@@ -750,7 +750,7 @@ class AiAssistantPanelUiTest {
         controller.appActions = MemoryActions(controller)
         replies += AiReply("", listOf(call(AI_SAVE_MEMORY_TOOL, """{"text":"Studies for JLPT N3, exam in December"}""")))
         replies += AiReply("Good luck with N3! I'll keep that in mind.")
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.onNodeWithTag("ai_assistant_button").performClick()
         composeRule.onNodeWithTag("ai_chat_memory_chip").assertIsDisplayed()
         composeRule.onNodeWithTag("ai_input").performTextInput("I'm studying for JLPT N3. The exam is in December.")
@@ -794,7 +794,7 @@ class AiAssistantPanelUiTest {
         memory.data =
             AiMemoryData(memories = listOf(AiMemory("m1", "Studies for JLPT N4", 1), AiMemory("m2", "Likes short answers", 2)))
         checkedGeminiKey()
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.runOnIdle {
             controller.openPanel()
             controller.showPage(AiPanelPage.MEMORY)
@@ -821,7 +821,7 @@ class AiAssistantPanelUiTest {
     fun aChatWithoutMemorySendsNoMemoryActions() {
         checkedGeminiKey()
         controller.appActions = MemoryActions(controller)
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.onNodeWithTag("ai_assistant_button").performClick()
         composeRule.onNodeWithTag("ai_chat_memory_chip").performClick()
         composeRule.onNodeWithTag("ai_input").performTextInput("Hi")
@@ -834,7 +834,7 @@ class AiAssistantPanelUiTest {
     fun peopleWhoUsedTheAssistantBeforeSeeWhatsNewOnce() {
         settings = AiAssistantSettings(introSeen = true)
         checkedGeminiKey()
-        showTopBarAndPanel(DualSubUiState())
+        showTopBarAndPanel(DuoSubUiState())
         composeRule.onNodeWithTag("ai_assistant_button").performClick()
         composeRule.onNodeWithTag("ai_news_card").assertIsDisplayed()
         composeRule.onNodeWithText("New: actions and memory").assertIsDisplayed()

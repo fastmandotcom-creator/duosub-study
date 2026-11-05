@@ -10,7 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +26,7 @@ class LanguageDownloadsDialogTest {
     private fun show(initial: LanguageDownloadsState) {
         var state by mutableStateOf(initial)
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 LanguageDownloadsScreen(
                     state = state,
                     onDownload = { code ->

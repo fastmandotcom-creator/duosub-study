@@ -56,7 +56,7 @@ class SourcePreferenceTest {
         assertNull(pickedCaptionTrack("track:.en", tracks))
         assertNull(pickedCaptionTrack("ja", tracks))
 
-        val loaded = DualSubUiState(sourcePreference = "ja", availableSourceLanguages = tracks, loadedTrackId = "a.ja")
+        val loaded = DuoSubUiState(sourcePreference = "ja", availableSourceLanguages = tracks, loadedTrackId = "a.ja")
         assertEquals("track:a.ja", sourceChoiceSelection(loaded))
         assertEquals("日本語 (自動生成)", sourceLanguageLabel(sourceChoiceSelection(loaded), choices, "Auto", java.util.Locale.JAPANESE))
         assertEquals("auto", sourceChoiceSelection(loaded.copy(sourcePreference = "auto")))

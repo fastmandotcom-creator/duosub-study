@@ -15,7 +15,7 @@ let failed = false;
 for (const target of [...found].sort()) {
   if (/^https?:\/\//i.test(target)) {
     try {
-      const response = await fetch(target, {redirect: 'follow', headers: {'user-agent': 'DualSub-Replay-link-check'}});
+      const response = await fetch(target, {redirect: 'follow', headers: {'user-agent': 'DuoSub-Replay-link-check'}});
       const ok = response.status < 400;
       console.log(`${ok ? 'PASS' : 'FAIL'} ${response.status} ${target}`);
       failed ||= !ok;

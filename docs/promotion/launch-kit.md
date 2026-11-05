@@ -5,7 +5,7 @@ Use these drafts as starting points. Check each community's current rules, parti
 ## Direct links
 
 - Repository: https://github.com/fastmandotcom-creator/duosub-study
-- Official APK: https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk
+- Official APK: https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DuoSub-Replay.apk
 - Latest release: https://github.com/fastmandotcom-creator/duosub-study/releases/latest
 - Demo video: https://github.com/fastmandotcom-creator/duosub-study/blob/main/docs/media/dualsub-replay-promo.mp4
 
@@ -32,7 +32,7 @@ I built DuoSub Study, a free and open-source Android app for learning languages 
 The app is still evolving, especially because YouTube's caption interfaces can change. I would value honest feedback from language learners: what would make this useful in your daily study?
 
 Repository: https://github.com/fastmandotcom-creator/duosub-study
-Download: https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk
+Download: https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DuoSub-Replay.apk
 
 ### Vietnamese
 
@@ -41,7 +41,7 @@ Mình vừa làm DuoSub Study, một ứng dụng Android miễn phí và mã ng
 Ứng dụng vẫn đang được hoàn thiện, đặc biệt vì giao diện phụ đề nội bộ của YouTube có thể thay đổi. Mình rất mong nhận góp ý thật từ người học ngoại ngữ: điều gì sẽ giúp ứng dụng hữu ích hơn trong việc học hằng ngày của bạn?
 
 Mã nguồn: https://github.com/fastmandotcom-creator/duosub-study
-Tải APK: https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk
+Tải APK: https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DuoSub-Replay.apk
 
 Guidance: choose a relevant language-learning or Android group, read its self-promotion rules, use one short demo, and respond to every substantive question. Avoid asking only for stars.
 

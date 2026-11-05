@@ -75,13 +75,13 @@ jobs:
           fi
 
       - name: Name preview APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk DualSub-Replay-preview.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk DuoSub-Replay-preview.apk
 
       - name: Upload verified preview APK
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: DualSub-Replay-preview
-          path: DualSub-Replay-preview.apk
+          name: DuoSub-Replay-preview
+          path: DuoSub-Replay-preview.apk
           if-no-files-found: error
           retention-days: 7
 

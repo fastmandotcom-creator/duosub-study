@@ -3,29 +3,29 @@
 ## Status
 
 Approved for implementation. On 2026-10-18, after v1.6.2, the owner asked in the project thread
-whether `DualSub-Replay-preview.apk` was still needed and said: "if we don't need that preview apk
+whether `DuoSub-Replay-preview.apk` was still needed and said: "if we don't need that preview apk
 i want to remove it from CI". That does not authorize merging or publishing.
 
 ## Context / problem
 
 Every owner merge into `main` ran **Release merged PR**, which built a debug APK of `main` and
-uploaded it to the `preview` release as `DualSub-Replay-preview.apk`, next to the numbered test
+uploaded it to the `preview` release as `DuoSub-Replay-preview.apk`, next to the numbered test
 APKs of open PRs. Since every owner merge now also publishes an official release (unless
 `release:skip`), that APK is almost always the same app as the latest release. It costs a
 build on every merge and makes the preview page harder to read.
 
 ## Goals
 
-- Merges into `main` no longer build or upload `DualSub-Replay-preview.apk`.
+- Merges into `main` no longer build or upload `DuoSub-Replay-preview.apk`.
 - A `release:skip` merge publishes nothing and starts no build job.
-- Official releases and PR preview APKs (`DualSub-Replay-PR<N>-build<run>-preview.apk`, removed
+- Official releases and PR preview APKs (`DuoSub-Replay-PR<N>-build<run>-preview.apk`, removed
   when the PR closes) are unchanged.
 
 ## Non-goals
 
-- No change to PR CI, its `DualSub-Replay-preview` artifact (which `pr-preview-auto.yml`
+- No change to PR CI, its `DuoSub-Replay-preview` artifact (which `pr-preview-auto.yml`
   downloads) or the preview package id.
-- The session cannot edit releases, so the existing `DualSub-Replay-preview.apk` asset and the
+- The session cannot edit releases, so the existing `DuoSub-Replay-preview.apk` asset and the
   preview release text are changed by the owner on GitHub.
 
 ## Plan
@@ -39,7 +39,7 @@ build on every merge and makes the preview page harder to read.
 
 ## Acceptance criteria
 
-- [ ] No workflow builds or uploads `DualSub-Replay-preview.apk` to a release.
+- [ ] No workflow builds or uploads `DuoSub-Replay-preview.apk` to a release.
 - [ ] `publish-main` runs only when `prepare` reports `eligible` and `release_needed`.
 - [ ] `python3 -m unittest discover -s tools/tests -p 'test_*.py' -v` passes and the workflow
   YAML parses.
@@ -52,7 +52,7 @@ build on every merge and makes the preview page harder to read.
 | Workflow tests | `python3 -m unittest discover -s tools/tests -p 'test_*.py' -v` passes | Local, CI |
 | YAML | The changed workflow parses | Local |
 | CI | `verify-build` and `managed-device-tests` pass | CI |
-| After merge | The merge's **Release merged PR** run does not upload `DualSub-Replay-preview.apk` | GitHub |
+| After merge | The merge's **Release merged PR** run does not upload `DuoSub-Replay-preview.apk` | GitHub |
 
 ## Release intent
 

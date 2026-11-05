@@ -29,7 +29,7 @@ The command:
 - Verifies the package id (`duosub.study.study`), version name, size, and
   permissions.
 - Creates (or resumes) a draft GitHub Release tagged `study-X.Y.Z.N`, uploads
-  `DualSub-Study.apk`, and publishes it as the latest Study release.
+  `DuoSub-Study.apk`, and publishes it as the latest Study release.
 
 The command does not run the test suite, does not download the previous APK, and does
 not compare signing certificates (the Study channel is a debug build signed locally;

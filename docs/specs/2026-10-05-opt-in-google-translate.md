@@ -200,7 +200,7 @@ working and for a dialog that suits the dark theme.
   (often 3 to 4 requests per sentence). Google throttles bursts from one client with HTTP 429.
 - One failed request (a 429, a timeout on mobile data) stopped translation for the rest of the
   video. There was no retry.
-- The player root is not wrapped in `DualSubTheme`, so the dialog used Material's light defaults.
+- The player root is not wrapped in `DuoSubTheme`, so the dialog used Material's light defaults.
 
 ### What other projects do
 
@@ -224,7 +224,7 @@ so it is not used.
    engine receives that row's sentence and prefixes plus the next untranslated sentences in the
    window (up to 8 sentences) in one request. Rows then read their texts from the cache, so a video
    costs roughly one request per 8 sentences instead of 3 to 4 per sentence.
-4. The failure dialog applies `DualSubTheme` itself (dark teal surface, accent buttons), shows a
+4. The failure dialog applies `DuoSubTheme` itself (dark teal surface, accent buttons), shows a
    cloud-off icon, makes "Use on-device translation" the filled button, and shows the English
    diagnostic reason (for example the HTTP status) in small text so a report says why it failed.
 
@@ -248,7 +248,7 @@ Implemented as planned, with these details:
 - The transcript bar shows the localized "Google Translate stopped working" instead of the English
   exception text when Google is the engine.
 - Settings, the dialog and the bar reach the engine choice through `LocalTranslationEngineActions`
-  (like `LocalLanguageDownloads`), which keeps `DualSubApp` under the complexity limit.
+  (like `LocalLanguageDownloads`), which keeps `DuoSubApp` under the complexity limit.
 - `client=at` is tried first: on 2026-10-05 `gtx` answered HTTP 429 from the test machine while `at`
   answered 200 with the expected translation for the screenshot sentence.
 
@@ -311,7 +311,7 @@ Google again every 2 minutes.
 - A failing request is retried after 1 s, 3 s and 7 s (`GOOGLE_RETRY_DELAYS_MS`) when Google
   answered 5xx or could not be reached. When every endpoint answers 403/429 (a block), the error is
   thrown at once (`GoogleTranslateException.blocked`), since a few seconds do not lift a block.
-- After that, the video translates on the device (`DualSubUiState.onDeviceFallback`). Rows Google
+- After that, the video translates on the device (`DuoSubUiState.onDeviceFallback`). Rows Google
   already translated keep Google's text from its cache (`GoogleWebTranslator.cachedTranslation`).
 - While falling back, the app sends the current row to Google every 2 minutes during playback
   (`GOOGLE_RECHECK_INTERVAL_MS`, `GoogleWebTranslator.responds`, no cache, no retries). When Google
@@ -338,6 +338,6 @@ Google again every 2 minutes.
 
 - Local (Linux, Android SDK 36): `formatCheck complexityCheck testDebugUnitTest lintDebug
   assembleDebug assembleDebugAndroidTest` and `tools/tests` passed; 458 unit tests, 0 failures.
-- `DualSubApp` reached the 100-line limit, so "Try Google again" reaches the top bar through
+- `DuoSubApp` reached the 100-line limit, so "Try Google again" reaches the top bar through
   `TranslationEngineActions` instead of a new parameter.
 - Managed-device tests and the F-Droid build: CI. Physical phone: pending the owner's check.

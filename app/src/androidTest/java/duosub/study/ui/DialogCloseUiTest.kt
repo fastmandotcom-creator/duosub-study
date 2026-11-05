@@ -8,7 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.platform.app.InstrumentationRegistry
 import duosub.study.assistant.AiMemory
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -37,7 +37,7 @@ class DialogCloseUiTest {
     @Test
     fun theXClosesTheAppLanguageDialogWithoutChoosing() {
         var chosen = false
-        compose.setContent { DualSubTheme { AppLanguageButton(onSelect = { chosen = true }) } }
+        compose.setContent { DuoSubTheme { AppLanguageButton(onSelect = { chosen = true }) } }
         compose.onNodeWithTag("app_language_button").performClick()
         compose.onNodeWithTag(DIALOG_CLOSE_TAG).assertIsDisplayed()
         Thread.sleep(FADE_IN_MS)
@@ -50,7 +50,7 @@ class DialogCloseUiTest {
     @Test
     fun theXLooksRightOnTheLightTheme() {
         preferences.edit().putString(APP_COLOR_THEME_PREFERENCE, "light").commit()
-        compose.setContent { DualSubTheme { AppLanguageButton(onSelect = {}) } }
+        compose.setContent { DuoSubTheme { AppLanguageButton(onSelect = {}) } }
         compose.onNodeWithTag("app_language_button").performClick()
         compose.onNodeWithTag(DIALOG_CLOSE_TAG).assertIsDisplayed()
         Thread.sleep(FADE_IN_MS)
@@ -61,7 +61,7 @@ class DialogCloseUiTest {
     fun changedTextIsNeverDroppedSilently() {
         var closed = false
         val memory = AiMemory("m1", "I study Japanese", 0)
-        compose.setContent { DualSubTheme { AiMemoryEditDialog(memory, onDismiss = { closed = true }, onSave = { true }) } }
+        compose.setContent { DuoSubTheme { AiMemoryEditDialog(memory, onDismiss = { closed = true }, onSave = { true }) } }
         compose.onNodeWithTag("ai_memory_edit_field").performTextInput(" every day")
         compose.onNodeWithTag("ai_memory_edit_close").performClick()
         compose.onNodeWithTag("dialog_keep_editing").assertIsDisplayed()
@@ -79,7 +79,7 @@ class DialogCloseUiTest {
     fun unchangedTextClosesAtOnce() {
         var closed = false
         val memory = AiMemory("m1", "I study Japanese", 0)
-        compose.setContent { DualSubTheme { AiMemoryEditDialog(memory, onDismiss = { closed = true }, onSave = { true }) } }
+        compose.setContent { DuoSubTheme { AiMemoryEditDialog(memory, onDismiss = { closed = true }, onSave = { true }) } }
         compose.onNodeWithTag("ai_memory_edit_close").performClick()
         compose.onNodeWithTag("dialog_discard").assertDoesNotExist()
         compose.runOnIdle { assertTrue(closed) }

@@ -91,7 +91,7 @@ internal object RemoteSwitchFetcher {
             Request
                 .Builder()
                 .url(REMOTE_SWITCHES_URL)
-                .header("User-Agent", "DualSub-Replay/${BuildConfig.VERSION_NAME}")
+                .header("User-Agent", "DuoSub-Replay/${BuildConfig.VERSION_NAME}")
                 .build()
         if (request.url.host != REMOTE_SWITCHES_HOST || !request.url.isHttps) throw IOException("Not the switches address")
         client.newCall(request).execute().use { response ->

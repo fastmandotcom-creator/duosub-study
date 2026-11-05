@@ -92,7 +92,7 @@ import duosub.study.R
 import duosub.study.data.SubtitleSegment
 import duosub.study.data.WordTap
 import duosub.study.translation.TranslationLanguages
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -102,7 +102,7 @@ import kotlin.math.roundToInt
 
 @Composable
 @Suppress("LongMethod")
-fun DualSubApp(
+fun DuoSubApp(
     viewModel: AppViewModel,
     playerMode: PlayerExperienceMode = PlayerExperienceMode.TRANSCRIPT_PANEL,
     effectivePlayerMode: PlayerExperienceMode = playerMode,
@@ -134,7 +134,7 @@ fun DualSubApp(
     var showVocabulary by remember { mutableStateOf(false) }
     var showProgress by remember { mutableStateOf(false) }
 
-    DualSubTheme {
+    DuoSubTheme {
         CompositionLocalProvider(LocalPairedReading provides pairReader) {
             if (!state.onboardingCompleted) {
                 LanguageSetupScreen(onComplete = viewModel::completeOnboarding, onSkip = viewModel::skipOnboarding)
@@ -143,7 +143,7 @@ fun DualSubApp(
             } else if (!state.dailyGoalPromptCompleted) {
                 DailyGoalSetupScreen(onFinish = viewModel::completeDailyGoalPrompt)
             } else {
-                DualSubExperience(
+                DuoSubExperience(
                     state = state,
                     webController = webController,
                     onVocabulary = {
@@ -238,7 +238,7 @@ fun DualSubApp(
 @Composable
 private fun SelectedWordDialog(
     selection: duosub.study.data.LearningWordSelection,
-    state: DualSubUiState,
+    state: DuoSubUiState,
     savedWords: List<duosub.study.data.SavedWord>,
     viewModel: AppViewModel,
     webController: YouTubeWebController,
@@ -305,8 +305,8 @@ private fun SelectedWordDialog(
 
 @Composable
 @Suppress("LongMethod")
-private fun DualSubExperience(
-    state: DualSubUiState,
+private fun DuoSubExperience(
+    state: DuoSubUiState,
     webController: YouTubeWebController,
     onVocabulary: () -> Unit,
     onProgress: () -> Unit,
@@ -656,7 +656,7 @@ private fun DualSubExperience(
 
 @Composable
 private fun SubtitlePanel(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     modifier: Modifier,
     onHide: () -> Unit,
     onSettings: () -> Unit,
@@ -862,7 +862,7 @@ internal fun shouldCollapseSidePanel(
 
 @Composable
 private fun SideSubtitlePanel(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     modifier: Modifier,
     onHide: () -> Unit,
     onSettings: () -> Unit,
@@ -970,7 +970,7 @@ private fun SideSubtitlePanel(
 
 @Composable
 internal fun SubtitleTimeline(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     onWordClick: (WordTap) -> Unit = {},
     onReplay: (SubtitleSegment) -> Unit,
 ) {
@@ -1297,7 +1297,7 @@ private fun CompactLoadingPanel(message: String) {
 /** The transcript; translation problems show in the top-right icon ([TranslationIssueButton]). */
 @Composable
 internal fun TranslatedSubtitleTimeline(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     onWordClick: (WordTap) -> Unit,
     onReplay: (SubtitleSegment) -> Unit,
 ) {
@@ -1454,7 +1454,7 @@ internal fun localizedLanguageLabel(
 ): String = if (label == TranslationLanguages.find(code)?.name) languageDisplayName(code, interfaceLocale) else label
 
 @Composable
-private fun sourceDescription(state: DualSubUiState): String {
+private fun sourceDescription(state: DuoSubUiState): String {
     val resources = LocalResources.current
     val interfaceLocale = currentInterfaceLocale()
     val source =

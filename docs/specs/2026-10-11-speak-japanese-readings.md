@@ -48,7 +48,7 @@ romanized or pinyin reading saved by the assistant is never read aloud in place 
 1. `ui/Pronunciation.kt`: `spokenText(text, start, words)` replaces each word that has a kana reading
    inside the selected text, keeping everything in between; mismatched offsets fall back to the text
    as written. `spokenWord(word, reading)` does the same for a saved word.
-2. Call them from `DualSubApp.SelectedWordDialog` (card and parts), `SelectableSubtitleText`
+2. Call them from `DuoSubApp.SelectedWordDialog` (card and parts), `SelectableSubtitleText`
    (selection bar and auto-pronounce) and `SavedWordsScreen`.
 
 ## Acceptance criteria

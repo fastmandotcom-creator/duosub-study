@@ -62,7 +62,7 @@ background", which only covers the current pair.
    `JapaneseMorphology` exposes install/remove/installed for the settings screen.
 3. `ui/LanguageDownloads.kt`: `LanguageDownloadsController` (state flow + download/remove/
    refresh), pure `languageDownloadRows` grouping, and the `LanguageDownloadsDialog` screen.
-   `AppViewModel` owns the controller; `DualSubApp` provides it with a composition local, so
+   `AppViewModel` owns the controller; `DuoSubApp` provides it with a composition local, so
    the settings dialog shows the row only when a controller exists.
 
 ## Acceptance criteria

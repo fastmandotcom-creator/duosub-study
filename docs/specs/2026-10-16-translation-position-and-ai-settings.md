@@ -108,7 +108,7 @@ the settings page does; Undo turns the switch back on but the old positions stay
 ## Proposed approach / plan
 
 1. `TranslationPosition` enum (`below`/`above`) stored as `translation_position`, loaded into
-   `DualSubUiState`, set by `AppViewModel.setTranslationPosition`, cleared by reset.
+   `DuoSubUiState`, set by `AppViewModel.setTranslationPosition`, cleared by reset.
 2. `subtitleLineOrder()` decides the order; `CompactSubtitleCard` and `LearningSubtitleOverlay`
    draw their two lines through it.
 3. `AppColorThemeOption` stored as `app_color_theme`; `dualSubColorScheme` builds a dark scheme
@@ -163,12 +163,12 @@ patch is the default. The owner decides; until then the PR keeps the patch defau
   `CompactSubtitleCard` and `LearningSubtitleOverlay` draw their lines through it; the live
   captions card reuses `CompactSubtitleCard`.
 - `ui/AppColorTheme.kt` and `ui/theme/Theme.kt`: the seven themes. `retint()` keeps each teal
-  role's lightness and swaps hue and saturation. `DualSubTheme` follows both preferences and
+  role's lightness and swaps hue and saturation. `DuoSubTheme` follows both preferences and
   sets light or dark system-bar icons.
 - Light-theme readability: `SubtitleColorOption.lightArgb` gives each subtitle color a dark
   shade for app cards; `partOfSpeechColor()` darkens word colors on dark text; the amber/red
   status tints have darker light-theme shades.
-- Fixed colors moved to theme roles in `DualSubApp`, `SubtitleCard`, `LanguageSetupScreen`,
+- Fixed colors moved to theme roles in `DuoSubApp`, `SubtitleCard`, `LanguageSetupScreen`,
   `GuideScreen`, `DailyGoalSetupScreen` and `JumpBackPill`.
 - `assistant/AiActions.kt`: 34 settings in settings-page order (18 new, including
   `app_colors`), aliases for spoken values, `asks` on the four settings above.

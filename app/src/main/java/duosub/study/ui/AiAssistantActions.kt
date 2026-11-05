@@ -45,8 +45,8 @@ private const val MS_PER_MINUTE = 60_000L
 private const val SECONDS_PER_MINUTE = 60L
 
 /**
- * The page video's controls for the assistant. [DualSubApp] owns the video controller, while the
- * assistant panel sits beside it, so DualSubApp binds it here ([BindAiPlayerControls]).
+ * The page video's controls for the assistant. [DuoSubApp] owns the video controller, while the
+ * assistant panel sits beside it, so DuoSubApp binds it here ([BindAiPlayerControls]).
  */
 internal class AiPlayerControls {
     private var web: YouTubeWebController? = null
@@ -87,7 +87,7 @@ internal class AiPlayerControls {
     }
 }
 
-/** Lets the assistant beside [DualSubApp] pause, replay and change the speed of the page video. */
+/** Lets the assistant beside [DuoSubApp] pause, replay and change the speed of the page video. */
 @Composable
 internal fun BindAiPlayerControls(webController: YouTubeWebController) {
     val player = LocalAiAssistant.current?.player ?: return
@@ -132,7 +132,7 @@ internal fun aiYouTubeSearchUrl(query: String): String =
 
 private fun onOff(enabled: Boolean) = if (enabled) "on" else "off"
 
-/** The settings kept only in preferences rather than in [DualSubUiState], as the assistant reads them. */
+/** The settings kept only in preferences rather than in [DuoSubUiState], as the assistant reads them. */
 internal data class AiStoredSettings(
     val overlayBackground: String = DEFAULT_SUBTITLE_BOX_BACKGROUND_KEY,
     val appColors: String = DEFAULT_APP_COLOR_THEME_KEY,
@@ -177,7 +177,7 @@ internal fun readAiStoredSettings(context: Context): AiStoredSettings {
 
 /** [setting]'s value now, written as the assistant's actions write it. */
 internal fun aiSettingCurrentValue(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     playerMode: PlayerExperienceMode,
     speed: Float,
     stored: AiStoredSettings,
@@ -235,7 +235,7 @@ private fun aiStudySettingValue(
 
 /** The Reading, Default view, Layout and Colors settings that the view model holds. */
 private fun aiReadingSettingValue(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     playerMode: PlayerExperienceMode,
     setting: AiSetting,
 ): String? =
@@ -260,7 +260,7 @@ private fun aiReadingSettingValue(
 
 /** Word learning, captions, the daily goal and the video's speed. */
 private fun aiLearningSettingValue(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     speed: Float,
     setting: AiSetting,
 ): String =
@@ -282,7 +282,7 @@ private fun aiLearningSettingValue(
 
 /** Why [action] cannot run in [state], in English for the model, or null. */
 internal fun aiActionRefusal(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     action: AiAction,
 ): String? =
     when {
@@ -300,7 +300,7 @@ internal fun aiActionRefusal(
     }
 
 private fun aiPlaybackRefusal(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     command: AiPlayback,
 ): String? =
     when {
@@ -322,7 +322,7 @@ private fun aiTime(ms: Long): String =
 
 /** What reading the screen tells the model: the current line and up to [linesAround] on each side, as quoted data. */
 internal fun aiVideoLook(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     linesAround: Int,
 ): String {
     if (state.activeVideoId == null) return "No video is open; the user is browsing YouTube."
@@ -363,7 +363,7 @@ internal fun aiSavedWord(
     word: String,
     reading: String?,
     meaning: String,
-    state: DualSubUiState,
+    state: DuoSubUiState,
 ): SavedWord {
     val source = learningSourceLanguage(state.resolvedSourceLanguage, state.sourcePreference)
     val target = state.targetLanguage
@@ -406,7 +406,7 @@ internal class AppAiActions(
     private val fullAccess: AiFullAccessActions? = null,
     private val screen: AiScreenCapture? = null,
 ) : AiAppActions {
-    private val state: DualSubUiState get() = viewModel.state.value
+    private val state: DuoSubUiState get() = viewModel.state.value
 
     private fun string(
         @StringRes id: Int,

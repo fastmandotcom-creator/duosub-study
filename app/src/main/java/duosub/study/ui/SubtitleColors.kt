@@ -132,17 +132,17 @@ internal fun appThemeAccentColor(key: String): Color =
 
 /** Custom text colors apply only while the "Custom subtitle colors" switch is on. */
 internal fun effectiveOriginalColor(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     onLight: Boolean = false,
 ): Color = subtitleColor(if (state.customColorsEnabled) state.originalColorKey else DEFAULT_ORIGINAL_COLOR_KEY, onLight)
 
 internal fun effectiveTranslatedColor(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     onLight: Boolean = false,
 ): Color = subtitleColor(if (state.customColorsEnabled) state.translatedColorKey else DEFAULT_TRANSLATED_COLOR_KEY, onLight)
 
 internal fun effectiveHighlightColor(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     onLight: Boolean = false,
 ): Color =
     subtitleColor(

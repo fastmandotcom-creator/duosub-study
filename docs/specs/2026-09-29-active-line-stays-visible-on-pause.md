@@ -12,7 +12,7 @@ transcript. On the owner's phone, when the spoken line was near the bottom of th
 above it grew and pushed it below the bottom edge. The owner had to scroll down to read the line
 they paused on.
 
-`SubtitleTimeline` in `ui/DualSubApp.kt` only moved the list when the active row changed or the
+`SubtitleTimeline` in `ui/DuoSubApp.kt` only moved the list when the active row changed or the
 panel got shorter. Rows growing in place moved nothing.
 
 ## Goals

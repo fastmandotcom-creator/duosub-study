@@ -91,7 +91,7 @@ The app already knows what it needs:
    the explicit learning preference), flush on pause, when the app is hidden, when the video
    closes, and on `onCleared`. Add `dailyGoalMinutes` and `dailyGoalPromptCompleted` state.
 4. UI: `ui/ProgressScreen.kt` (screen + reusable goal picker), `ui/DailyGoalSetupScreen.kt`, a
-   "Progress" drawer item, and the new first-launch step in `DualSubApp`.
+   "Progress" drawer item, and the new first-launch step in `DuoSubApp`.
 5. Tests: unit tests for the pure logic and the migration rule; instrumented tests for the
    repository, the Progress content and the goal step.
 
@@ -142,10 +142,10 @@ Applied as the GitHub label `release:minor` on PR #84 (latest stable release bef
   `onCleared`; `setDailyGoal` and `completeDailyGoalPrompt`. `completeGuide` stores
   `daily_goal_prompt_completed=false` so the goal step still appears if the app closes before it.
 - UI: `ProgressScreen.kt` (with the shared `DailyGoalPicker`), `DailyGoalSetupScreen.kt`, a
-  "Progress" drawer item, the new first-launch step in `DualSubApp`, and the scroll-friendly overlay
+  "Progress" drawer item, the new first-launch step in `DuoSubApp`, and the scroll-friendly overlay
   stays hidden during the goal step (`LearningPlayerRoot`).
 - Deviations: languages use `TranslationLanguages.normalize` so they match saved words. The word
-  dialog in `DualSubApp` moved into `SelectedWordDialog` to keep `DualSubApp` under the detekt
+  dialog in `DuoSubApp` moved into `SelectedWordDialog` to keep `DuoSubApp` under the detekt
   `LongMethod` limit. "Reset all settings" does not clear the daily goal, which is progress data.
 
 ## Validation result

@@ -57,7 +57,7 @@
   } catch (e) {}
 
   document.addEventListener('click', function (event) {
-    var link = event.target.closest && event.target.closest('a[href$="/releases/latest/download/DualSub-Replay.apk"]');
+    var link = event.target.closest && event.target.closest('a[href$="/releases/latest/download/DuoSub-Replay.apk"]');
     if (!link) return;
     tapped = true;
     try { sessionStorage.setItem(STATE_KEY, '1'); } catch (e) {}

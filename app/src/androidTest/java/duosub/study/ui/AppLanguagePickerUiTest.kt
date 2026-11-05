@@ -14,7 +14,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -28,7 +28,7 @@ class AppLanguagePickerUiTest {
     fun drawerOffersEveryLanguageAndFollowsTheDeviceByDefault() {
         var chosen: AppLanguageOption? = null
         compose.setContent {
-            DualSubTheme { AppLanguageButton(onSelect = { chosen = it }) }
+            DuoSubTheme { AppLanguageButton(onSelect = { chosen = it }) }
         }
         compose.onNodeWithText("Device language").assertIsDisplayed()
         compose.onNodeWithTag("app_language_button").performClick()
@@ -51,7 +51,7 @@ class AppLanguagePickerUiTest {
                 LocalResources provides vietnamese.resources,
                 LocalConfiguration provides configuration,
             ) {
-                DualSubTheme {
+                DuoSubTheme {
                     AppNavigation(onPractice = {}, onSettings = {}) { menu -> menu() }
                 }
             }

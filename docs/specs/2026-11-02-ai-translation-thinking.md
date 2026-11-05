@@ -58,7 +58,7 @@ translation from no thinking (the default) to a higher level.
 1. `AiTranslationThinking` (Off/Low/Medium), `aiTranslationThinkingLevels(provider)`,
    `aiTranslationEffort(provider, model, thinking)`, `aiTranslationScope` in
    `assistant/AiTranslationAccess.kt`; preference `ai_translation_thinking`.
-2. `DualSubUiState.aiTranslationThinking`, `AppViewModel.setAiTranslationThinking` (reloads like the
+2. `DuoSubUiState.aiTranslationThinking`, `AppViewModel.setAiTranslationThinking` (reloads like the
    model choice), reset with Reset all settings.
 3. `AiTranslationThinkingSettings` chips in `ui/GoogleWaitSettings.kt`, shown in
    `OnlineTranslationSettingsRows`.

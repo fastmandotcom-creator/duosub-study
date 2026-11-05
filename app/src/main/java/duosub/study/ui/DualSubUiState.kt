@@ -14,7 +14,7 @@ import duosub.study.data.activeWordIndex as timedActiveWordIndex
 
 enum class LoadStage { IDLE, LOADING_CAPTIONS, TRANSLATING, READY, ERROR }
 
-data class DualSubUiState(
+data class DuoSubUiState(
     val liveFallback: Boolean = false,
     val liveOriginal: String? = null,
     val liveTranslated: String? = null,
@@ -111,7 +111,7 @@ data class DualSubUiState(
 )
 
 /** [state] translating with Google again, without the fallback and its reasons. */
-internal fun withGoogleAgain(state: DualSubUiState): DualSubUiState =
+internal fun withGoogleAgain(state: DuoSubUiState): DuoSubUiState =
     state.copy(
         onDeviceFallback = false,
         youTubeTranslationFallback = false,
@@ -121,9 +121,9 @@ internal fun withGoogleAgain(state: DualSubUiState): DualSubUiState =
     )
 
 /** The engine actually translating right now: Google, unless this video fell back to on-device. */
-internal fun DualSubUiState.translatesWithGoogle(): Boolean = translationEngine == TranslationEngine.GOOGLE_WEB && !onDeviceFallback
+internal fun DuoSubUiState.translatesWithGoogle(): Boolean = translationEngine == TranslationEngine.GOOGLE_WEB && !onDeviceFallback
 
-internal fun DualSubUiState.onlineTranslationSettings() =
+internal fun DuoSubUiState.onlineTranslationSettings() =
     OnlineTranslationSettings(translationEngine, googleWait, aiTranslation, aiTranslationOnly, aiTranslationModel, aiTranslationThinking)
 
 /**
@@ -223,7 +223,7 @@ internal fun pickedCaptionTrack(
         ?.let { id -> availableSourceLanguages.firstOrNull { it.trackId == id } }
 
 /** What the source list shows as chosen: Auto, the loaded track, or the chosen language while loading. */
-internal fun sourceChoiceSelection(state: DualSubUiState): String =
+internal fun sourceChoiceSelection(state: DuoSubUiState): String =
     when {
         state.sourcePreference == "auto" -> "auto"
         state.loadedTrackId.isNotBlank() && state.availableSourceLanguages.any { it.trackId == state.loadedTrackId } ->
@@ -266,11 +266,11 @@ internal fun usesVietnameseEnglishPair(
     sourcePreference.substringBefore('-').equals(DEFAULT_SOURCE_LANGUAGE, ignoreCase = true) &&
         targetLanguage.substringBefore('-').equals(DEFAULT_TARGET_LANGUAGE, ignoreCase = true)
 
-internal fun DualSubUiState.usesVietnameseEnglishPair(): Boolean = usesVietnameseEnglishPair(sourcePreference, targetLanguage)
+internal fun DuoSubUiState.usesVietnameseEnglishPair(): Boolean = usesVietnameseEnglishPair(sourcePreference, targetLanguage)
 
 /** Keeps the spoken pair's visual order aligned with its primary-then-secondary reading order. */
 internal fun effectiveStudyTranslationPosition(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     readingPairActive: Boolean,
 ): TranslationPosition =
     if (state.usesVietnameseEnglishPair() && (state.studyPlayMode == StudyPlayMode.READ_PAIR || readingPairActive)) {
@@ -288,7 +288,7 @@ internal fun studyTranslationTarget(sourceLanguage: String?): String =
  * An English track is translated into Vietnamese and that translation moves to the first line.
  * Line 1 and line 2 are as the learner set them; the default pair still puts Vietnamese first.
  */
-internal fun DualSubUiState.studyLine(segment: SubtitleSegment): SubtitleSegment =
+internal fun DuoSubUiState.studyLine(segment: SubtitleSegment): SubtitleSegment =
     if (usesVietnameseEnglishPair()) {
         segment.asStudyPair(resolvedSourceLanguage, studyTranslationTarget(resolvedSourceLanguage), thirdLineFor(segment))
     } else {

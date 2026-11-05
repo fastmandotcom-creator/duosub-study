@@ -191,7 +191,7 @@
     "standard:multiline-expression-wrapping": 5,
     "standard:chain-method-continuation": 4
   },
-  "app/src/main/java/duosub/study/ui/DualSubApp.kt": {
+  "app/src/main/java/duosub/study/ui/DuoSubApp.kt": {
     "standard:import-ordering": 1,
     "standard:function-naming": 15,
     "standard:statement-wrapping": 10,

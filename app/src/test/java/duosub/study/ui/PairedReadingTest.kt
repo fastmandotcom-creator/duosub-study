@@ -23,7 +23,7 @@ class PairedReadingTest {
     @Test
     fun defaultVietnameseEnglishPairSpeaksVietnameseBeforeEnglish() {
         val state =
-            DualSubUiState(
+            DuoSubUiState(
                 sourcePreference = "vi",
                 targetLanguage = "en",
                 resolvedSourceLanguage = "en",

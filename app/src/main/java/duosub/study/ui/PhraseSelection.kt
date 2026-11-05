@@ -318,7 +318,7 @@ internal fun rememberPhraseSelection(): PhraseSelectionController {
 /** Connects the shared selection to the page video and the app's speech engine. */
 @Composable
 internal fun BindPhraseActions(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     webController: YouTubeWebController,
     pronouncer: WordPronouncer,
     translate: suspend (text: String, translated: Boolean) -> String,

@@ -66,14 +66,14 @@ with nothing for Android apps yet. The fork reuses the Codex CLI's login instead
 - TSV export adds `sourceTitle` and `notes` columns after `deck`; import maps them by header.
 - Third line (`ThirdSubtitleLine.kt`): the fork's design. `ThirdLineTranslation` runs a second
   `translatePlaybackWindow` loop on the same display store as the second line, so row ids
-  match, and publishes `ThirdLines(videoId, language, lines)` beside `DualSubUiState.segments`.
+  match, and publishes `ThirdLines(videoId, language, lines)` beside `DuoSubUiState.segments`.
   The subtitle store, `SubtitleSegment` and the two-line pipeline are unchanged. It starts with
   each translation run and restarts when the third language or the engine changes. Google
   first with one batched request for upcoming lines, falling back to ML Kit when it has a
   model; with "On this device only" it uses ML Kit only. Its failures are silent and never
   touch the other two lines.
 - `SavedWord.thirdSentence` and `SavedWord.thirdLanguage`: optional JSON fields, filled from
-  `DualSubUiState.withThirdLineOnScreen` when a word is tapped and again when it is saved (the line
+  `DuoSubUiState.withThirdLineOnScreen` when a word is tapped and again when it is saved (the line
   may arrive in between). Saving again with the line off keeps the old one (`withThirdLineOf`).
   TSV export adds `thirdSentence` and `thirdLanguage` columns at the end. Anki gets no new field:
   AnkiDroid's provider cannot add a field to the "DuoSub Study" note type people already have,

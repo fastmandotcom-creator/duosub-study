@@ -16,7 +16,7 @@ import duosub.study.data.RemoteNotice
 import duosub.study.data.RemoteSwitchState
 import duosub.study.data.RemoteSwitches
 import duosub.study.data.UpdateReminder
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import duosub.study.update.AppUpdater
 import duosub.study.update.UPDATE_REMINDERS_PREFERENCE
 import duosub.study.update.UpdateState
@@ -41,7 +41,7 @@ class AppNoticesUiTest {
     private fun update(critical: Boolean = false) =
         AppUpdate(
             versionName = "1.9.0",
-            downloadUrl = "https://github.com/fastmandotcom-creator/duosub-study/releases/download/v1.9.0/DualSub-Replay.apk",
+            downloadUrl = "https://github.com/fastmandotcom-creator/duosub-study/releases/download/v1.9.0/DuoSub-Replay.apk",
             sha256 = "136c5c6363625a137e1b07cd4fcc6e00fd64ae23bfca427cfeff01ff038f080e",
             checksumUrl = null,
             sizeBytes = 34_251_919,
@@ -72,7 +72,7 @@ class AppNoticesUiTest {
     @Test
     fun aNewVersionShowsABannerThatCanSkipTheVersion() {
         AppUpdater.showReminderForTest(update(), UpdateReminder.BANNER)
-        composeRule.setContent { DualSubTheme { AppNoticesHost() } }
+        composeRule.setContent { DuoSubTheme { AppNoticesHost() } }
         composeRule.onNodeWithText("Version 1.9.0 is available.").assertIsDisplayed()
         composeRule.onNodeWithTag("update_banner_update").assertIsDisplayed()
         composeRule.onNodeWithTag("update_banner_not_now").assertIsDisplayed()
@@ -86,7 +86,7 @@ class AppNoticesUiTest {
     @Test
     fun aSecurityUpdateAsksAtOnceAndCanBeDeclined() {
         AppUpdater.showReminderForTest(update(critical = true), UpdateReminder.SECURITY)
-        composeRule.setContent { DualSubTheme { AppNoticesHost() } }
+        composeRule.setContent { DuoSubTheme { AppNoticesHost() } }
         composeRule.onNodeWithText("Security update").assertIsDisplayed()
         composeRule.onNodeWithTag("security_update_update").assertIsDisplayed()
         composeRule.onNodeWithTag("security_update_details").assertIsDisplayed()
@@ -102,7 +102,7 @@ class AppNoticesUiTest {
     @Test
     fun aRemoteNoticeStaysClosedUntilANewOne() {
         RemoteSwitchState.set(RemoteSwitches(notice = RemoteNotice.YOUTUBE_CHANGED, noticeKey = "a"))
-        composeRule.setContent { DualSubTheme { AppNoticesHost() } }
+        composeRule.setContent { DuoSubTheme { AppNoticesHost() } }
         composeRule.onNodeWithTag("remote_notice").assertIsDisplayed()
         saveUiEvidence("remote-notice")
         composeRule.onNodeWithTag("remote_notice_close").performClick()
@@ -115,7 +115,7 @@ class AppNoticesUiTest {
     fun reportAProblemShowsWhatWouldBeSent() {
         ProblemLog.record(ProblemArea.GOOGLE_TRANSLATE, "translate.googleapis.com/translate_a/t: HTTP 429")
         var closed = false
-        composeRule.setContent { DualSubTheme { ReportProblemDialog(onDismiss = { closed = true }) } }
+        composeRule.setContent { DuoSubTheme { ReportProblemDialog(onDismiss = { closed = true }) } }
         composeRule
             .onNodeWithText(
                 "Google Translate: translate.googleapis.com/translate_a/t: HTTP 429",
@@ -133,7 +133,7 @@ class AppNoticesUiTest {
     @Test
     fun remindersAreOnUntilTurnedOff() {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 SubtitleSettingsDialog(
                     sourcePreference = "auto",
                     targetLanguage = "vi",

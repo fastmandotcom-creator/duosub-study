@@ -223,7 +223,7 @@ class TranslationFailureTest {
     @Test
     fun retryReloadsCaptionsUnlessOnlyTranslationFailed() {
         val showing =
-            DualSubUiState(
+            DuoSubUiState(
                 activeVideoId = "video",
                 segments = listOf(SubtitleSegment(0, 0, 1000, "Hello")),
                 translationError = "offline",

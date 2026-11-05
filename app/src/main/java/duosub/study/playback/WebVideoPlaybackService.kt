@@ -30,7 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-private const val PLAYBACK_LOG_TAG = "DualSubPlayback"
+private const val PLAYBACK_LOG_TAG = "DuoSubPlayback"
 private const val CHANNEL_ID = "video_playback"
 private const val NOTIFICATION_ID = 1_701
 private const val ACTION_TOGGLE = "duosub.study.playback.TOGGLE"
@@ -57,7 +57,7 @@ class WebVideoPlaybackService : Service() {
         running = true
         createChannel()
         session =
-            MediaSessionCompat(this, "DualSubReplay").apply {
+            MediaSessionCompat(this, "DuoSubReplay").apply {
                 setCallback(SessionCallback())
                 setSessionActivity(openAppIntent())
                 isActive = true

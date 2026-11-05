@@ -40,7 +40,7 @@ internal fun Resources.uiStrings(): UiStrings =
 
 /** [learningOverlayContent] with the app's own texts in the interface language. */
 @Composable
-internal fun learningOverlayContent(state: DualSubUiState): LearningOverlayContent? {
+internal fun learningOverlayContent(state: DuoSubUiState): LearningOverlayContent? {
     val reader = LocalPairedReading.current
     val readingSegmentId = reader?.readingSegmentId
     return learningOverlayContent(
@@ -52,7 +52,7 @@ internal fun learningOverlayContent(state: DualSubUiState): LearningOverlayConte
 }
 
 internal fun learningOverlayContent(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     strings: UiStrings,
     readingSegmentId: Long? = null,
     readingSide: ReadSide? = null,
@@ -67,7 +67,7 @@ internal fun learningOverlayContent(
 }
 
 private fun unfilteredLearningOverlayContent(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     strings: UiStrings,
     readingSegmentId: Long?,
     readingSide: ReadSide?,

@@ -139,7 +139,7 @@ class SubtitleWordHighlightTest {
 
     @Test fun customColorTogglesFallBackToDefaults() {
         val state =
-            DualSubUiState(
+            DuoSubUiState(
                 originalColorKey = "amber",
                 translatedColorKey = "rose",
                 highlightColorKey = "lavender",
@@ -254,7 +254,7 @@ class SubtitleWordHighlightTest {
     }
 
     @Test fun wordLearningModeDefaultsToEnabled() {
-        val state = DualSubUiState()
+        val state = DuoSubUiState()
         assertTrue("Word Learning Mode should be enabled by default", state.wordLearningEnabled)
         assertEquals("original", state.wordLearningTarget)
         assertTrue(state.wordLearningActiveOnly)

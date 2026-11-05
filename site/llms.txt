@@ -24,7 +24,7 @@ Key facts:
 
 ## Download and source
 
-- [Latest APK](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk)
+- [Latest APK](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DuoSub-Replay.apk)
 - [Release notes](https://github.com/fastmandotcom-creator/duosub-study/releases/latest)
 - [Source code and README](https://github.com/fastmandotcom-creator/duosub-study)
 - [Privacy policy](https://github.com/fastmandotcom-creator/duosub-study/blob/main/PRIVACY.md)

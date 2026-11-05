@@ -43,7 +43,7 @@ languages a learner actually uses means searching or scrolling each time.
 ## Proposed approach / plan
 
 1. `ui/RecentLanguages.kt`: parse/encode, `rememberRecentLanguage`, `recentLanguagesToShow`.
-2. `DualSubUiState.recentTargetLanguages`, loaded from and saved to preferences.
+2. `DuoSubUiState.recentTargetLanguages`, loaded from and saved to preferences.
 3. `LanguagePickerDialog` takes `recentCodes` and shows the Recent group when the search is empty.
 4. Both the gear popup and the settings page pass the list to the Translate to picker.
 

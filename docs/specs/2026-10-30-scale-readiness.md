@@ -191,8 +191,8 @@ it is the owner's call and not applied without asking.
   that offer in-app tabs. Owner choice too: a Send by email button to `dualsubreplay.help@gmail.com`,
   an inbox the owner created for app reports (`PROBLEM_REPORT_EMAIL`): the mail app opens with the
   address, an English subject with the version, and the report; with no mail app, a note says to Copy.
-- Split: `DualSubUiState`, `LoadStage` and the pure helper functions moved unchanged from
-  `AppViewModel.kt` (2,243 → 1,958 lines) to `ui/DualSubUiState.kt`; only `withGoogleAgain`
+- Split: `DuoSubUiState`, `LoadStage` and the pure helper functions moved unchanged from
+  `AppViewModel.kt` (2,243 → 1,958 lines) to `ui/DuoSubUiState.kt`; only `withGoogleAgain`
   became `internal` because the view model still uses it. The view model's own methods were not
   split further in this PR.
 - AI assistant: `update_reminders` setting (asks first); Reset all settings turns it back on.

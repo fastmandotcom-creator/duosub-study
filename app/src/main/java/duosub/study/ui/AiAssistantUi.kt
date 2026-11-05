@@ -33,7 +33,7 @@ import duosub.study.assistant.AiAssistantController
 import duosub.study.assistant.AiErrorKind
 import duosub.study.assistant.aiSubtitleLineContext
 import duosub.study.translation.TranslationLanguages
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 
 /** The assistant, the page video's controls it may use, its screenshots, and the bundled app guide it reads. */
 internal class AiAssistantHost(
@@ -69,7 +69,7 @@ internal fun mildProblemTint(): Color = if (appThemeIsLight()) MildProblemTintOn
 
 @Composable
 internal fun appProblems(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     onTryGoogleAgain: () -> Unit,
     onRetry: () -> Unit,
 ): List<AppProblem> {
@@ -131,7 +131,7 @@ internal fun appProblems(
  */
 @Composable
 internal fun TopBarAssistantOrIssueButton(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     problems: List<AppProblem>,
     onTryGoogleAgain: () -> Unit,
     onRetry: () -> Unit,
@@ -206,18 +206,18 @@ internal fun openExternalPage(
 
 /**
  * The panel with this screen's problems, the current subtitle line, and what the app knows right
- * now. It sits next to [DualSubApp] rather than inside it, so it applies the app theme itself;
+ * now. It sits next to [DuoSubApp] rather than inside it, so it applies the app theme itself;
  * without it, Material's light purple defaults would show.
  */
 @Composable
 internal fun AiAssistantOverlay(
     host: AiAssistantHost,
-    state: DualSubUiState,
+    state: DuoSubUiState,
     playerMode: PlayerExperienceMode,
     fullscreen: Boolean,
     onTryGoogleAgain: () -> Unit,
     onRetry: () -> Unit,
-) = DualSubTheme {
+) = DuoSubTheme {
     // The button is not reachable in fullscreen video, so the panel does not stay over it either.
     LaunchedEffect(fullscreen) { if (fullscreen) host.controller.closePanel() }
     val locale = currentInterfaceLocale()

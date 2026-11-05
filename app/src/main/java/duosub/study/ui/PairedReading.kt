@@ -74,7 +74,7 @@ internal suspend fun playPairedReading(
 }
 
 /** The line on screen, as a pair. A word that is the whole line uses that line's translation. */
-internal fun currentSpokenPair(state: DualSubUiState): SpokenPair? {
+internal fun currentSpokenPair(state: DuoSubUiState): SpokenPair? {
     val source = state.resolvedSourceLanguage ?: "en"
     if (state.liveFallback) {
         val primary = state.liveOriginal?.trim().orEmpty()
@@ -86,7 +86,7 @@ internal fun currentSpokenPair(state: DualSubUiState): SpokenPair? {
 
 /** [segment] as the pair shown for it (line 1 then line 2), or null when its first line is blank. */
 internal fun spokenPairOf(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     segment: SubtitleSegment,
 ): SpokenPair? {
     val line = state.studyLine(segment)
@@ -124,7 +124,7 @@ internal class PairedLineReaderHost(
     private val pronouncer: WordPronouncer,
     private val controller: YouTubeWebController,
 ) {
-    var state: DualSubUiState? = null
+    var state: DuoSubUiState? = null
     var times: Int = DEFAULT_PAIR_READ_COUNT
     var progress by mutableStateOf<PairReadProgress?>(null)
         private set

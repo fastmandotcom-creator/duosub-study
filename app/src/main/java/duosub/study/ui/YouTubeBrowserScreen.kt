@@ -80,7 +80,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONObject
 import org.json.JSONTokener
 
-private const val BROWSER_LOG_TAG = "DualSubBrowser"
+private const val BROWSER_LOG_TAG = "DuoSubBrowser"
 // Keep native karaoke tracking close to YouTube's own transcript cadence. 250 ms
 // polling made spoken-word changes visibly trail fast speech by up to a quarter
 // second; 100 ms keeps the highlight responsive without polling every frame.

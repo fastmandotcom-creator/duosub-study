@@ -68,8 +68,8 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          gh release download --pattern 'DualSub-Replay.apk' --pattern 'DualSub-Replay.apk.sha256' --dir _site
-          (cd _site && sha256sum --check DualSub-Replay.apk.sha256)
+          gh release download --pattern 'DuoSub-Replay.apk' --pattern 'DuoSub-Replay.apk.sha256' --dir _site
+          (cd _site && sha256sum --check DuoSub-Replay.apk.sha256)
 
       - name: Upload site
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

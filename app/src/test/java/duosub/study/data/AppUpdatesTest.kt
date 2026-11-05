@@ -20,8 +20,8 @@ class AppUpdatesTest {
          "assets":[
           {"name":"$apkName","size":34251919,"digest":"$apkDigest",
            "browser_download_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/download/$tag/$apkName"},
-          {"name":"DualSub-Replay.apk.sha256","size":85,
-           "browser_download_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/download/$tag/DualSub-Replay.apk.sha256"}
+          {"name":"DuoSub-Replay.apk.sha256","size":85,
+           "browser_download_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/download/$tag/DuoSub-Replay.apk.sha256"}
          ]}
         """.trimIndent()
 
@@ -57,8 +57,8 @@ class AppUpdatesTest {
         assertEquals("1.7.2", update.versionName)
         assertEquals(digest, update.sha256)
         assertEquals(34251919L, update.sizeBytes)
-        assertTrue(update.downloadUrl.endsWith("/v1.7.2/DualSub-Replay.apk"))
-        assertTrue(update.checksumUrl!!.endsWith("/v1.7.2/DualSub-Replay.apk.sha256"))
+        assertTrue(update.downloadUrl.endsWith("/v1.7.2/DuoSub-Replay.apk"))
+        assertTrue(update.checksumUrl!!.endsWith("/v1.7.2/DuoSub-Replay.apk.sha256"))
         assertTrue(update.pageUrl.endsWith("/releases/tag/v1.7.2"))
     }
 
@@ -77,7 +77,7 @@ class AppUpdatesTest {
     fun aMissingDigestFallsBackToTheChecksumFile() {
         val update = parseOfficialRelease(official("v1.7.2", apkDigest = ""), "1.7.1")!!
         assertNull(update.sha256)
-        assertEquals(digest, parseSha256File("$digest  DualSub-Replay.apk\n"))
+        assertEquals(digest, parseSha256File("$digest  DuoSub-Replay.apk\n"))
         assertNull(parseSha256File("not a checksum"))
         assertNull(sha256Digest("md5:$digest"))
         assertNull(sha256Digest("sha256:1234"))
@@ -93,12 +93,12 @@ class AppUpdatesTest {
                "browser_download_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/download/preview/$name"}"""
         val json =
             """{"html_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/tag/preview","assets":[
-                ${asset("DualSub-Replay-PR138-build471-preview.apk")},
-                ${asset("DualSub-Replay-PR137-build480-preview.apk")},
-                ${asset("DualSub-Replay-PR138-build469-preview.apk")}]}"""
+                ${asset("DuoSub-Replay-PR138-build471-preview.apk")},
+                ${asset("DuoSub-Replay-PR137-build480-preview.apk")},
+                ${asset("DuoSub-Replay-PR138-build469-preview.apk")}]}"""
         val update = parsePreviewRelease(json, UpdateChannel.Preview(138, 470))!!
         assertEquals("PR 138 build 471", update.versionName)
-        assertTrue(update.downloadUrl.endsWith("DualSub-Replay-PR138-build471-preview.apk"))
+        assertTrue(update.downloadUrl.endsWith("DuoSub-Replay-PR138-build471-preview.apk"))
         assertEquals(digest, update.sha256)
         assertNull(parsePreviewRelease(json, UpdateChannel.Preview(138, 471)))
         assertNull(parsePreviewRelease(json, UpdateChannel.Preview(140, 1)))
@@ -124,7 +124,7 @@ class AppUpdatesTest {
         assertEquals("1.0.4.8", update.versionName)
         assertEquals(digest, update.sha256)
         assertEquals(63657211L, update.sizeBytes)
-        assertTrue(update.downloadUrl.endsWith("/study-1.0.4.8/DualSub-Study.apk"))
+        assertTrue(update.downloadUrl.endsWith("/study-1.0.4.8/DuoSub-Study.apk"))
         assertTrue(update.downloadUrl.startsWith("https://github.com/fastmandotcom-creator/duosub-study/"))
         assertTrue(update.pageUrl.endsWith("/releases/tag/study-1.0.4.8"))
         // The first Study release has three numbers and sorts below the four-number ones.

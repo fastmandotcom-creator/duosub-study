@@ -8,7 +8,7 @@ import java.util.Locale
 
 /** English names for the model; the assistant answers in [interfaceLocale]'s language. */
 internal fun aiAppSnapshot(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     playerMode: PlayerExperienceMode,
     interfaceLocale: Locale,
     appVersion: String,
@@ -27,7 +27,7 @@ internal fun aiAppSnapshot(
         settings = aiSettingsSummary(state, playerMode, stored, speed),
     )
 
-internal fun aiTranslationStatus(state: DualSubUiState): String =
+internal fun aiTranslationStatus(state: DuoSubUiState): String =
     when {
         state.translationError != null -> "stopped, original captions only (${state.translationError})"
         state.onDeviceFallback && state.youTubeTranslationFallback ->
@@ -46,7 +46,7 @@ private fun onOff(enabled: Boolean) = if (enabled) "on" else "off"
 
 /** Every setting the assistant may change, by the key and value its change_setting tool uses. */
 internal fun aiSettingsSummary(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     playerMode: PlayerExperienceMode,
     stored: AiStoredSettings,
     speed: Float,

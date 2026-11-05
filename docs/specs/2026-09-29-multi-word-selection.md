@@ -70,7 +70,7 @@ finds confusing.
   `word = phrase`, `reading = joined readings`.
 - Plain JUnit4 for the selection and positioning logic, in small `internal` functions.
 - PR #85 (active line stays visible on pause) is changing `SubtitleTimeline` in
-  `ui/DualSubApp.kt`; stay out of that region so both PRs merge cleanly.
+  `ui/DuoSubApp.kt`; stay out of that region so both PRs merge cleanly.
 
 ## Proposed approach / plan
 
@@ -86,8 +86,8 @@ finds confusing.
    - `SelectableSubtitleText` replaces the four `ClickableText` blocks in `SubtitleCard.kt` and
      `LearningPlayerRoot.kt`: highlights the range, shows the bar in a non-focusable `Popup`,
      handles Back and clears when the line's text changes or it leaves the screen.
-3. `LearningPlayerRoot` creates the controller around both `DualSubApp` and the overlay;
-   `DualSubApp` binds `webController.pause` and `WordPronouncer` to it.
+3. `LearningPlayerRoot` creates the controller around both `DuoSubApp` and the overlay;
+   `DuoSubApp` binds `webController.pause` and `WordPronouncer` to it.
 4. `WordLearningSheet.kt`: rebuild the card as a `Dialog` with header ✕, full-width Save button
    under the meaning, and the word-by-word list for phrases. Keep existing test tags and the
    parameter order.
@@ -169,9 +169,9 @@ untranslated until **Translate** is pressed.
 
 As planned, with these details:
 
-- `PhraseSelectionController` is created in `LearningPlayerRoot` around both `DualSubApp` and the
-  floating overlay, because the overlay is composed outside `DualSubApp`. `BindPhraseActions` in
-  `DualSubApp` connects it to `YouTubeWebController.pause` and `WordPronouncer`.
+- `PhraseSelectionController` is created in `LearningPlayerRoot` around both `DuoSubApp` and the
+  floating overlay, because the overlay is composed outside `DuoSubApp`. `BindPhraseActions` in
+  `DuoSubApp` connects it to `YouTubeWebController.pause` and `WordPronouncer`.
 - Selections clear when the bar's ✕, Back, a tap inside the selection or a blank tap in that line
   is used, when Translate opens the card, when the line's text changes, or when the line leaves
   the screen. The popup is not focusable, so it never takes focus from the video or the overlay.

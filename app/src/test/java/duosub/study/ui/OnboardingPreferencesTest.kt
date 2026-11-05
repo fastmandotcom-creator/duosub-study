@@ -25,8 +25,8 @@ class OnboardingPreferencesTest {
     @Test fun studyDefaultsAreEnglishCaptionsAndVietnameseTranslation() {
         assertEquals("vi", DEFAULT_SOURCE_LANGUAGE)
         assertEquals("en", DEFAULT_TARGET_LANGUAGE)
-        assertEquals("vi", DualSubUiState().sourcePreference)
-        assertEquals("en", DualSubUiState().targetLanguage)
+        assertEquals("vi", DuoSubUiState().sourcePreference)
+        assertEquals("en", DuoSubUiState().targetLanguage)
         assertEquals(true, usesVietnameseEnglishPair("vi", "en"))
         assertEquals(false, usesVietnameseEnglishPair("ja", "en"))
         assertEquals("en", studyTranslationTarget("vi"))

@@ -9,7 +9,7 @@ import org.junit.Test
 
 /** What the top-right icon reports, and which engine translates, after a Google failure. */
 class TranslationIssueTest {
-    private val google = DualSubUiState(activeVideoId = "video", translationEngine = TranslationEngine.GOOGLE_WEB)
+    private val google = DuoSubUiState(activeVideoId = "video", translationEngine = TranslationEngine.GOOGLE_WEB)
 
     @Test fun noIconWhileTranslationWorksOrNoVideoIsOpen() {
         assertNull(google.translationIssue())

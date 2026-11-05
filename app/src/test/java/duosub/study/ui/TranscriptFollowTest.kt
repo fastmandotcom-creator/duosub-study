@@ -10,7 +10,7 @@ class TranscriptFollowTest {
         assertEquals(TranscriptFollow.PAGE, storedTranscriptFollow(null))
         assertEquals(TranscriptFollow.PAGE, storedTranscriptFollow("lyrics"))
         assertEquals(TranscriptFollow.CENTER, storedTranscriptFollow("center"))
-        assertEquals(TranscriptFollow.PAGE, DualSubUiState().transcriptFollow)
+        assertEquals(TranscriptFollow.PAGE, DuoSubUiState().transcriptFollow)
         assertTrue(TRANSCRIPT_FOLLOW_PREFERENCE in RESETTABLE_SETTING_KEYS)
     }
 

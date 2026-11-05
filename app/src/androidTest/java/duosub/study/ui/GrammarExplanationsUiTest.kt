@@ -16,7 +16,7 @@ import duosub.study.data.CefrLevel
 import duosub.study.data.GrammarMatch
 import duosub.study.data.GrammarMeaning
 import duosub.study.data.HskLevel
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -41,7 +41,7 @@ class GrammarExplanationsUiTest {
     @Test
     fun showsTheLikeliestMeaningAndRevealsTheOthers() {
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 GrammarPointList(
                     listOf(
                         GrammarMatch("に", 3, 4, listOf(GrammarMeaning.PLACE_EXIST, GrammarMeaning.TIME, GrammarMeaning.DESTINATION)),
@@ -68,7 +68,7 @@ class GrammarExplanationsUiTest {
     @Test
     fun showsHskAndCefrLevels() {
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 GrammarPointList(
                     listOf(
                         GrammarMatch("V + 了 le", 4, 5, listOf(GrammarMeaning.ZH_LE_COMPLETED), HskLevel.HSK1),
@@ -101,7 +101,7 @@ class GrammarExplanationsUiTest {
             )
         // A new key is a new word card, which reads the stored choice again.
         val card = mutableIntStateOf(0)
-        compose.setContent { DualSubTheme { key(card.intValue) { GrammarPointList(matches) } } }
+        compose.setContent { DuoSubTheme { key(card.intValue) { GrammarPointList(matches) } } }
 
         compose.onAllNodesWithTag("grammar_point").assertCountEquals(2)
         compose.onNodeWithTag("grammar_section_count", useUnmergedTree = true).assertDoesNotExist()
@@ -121,7 +121,7 @@ class GrammarExplanationsUiTest {
 
     @Test
     fun noGrammarShowsNothing() {
-        compose.setContent { DualSubTheme { GrammarPointList(emptyList()) } }
+        compose.setContent { DuoSubTheme { GrammarPointList(emptyList()) } }
 
         compose.onAllNodesWithTag("grammar_section").assertCountEquals(0)
     }

@@ -28,20 +28,20 @@ enum class CaptionVisibility(
 internal fun storedCaptionVisibility(value: String?): CaptionVisibility =
     CaptionVisibility.entries.firstOrNull { it.name == value } ?: CaptionVisibility.ALWAYS
 
-internal fun DualSubUiState.showOriginal() = studyCaptionVisibility(originalVisibility, studyPlayMode).visible(playbackPaused)
+internal fun DuoSubUiState.showOriginal() = studyCaptionVisibility(originalVisibility, studyPlayMode).visible(playbackPaused)
 
-internal fun DualSubUiState.showTranslation() = studyCaptionVisibility(translatedVisibility, studyPlayMode).visible(playbackPaused)
+internal fun DuoSubUiState.showTranslation() = studyCaptionVisibility(translatedVisibility, studyPlayMode).visible(playbackPaused)
 
 /** Hiding the transcript for an overlay must not disconnect its live timing source. */
 internal fun shouldCaptureCaptionsForPresentation(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     mode: PlayerExperienceMode,
 ): Boolean =
     (state.subtitlePanelVisible || mode == PlayerExperienceMode.SCROLL_FRIENDLY_OVERLAY) &&
         (state.liveFallback || shouldCaptureLiveCaptions(state.generatedCaptions, state.wordHighlightEnabled))
 
 /** Only a loaded transcript sets the page's track; live fallback takes its language from the page. */
-internal fun captionTrackTarget(state: DualSubUiState): CaptionTrackTarget? {
+internal fun captionTrackTarget(state: DuoSubUiState): CaptionTrackTarget? {
     if (state.liveFallback) return null
     val videoId = state.activeVideoId ?: return null
     val language = state.resolvedSourceLanguage ?: return null
@@ -76,7 +76,7 @@ internal fun CaptionVisibilitySettings() {
 }
 
 internal fun shouldSuppressNativeCaptions(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     liveCapture: Boolean,
     mode: PlayerExperienceMode,
 ): Boolean =

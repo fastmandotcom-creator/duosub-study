@@ -21,7 +21,7 @@ class CaptionPresentationUiTest {
     @Test fun pauseVisibilityUpdatesBothPresentationsWithoutReopening() {
         val state =
             mutableStateOf(
-                DualSubUiState(
+                DuoSubUiState(
                     activeVideoId = "dQw4w9WgXcQ",
                     currentIndex = 0,
                     originalVisibility = CaptionVisibility.ALWAYS,

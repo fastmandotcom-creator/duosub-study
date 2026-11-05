@@ -103,7 +103,7 @@ cannot.
    pending cards, Undo, Apply/Cancel, records saved with the answer; history JSON keeps them.
 4. UI: `ui/AiAssistantActions.kt` implements `AiAppActions` with `AppViewModel` setters, the
    caption-visibility preferences, the player mode, the page video (pause, replay, speed via a new
-   `AiPlayerControls` bound in `DualSubExperience`), the vocabulary, and a new
+   `AiPlayerControls` bound in `DuoSubExperience`), the vocabulary, and a new
    `AppViewModel.openYouTubePage`. Chips and cards under the assistant's bubble.
 5. Guide (`assets/ai/assistant-guide.md`), PRIVACY.md, AGENTS.md AI invariant, strings in 8 languages.
 
@@ -169,8 +169,8 @@ Built as planned, with these details and deviations:
   video was closed, for example), the chip only loses its Undo button.
 - A setting the assistant sets to the value it already has gets a chip without Undo, and the model
   is told it was already that value.
-- The player's controls (`AiPlayerControls`) are bound in `DualSubExperience` rather than in
-  `DualSubApp()`, which is at the method-length limit.
+- The player's controls (`AiPlayerControls`) are bound in `DuoSubExperience` rather than in
+  `DuoSubApp()`, which is at the method-length limit.
 - An answer whose only content was actions the app could not run (for example a model that sends a
   tool call when none were offered) is shown as a bad reply instead of an empty bubble.
 - The speed the assistant set is remembered for that video only; YouTube's own speed menu is not

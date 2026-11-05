@@ -102,7 +102,7 @@ class AnkiConnectNotesTest {
     }
 
     @Test
-    fun theDeckIsTheChosenOneThenDualSubReplayThenDefault() {
+    fun theDeckIsTheChosenOneThenDuoSubReplayThenDefault() {
         assertEquals("Mining", ankiConnectDeck(listOf("Default", "Mining"), "Mining"))
         assertEquals(ANKI_DECK_NAME, ankiConnectDeck(listOf("Default", ANKI_DECK_NAME), "Gone"))
         assertNull(ankiConnectDeck(listOf("Default"), null))
@@ -121,7 +121,7 @@ class AnkiConnectNotesTest {
     }
 
     @Test
-    fun desktopAnkiConnectGetsTheDualSubReplayDeckAndNoteType() =
+    fun desktopAnkiConnectGetsTheDuoSubReplayDeckAndNoteType() =
         runBlocking {
             val anki = FakeAnkiConnect(listOf("Default"), mapOf("Basic" to listOf("Front", "Back")), canMake = true)
             val notes = AnkiConnectNotes(MemorySentWords(), { anki.answer(it) })

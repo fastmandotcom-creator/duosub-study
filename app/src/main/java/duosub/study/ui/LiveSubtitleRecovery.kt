@@ -81,7 +81,7 @@ internal class LiveTranslationGate {
 
 @Composable
 internal fun LiveSubtitlePanel(
-    state: DualSubUiState,
+    state: DuoSubUiState,
     onRetry: () -> Unit,
     onWordClick: (WordTap) -> Unit,
 ) {

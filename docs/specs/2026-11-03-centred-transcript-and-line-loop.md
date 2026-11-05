@@ -65,7 +65,7 @@ Before this change:
 ## Proposed approach / plan
 
 1. `TranscriptFollow` enum (`center`, `page`), preference `transcript_follow`, in
-   `DualSubUiState`, `AppViewModel.setTranscriptFollow`, resettable.
+   `DuoSubUiState`, `AppViewModel.setTranscriptFollow`, resettable.
 2. `SubtitleTimeline`: in centre mode every line change calls `centreRow` (instant on the first
    placement or a far seek, else `animateScrollBy` by `centreScrollDelta`), skipped while the
    learner browses. `rememberLearnerBrowsing` moves up from `JumpBackPill` so both share it.

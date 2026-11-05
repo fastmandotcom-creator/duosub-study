@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -17,7 +17,7 @@ class GuideScreenTest {
     @Test
     fun firstPageShowsContentWithSkipOption() {
         composeRule.setContent {
-            DualSubTheme { GuideScreen(onFinish = {}) }
+            DuoSubTheme { GuideScreen(onFinish = {}) }
         }
 
         composeRule.onNodeWithTag("guide_screen").assertIsDisplayed()
@@ -30,7 +30,7 @@ class GuideScreenTest {
     fun skipFinishesFromFirstPage() {
         var finished = false
         composeRule.setContent {
-            DualSubTheme { GuideScreen(onFinish = { finished = true }) }
+            DuoSubTheme { GuideScreen(onFinish = { finished = true }) }
         }
 
         composeRule.onNodeWithTag("guide_skip").performClick()
@@ -41,7 +41,7 @@ class GuideScreenTest {
     fun nextAdvancesThroughPagesAndDoneFinishes() {
         var finished = false
         composeRule.setContent {
-            DualSubTheme { GuideScreen(onFinish = { finished = true }) }
+            DuoSubTheme { GuideScreen(onFinish = { finished = true }) }
         }
 
         composeRule.onNodeWithTag("guide_next").performClick()

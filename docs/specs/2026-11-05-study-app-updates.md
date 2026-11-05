@@ -6,7 +6,7 @@ Implemented 2026-11-05. Publish an end-user APK with `python3 tools/publish_stud
 
 ## Context / problem
 
-DuoSub Study is published in `fastmandotcom-creator/duosub-study` as tag `study-<version>` with one asset, `DualSub-Study.apk`. The published APK (study-1.0.4.9, checked 2026-11-05) is a debug build with application id `duosub.study.study`, versionName `1.0.4-study.9`.
+DuoSub Study is published in `fastmandotcom-creator/duosub-study` as tag `study-<version>` with one asset, `DuoSub-Study.apk`. The published APK (study-1.0.4.9, checked 2026-11-05) is a debug build with application id `duosub.study.study`, versionName `1.0.4-study.9`.
 
 `updateChannelFor` only knows the official app (`duosub.study`, not debuggable) and PR previews (`.preview`). The Study app matches neither, so its channel is `None`: it cannot update itself, and the update dialog opens the releases page of `fastmandotcom-creator/duosub-study`.
 
@@ -29,7 +29,7 @@ Settings → App updates and the drawer's Check for updates work in Study. A rel
 ## Technical constraints / invariants
 
 - Only the latest non-draft, non-prerelease release is read, through `releases/latest`.
-- The APK is the asset named `DualSub-Study.apk`; it must match GitHub's SHA-256 digest, be this package and have a higher versionCode (existing `AppUpdater` checks). Android requires the same signer for an in-place install; users with an older install signed differently can uninstall it and install this APK fresh.
+- The APK is the asset named `DuoSub-Study.apk`; it must match GitHub's SHA-256 digest, be this package and have a higher versionCode (existing `AppUpdater` checks). Android requires the same signer for an in-place install; users with an older install signed differently can uninstall it and install this APK fresh.
 - Downloads stay limited to GitHub hosts.
 - The installed `X.Y.Z-study.N` and the tag `study-X.Y.Z.N` are compared as the numbers `X.Y.Z.N`. A tag `study-1.0.4` equals `1.0.4`.
 - Each Study release must raise versionCode and use versionName `X.Y.Z-study.N`, as 1.0.4-study.7 does; the updater cannot work otherwise.
@@ -41,17 +41,17 @@ Settings → App updates and the drawer's Check for updates work in Study. A rel
 - `parseStudyRelease` in `data/AppUpdates.kt`, next to `parseOfficialRelease`.
 - `AppUpdater.checkNow` reads the Study latest release for that channel.
 - `AppUpdateUi` opens the Study releases page for that channel.
-- `python3 tools/publish_study_apk.py` publishes exactly one verified `DualSub-Study.apk`, checking only the package and release version needed by the updater; it does not download the previous APK or compare signing certificates.
+- `python3 tools/publish_study_apk.py` publishes exactly one verified `DuoSub-Study.apk`, checking only the package and release version needed by the updater; it does not download the previous APK or compare signing certificates.
 - Android unit, lint, and managed-device suites remain available only by manual workflow dispatch and do not delay APK release.
 
 ## Acceptance criteria
 
 - [x] `updateChannelFor` returns `Study` for `duosub.study.study`, debuggable or not.
-- [x] `parseStudyRelease` offers `study-1.0.4.8` to `1.0.4-study.7`, and nothing for `study-1.0.4.7`, an older tag, a draft or prerelease, or a release without `DualSub-Study.apk`.
+- [x] `parseStudyRelease` offers `study-1.0.4.8` to `1.0.4-study.7`, and nothing for `study-1.0.4.7`, an older tag, a draft or prerelease, or a release without `DuoSub-Study.apk`.
 - [x] The offered download is the asset's URL with its SHA-256 digest.
 - [ ] On a device: Check for updates in an older Study build offers the newer release and installs it (needs a signed older build; not run).
 - [x] Study APK publication is a single local command after a direct push to `main`.
-- [x] The publishing command checks package/version/signing continuity and publishes `DualSub-Study.apk`.
+- [x] The publishing command checks package/version/signing continuity and publishes `DuoSub-Study.apk`.
 
 ## Validation
 

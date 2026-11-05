@@ -27,9 +27,9 @@ class LearningPlayerRootTest {
     }
 
     @Test
-    fun overlayUsesTheActiveDualSubtitle() {
+    fun overlayUsesTheActiveDuoSubtitle() {
         val state =
-            DualSubUiState(
+            DuoSubUiState(
                 activeVideoId = "dQw4w9WgXcQ",
                 segments =
                     listOf(
@@ -55,7 +55,7 @@ class LearningPlayerRootTest {
         val first = SubtitleSegment(1, 1_000, 2_000, "Hello", "Xin chào")
         val next = SubtitleSegment(2, 2_000, 3_000, "Goodbye", "Tạm biệt")
         val state =
-            DualSubUiState(
+            DuoSubUiState(
                 activeVideoId = "dQw4w9WgXcQ",
                 resolvedSourceLanguage = "en",
                 segments = listOf(first, next),
@@ -101,7 +101,7 @@ class LearningPlayerRootTest {
             )
         val segment = SubtitleSegment(2, 2_000, 3_000, "Second line", null, words = words)
         val baseState =
-            DualSubUiState(
+            DuoSubUiState(
                 activeVideoId = "dQw4w9WgXcQ",
                 segments = listOf(segment),
                 currentIndex = 0,
@@ -123,7 +123,7 @@ class LearningPlayerRootTest {
         assertEquals(
             LearningOverlayContent(null, null, "Loading captions…"),
             learningOverlayContent(
-                DualSubUiState(
+                DuoSubUiState(
                     activeVideoId = "dQw4w9WgXcQ",
                     statusMessage = "Loading captions…",
                 ),
@@ -133,7 +133,7 @@ class LearningPlayerRootTest {
         assertEquals(
             LearningOverlayContent(null, null, "Captions unavailable"),
             learningOverlayContent(
-                DualSubUiState(
+                DuoSubUiState(
                     activeVideoId = "dQw4w9WgXcQ",
                     statusMessage = "Loading captions…",
                     errorMessage = "Captions unavailable",
@@ -141,7 +141,7 @@ class LearningPlayerRootTest {
                 TestUiStrings,
             ),
         )
-        assertNull(learningOverlayContent(DualSubUiState(), TestUiStrings))
+        assertNull(learningOverlayContent(DuoSubUiState(), TestUiStrings))
     }
 
     @Test

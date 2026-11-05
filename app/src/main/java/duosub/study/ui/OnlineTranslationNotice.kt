@@ -86,7 +86,7 @@ internal sealed interface TranslationIssue {
 }
 
 /** The problem to show for the current video, or null when translation works. */
-internal fun DualSubUiState.translationIssue(): TranslationIssue? =
+internal fun DuoSubUiState.translationIssue(): TranslationIssue? =
     when {
         activeVideoId == null -> null
         translationError != null -> TranslationIssue.Unavailable(translationError)

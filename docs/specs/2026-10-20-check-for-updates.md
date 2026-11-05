@@ -6,7 +6,7 @@ Implemented (owner request 2026-10-20 in the "App updates" project thread); wait
 
 ## Context / problem
 
-Every release is published on GitHub as `DualSub-Replay.apk`, signed with the same production
+Every release is published on GitHub as `DuoSub-Replay.apk`, signed with the same production
 key, so a new APK already installs over the old one and keeps saved words and settings. But the
 app never says a new version exists: the drawer only says "Check the latest version of the app on
 GitHub.", so people visit GitHub and download every release by hand.

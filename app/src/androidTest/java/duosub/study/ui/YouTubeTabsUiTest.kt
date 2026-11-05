@@ -16,7 +16,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.platform.app.InstrumentationRegistry
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -59,7 +59,7 @@ class YouTubeTabsUiTest {
                 },
             )
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 AppNavigation(onPractice = {}, onSettings = {}, tabs = tabs, tabActions = actions) { menu -> menu() }
             }
         }
@@ -103,7 +103,7 @@ class YouTubeTabsUiTest {
                 true
             })
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 AppNavigation(
                     onPractice = {},
                     onSettings = {},
@@ -136,7 +136,7 @@ class YouTubeTabsUiTest {
         TabThumbnails.put(browserTabThumbnailUrl(video)!!, ImageBitmap(16, 9))
         var tabs by mutableStateOf(BrowserTabs().opened(video)!!)
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 AppNavigation(onPractice = {}, onSettings = {}, tabs = tabs) { menu -> menu() }
             }
         }
@@ -155,7 +155,7 @@ class YouTubeTabsUiTest {
     @Test fun aFullListSaysSoInsteadOfOfferingANewTab() {
         val full = (1..MAX_BROWSER_TABS).fold(BrowserTabs()) { state, _ -> state.opened(video)!! }
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 AppNavigation(onPractice = {}, onSettings = {}, tabs = full) { menu -> menu() }
             }
         }
@@ -168,7 +168,7 @@ class YouTubeTabsUiTest {
     @Test fun everyTabClosedShowsTheEmptyPage() {
         var opened = 0
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 Column {
                     Text("top bar")
                     EmptyTabsPage(onOpenNewTab = { opened++ }, modifier = Modifier.fillMaxSize())
@@ -187,7 +187,7 @@ class YouTubeTabsUiTest {
         val newTabs = mutableListOf<String>()
         val here = mutableListOf<String>()
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 OpenInNewTabMenu(link, onOpenInNewTab = { newTabs += it }, onOpenHere = { here += it }, onDismiss = { link = null })
             }
         }

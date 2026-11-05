@@ -11,7 +11,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.test.platform.app.InstrumentationRegistry
 import duosub.study.data.AppUpdate
 import duosub.study.data.UpdateChannel
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import duosub.study.update.APP_AUTO_UPDATE_PREFERENCE
 import duosub.study.update.AppUpdater
 import duosub.study.update.UpdateState
@@ -31,7 +31,7 @@ class AppUpdateUiTest {
     private val update =
         AppUpdate(
             versionName = "1.7.2",
-            downloadUrl = "https://github.com/fastmandotcom-creator/duosub-study/releases/download/v1.7.2/DualSub-Replay.apk",
+            downloadUrl = "https://github.com/fastmandotcom-creator/duosub-study/releases/download/v1.7.2/DuoSub-Replay.apk",
             sha256 = null,
             checksumUrl = null,
             sizeBytes = 34_251_919,
@@ -47,7 +47,7 @@ class AppUpdateUiTest {
     @Test
     fun updateAutomaticallyIsOffUntilTurnedOn() {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 SubtitleSettingsDialog(
                     sourcePreference = "auto",
                     targetLanguage = "vi",
@@ -76,7 +76,7 @@ class AppUpdateUiTest {
     @Test
     fun aNewerVersionOffersUpdateAndNotNow() {
         AppUpdater.showForTest(UpdateState.Available(update))
-        composeRule.setContent { DualSubTheme { AppUpdateDialogHost(channel = UpdateChannel.Official) } }
+        composeRule.setContent { DuoSubTheme { AppUpdateDialogHost(channel = UpdateChannel.Official) } }
         composeRule.onNodeWithText("Version 1.7.2 is available.", substring = true).assertIsDisplayed()
         composeRule.onNodeWithTag("update_download").assertIsDisplayed()
         composeRule.onNodeWithTag("update_whats_new").assertIsDisplayed()
@@ -88,7 +88,7 @@ class AppUpdateUiTest {
     @Test
     fun aLocalBuildOnlyOpensGitHub() {
         AppUpdater.showForTest(UpdateState.Idle)
-        composeRule.setContent { DualSubTheme { AppUpdateDialogHost(channel = UpdateChannel.None) } }
+        composeRule.setContent { DuoSubTheme { AppUpdateDialogHost(channel = UpdateChannel.None) } }
         composeRule.onNodeWithTag("update_open_github").assertIsDisplayed()
         composeRule.onNodeWithTag(DIALOG_CLOSE_TAG).performClick()
         composeRule.waitUntil(5_000) { composeRule.onAllNodes(hasTestTag("update_message")).fetchSemanticsNodes().isEmpty() }

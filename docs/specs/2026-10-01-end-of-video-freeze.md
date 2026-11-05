@@ -56,7 +56,7 @@ After: the last line and its translation stay on screen and the app keeps respon
 
 ## Proposed approach / plan
 
-1. In `ui/DualSubApp.kt`, compute the bottom-slot scroll from the row's measured offset after
+1. In `ui/DuoSubApp.kt`, compute the bottom-slot scroll from the row's measured offset after
    `scrollToItem` (`bottomSlotScrollDelta`) and skip a zero scroll.
 2. After each correction, set `activeFitted` from whether the row now fits, so a correction that
    could not fit it waits for real user or playback changes instead of answering its own layout.

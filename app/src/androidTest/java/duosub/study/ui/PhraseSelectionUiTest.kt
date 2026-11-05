@@ -21,7 +21,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
 import duosub.study.data.SubtitleSegment
 import duosub.study.data.WordTap
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -54,7 +54,7 @@ class PhraseSelectionUiTest {
                 },
             )
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 CompositionLocalProvider(LocalPhraseSelection provides controller) {
                     CompactSubtitleCard(
                         segment = SubtitleSegment(1, 1_000, 3_000, original, translated),
@@ -208,7 +208,7 @@ class PhraseSelectionUiTest {
     fun tappingOutsideTheSubtitlesClearsTheSelection() {
         val controller = PhraseSelectionController()
         compose.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 CompositionLocalProvider(LocalPhraseSelection provides controller) {
                     Column(Modifier.clearPhraseSelectionOnTapElsewhere(controller)) {
                         CompactSubtitleCard(

@@ -15,7 +15,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.unit.dp
 import androidx.test.platform.app.InstrumentationRegistry
 import duosub.study.R
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -38,7 +38,7 @@ class SettingsPageMemoryUiTest {
         jumpToSection: MoreSettingsSection? = null,
     ) {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 if (settingsOpen) {
                     SubtitleSettingsDialog(
                         sourcePreference = "auto",
@@ -118,7 +118,7 @@ class SettingsPageMemoryUiTest {
         var taps = 0
         var longPresses = 0
         composeRule.setContent {
-            DualSubTheme { PanelSettingsButton(onClick = { taps++ }, onLongClick = { longPresses++ }, size = 48.dp, iconSize = 24.dp) }
+            DuoSubTheme { PanelSettingsButton(onClick = { taps++ }, onLongClick = { longPresses++ }, size = 48.dp, iconSize = 24.dp) }
         }
         val gear =
             composeRule.onNodeWithContentDescription(

@@ -167,7 +167,7 @@ estimated version is v1.0.7 (latest stable release v1.0.6), subject to reservati
 - `ui/YouTubeWebScripts.kt`: `CaptionTrackTarget`, `webCaptionTrackSyncScript`, the snapshot
   hook, and `ensureCaptions` using `choose()`.
 - `ui/CaptionVisibility.kt`: `captionTrackTarget`.
-- `SingleYouTubePage` and `DualSubApp` wiring.
+- `SingleYouTubePage` and `DuoSubApp` wiring.
 - `config/quality/detekt-baseline.xml`: the existing `SingleYouTubePage` entries were
   re-keyed for the new parameter.
 

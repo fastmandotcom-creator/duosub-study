@@ -98,7 +98,7 @@ scope, not merge or release.
    `readStudySettings`, `rememberStudySettings()` (listens to preferences), and the
    "Study tools" settings section (`MoreSettingsSection.STUDY`).
 2. `ui/StudyPlayback.kt`: a pure `StudyPlaybackDriver` fed by the 33 ms playback tick (wrapped in
-   `DualSubApp`) that returns pause, play-from, seek-paused, gap-speed and normal-speed actions;
+   `DuoSubApp`) that returns pause, play-from, seek-paused, gap-speed and normal-speed actions;
    `YouTubeWebController` runs them. Listen first maps `ALWAYS` caption visibility to `PAUSED`
    (`studyCaptionVisibility`) in the view model.
 3. `data/KnownWords.kt`: `KnownWordsRepository` (`files/known-words/<language>.txt`),
@@ -172,7 +172,7 @@ Built as planned, in one PR. What landed and where it differs from the plan:
   only while Known words is on. The section also shows how many words are known, with Clear known
   words behind a confirmation.
 - Play modes and skip silence: `ui/StudyPlayback.kt` (`StudyPlaybackDriver`, run by
-  `StudyPlaybackRunner` on the page's playback tick from `DualSubApp`). Read first stops 20 ms into
+  `StudyPlaybackRunner` on the page's playback tick from `DuoSubApp`). Read first stops 20 ms into
   the next line so that line is on screen. The driver's own seeks (repeat, read first, jump) are told
   apart from the user's by where they land. Skip silence keeps the user's speed on the page video
   and brings it back from the app before the next line, or from the page by itself if the app stops

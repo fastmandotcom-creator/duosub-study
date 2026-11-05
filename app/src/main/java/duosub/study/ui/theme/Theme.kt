@@ -40,11 +40,11 @@ internal fun dualSubColorScheme(
     themeKey: String = DEFAULT_APP_COLOR_THEME_KEY,
 ): ColorScheme {
     val theme = storedAppColorTheme(themeKey)
-    return if (theme.isLight) lightDualSubColorScheme(appThemeAccentColor(accentKey)) else darkDualSubColorScheme(accentKey, theme)
+    return if (theme.isLight) lightDuoSubColorScheme(appThemeAccentColor(accentKey)) else darkDuoSubColorScheme(accentKey, theme)
 }
 
 /** The dark teal palette, recolored by [theme]'s hue and saturation. */
-private fun darkDualSubColorScheme(
+private fun darkDuoSubColorScheme(
     accentKey: String,
     theme: AppColorThemeOption,
 ): ColorScheme {
@@ -78,7 +78,7 @@ private fun darkDualSubColorScheme(
     )
 }
 
-private fun lightDualSubColorScheme(accent: Color): ColorScheme {
+private fun lightDuoSubColorScheme(accent: Color): ColorScheme {
     val primary = lerp(accent, Color.Black, LIGHT_ACCENT_DARKENING)
     return lightColorScheme(
         primary = primary,
@@ -137,7 +137,7 @@ internal fun retint(
 }
 
 @Composable
-fun DualSubTheme(content: @Composable () -> Unit) {
+fun DuoSubTheme(content: @Composable () -> Unit) {
     val context = LocalContext.current
     val preferences =
         remember(context) {

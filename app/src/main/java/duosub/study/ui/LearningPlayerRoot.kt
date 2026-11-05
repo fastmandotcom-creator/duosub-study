@@ -577,7 +577,7 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
         tvFocusShading(tvLayout),
     ) {
         Box(Modifier.fillMaxSize().clearPhraseSelectionOnTapElsewhere(phraseSelection)) {
-            DualSubApp(
+            DuoSubApp(
                 viewModel = viewModel,
                 playerMode = mode,
                 effectivePlayerMode = effectiveMode,

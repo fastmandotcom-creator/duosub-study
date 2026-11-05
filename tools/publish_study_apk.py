@@ -12,7 +12,7 @@ import time
 
 
 REPOSITORY = "fastmandotcom-creator/duosub-study"
-APK_NAME = "DualSub-Study.apk"
+APK_NAME = "DuoSub-Study.apk"
 TAG_PATTERN = re.compile(r"^study-(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?$")
 
 

@@ -12,7 +12,7 @@ import androidx.compose.ui.test.performScrollTo
 import duosub.study.translation.GoogleWait
 import duosub.study.translation.SubtitleTranslator
 import duosub.study.translation.TranslationEngine
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +26,7 @@ class OnlineTranslationUiTest {
         actions: TranslationEngineActions = TranslationEngineActions(select = {}),
     ) {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 CompositionLocalProvider(LocalTranslationEngineActions provides actions) {
                     SubtitleSettingsDialog(
                         sourcePreference = "ja",
@@ -142,7 +142,7 @@ class OnlineTranslationUiTest {
         var triedGoogle = 0
         var retried = 0
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 TranslationIssueButton(
                     TranslationIssue.OnDeviceFallback("Google Translate refused the request (HTTP 429)."),
                     onTryGoogleAgain = { triedGoogle++ },
@@ -165,7 +165,7 @@ class OnlineTranslationUiTest {
         var triedGoogle = 0
         var retried = 0
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 TranslationIssueButton(
                     TranslationIssue.Unavailable("The translation model download took too long."),
                     onTryGoogleAgain = { triedGoogle++ },
@@ -186,7 +186,7 @@ class OnlineTranslationUiTest {
         var triedAgain = 0
         val reason = "HTTP 429: You exceeded your current quota. " + "Please check your plan and billing details. ".repeat(12)
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 TranslationIssueButton(
                     TranslationIssue.AiPaused(reason.trim()),
                     onTryGoogleAgain = { triedAgain++ },
@@ -207,7 +207,7 @@ class OnlineTranslationUiTest {
     @Test
     fun noIconWhileTranslationWorks() {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 TranslationIssueButton(null, onTryGoogleAgain = {}, onRetryTranslation = {})
             }
         }

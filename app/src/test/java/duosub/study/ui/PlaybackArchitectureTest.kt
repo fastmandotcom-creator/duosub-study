@@ -241,7 +241,7 @@ class PlaybackArchitectureTest {
     @Test
     fun captionTrackTargetComesOnlyFromALoadedTranscript() {
         val loaded =
-            DualSubUiState(activeVideoId = "abcdefghijk", resolvedSourceLanguage = "ja", generatedCaptions = true)
+            DuoSubUiState(activeVideoId = "abcdefghijk", resolvedSourceLanguage = "ja", generatedCaptions = true)
 
         assertEquals(CaptionTrackTarget("abcdefghijk", "ja", generated = true), captionTrackTarget(loaded))
         assertNull(captionTrackTarget(loaded.copy(resolvedSourceLanguage = null)))

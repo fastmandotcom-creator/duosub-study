@@ -22,7 +22,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.dp
 import androidx.test.platform.app.InstrumentationRegistry
 import duosub.study.data.SubtitleSegment
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -52,7 +52,7 @@ class TranslationPositionAndThemeUiTest {
     fun aboveShowsTheTranslationFirstInThePanelAndTheOverlay() {
         val segment = SubtitleSegment(1, 0, 2_000, "Original line", "Translated line")
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Column(Modifier.padding(12.dp)) {
                         CompactSubtitleCard(segment, true, 1f, {}, translationPosition = TranslationPosition.BELOW)
@@ -87,7 +87,7 @@ class TranslationPositionAndThemeUiTest {
         var side by mutableStateOf(ReadSide.PRIMARY)
         val segment = SubtitleSegment(1, 0, 2_000, "Xin chào", "Hello")
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Column(Modifier.padding(12.dp)) {
                         CompactSubtitleCard(
@@ -131,7 +131,7 @@ class TranslationPositionAndThemeUiTest {
         var position = TranslationPosition.BELOW
         var background = 0f
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 background = MaterialTheme.colorScheme.background.luminance()
                 SubtitleSettingsDialog(
                     sourcePreference = "auto",
@@ -172,7 +172,7 @@ class TranslationPositionAndThemeUiTest {
     fun theReadingCardSwitchesTheTranscriptToInTheMiddle() {
         var follow by mutableStateOf(TranscriptFollow.PAGE)
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 SubtitleSettingsDialog(
                     sourcePreference = "auto",
                     targetLanguage = "vi",
@@ -200,7 +200,7 @@ class TranslationPositionAndThemeUiTest {
     fun theLightThemeKeepsSubtitlesReadableOnItsCards() {
         preferences.edit().putString(APP_COLOR_THEME_PREFERENCE, AppColorThemeOption.LIGHT.key).commit()
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Column(Modifier.padding(12.dp)) {
                         Text("Light theme transcript", style = MaterialTheme.typography.titleMedium)

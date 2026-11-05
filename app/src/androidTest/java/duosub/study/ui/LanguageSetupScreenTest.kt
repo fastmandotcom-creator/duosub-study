@@ -8,7 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import duosub.study.ui.theme.DualSubTheme
+import duosub.study.ui.theme.DuoSubTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -22,7 +22,7 @@ class LanguageSetupScreenTest {
     fun continueRequiresBothLanguagesAndReportsChoices() {
         var completed: Pair<String, String>? = null
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 LanguageSetupScreen(
                     onComplete = { native, learning -> completed = native to learning },
                     onSkip = {},
@@ -53,7 +53,7 @@ class LanguageSetupScreenTest {
         var skipped = false
         var completed: Pair<String, String>? = null
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 LanguageSetupScreen(
                     onComplete = { native, learning -> completed = native to learning },
                     onSkip = { skipped = true },
@@ -71,7 +71,7 @@ class LanguageSetupScreenTest {
     @Test
     fun changingNativeLanguageUpdatesSelection() {
         composeRule.setContent {
-            DualSubTheme {
+            DuoSubTheme {
                 LanguageSetupScreen(onComplete = { _, _ -> }, onSkip = {})
             }
         }

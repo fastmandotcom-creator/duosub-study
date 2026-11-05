@@ -60,7 +60,7 @@ User-visible strings are unchanged. No preference key or migration changes.
 
 ## Acceptance criteria
 
-- [x] `DualSubUiState()` defaults to `"original"`; the stored fallback and Reset use the same constant.
+- [x] `DuoSubUiState()` defaults to `"original"`; the stored fallback and Reset use the same constant.
 - [x] Tokenizing `there's plenty<mark> of situations of people<mark>` yields all six words for
       U+200B, U+2060, U+200E and U+FEFF (unit test) and on Android's regex engine (device test).
 - [x] Curly-apostrophe and accented words stay whole.

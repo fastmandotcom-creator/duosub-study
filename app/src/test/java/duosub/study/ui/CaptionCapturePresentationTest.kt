@@ -5,7 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CaptionCapturePresentationTest {
-    private val state = DualSubUiState(generatedCaptions = true, wordHighlightEnabled = true)
+    private val state = DuoSubUiState(generatedCaptions = true, wordHighlightEnabled = true)
 
     @Test
     fun captureSurvivesThePanelToOverlayTransition() {

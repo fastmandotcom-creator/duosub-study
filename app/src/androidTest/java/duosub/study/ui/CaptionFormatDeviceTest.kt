@@ -72,7 +72,7 @@ class CaptionFormatDeviceTest {
                                 "Bạn có thể giúp tôi với chiếc hộp này không, vì nó quá nặng để tôi có thể mang một mình?"
                             },
                     )
-                val state = DualSubUiState(activeVideoId = "dQw4w9WgXcQ", segments = listOf(segment), currentIndex = 0, activeWordIndex = 2)
+                val state = DuoSubUiState(activeVideoId = "dQw4w9WgXcQ", segments = listOf(segment), currentIndex = 0, activeWordIndex = 2)
                 Column(Modifier.systemBarsPadding()) {
                     CompactSubtitleCard(segment, true, 1.35f, {}, activeWordIndex = 2)
                     LearningSubtitleOverlay(
