@@ -275,8 +275,8 @@ internal fun studyTranslationTarget(sourceLanguage: String?): String =
 /**
  * The line the learner reads first is Vietnamese, then English. A Vietnamese track stays as it is.
  * An English track is translated into Vietnamese and that translation moves to the first line.
+ * Line 1 and line 2 are as the learner set them; the default pair still puts Vietnamese first.
  */
-/** Line 1 and line 2 as the learner set them. The default pair still puts Vietnamese first. */
 internal fun DualSubUiState.studyLine(segment: SubtitleSegment): SubtitleSegment =
     if (usesVietnameseEnglishPair()) {
         segment.asStudyPair(resolvedSourceLanguage, studyTranslationTarget(resolvedSourceLanguage), thirdLineFor(segment))
