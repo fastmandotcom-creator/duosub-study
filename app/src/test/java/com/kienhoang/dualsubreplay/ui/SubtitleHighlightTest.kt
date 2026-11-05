@@ -225,6 +225,7 @@ class SubtitleWordHighlightTest {
                 PRONUNCIATION_VOLUME_PREFERENCE,
                 STUDY_PLAY_MODE_PREFERENCE,
                 STUDY_REPEAT_COUNT_PREFERENCE,
+                PAIR_READ_COUNT_PREFERENCE,
                 SKIP_SILENCE_PREFERENCE,
                 KNOWN_WORDS_PREFERENCE,
                 MARK_NEW_WORDS_PREFERENCE,

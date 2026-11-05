@@ -46,7 +46,7 @@ class StudyPlaybackTest {
 
     @Test
     fun normalPlayAsksForNothing() {
-        assertEquals(emptyList<Pair<Long, StudyAction>>(), play(StudyPlaybackDriver(), StudySettings(), 0, 11_000))
+        assertEquals(emptyList<Pair<Long, StudyAction>>(), play(StudyPlaybackDriver(), StudySettings(playMode = StudyPlayMode.NORMAL), 0, 11_000))
     }
 
     @Test
@@ -250,7 +250,7 @@ class StudyPlaybackTest {
     @Test
     fun skipSilenceSpeedsUpLongGapsAndBringsTheSpeedBackBeforeTheNextLine() {
         val driver = StudyPlaybackDriver()
-        val settings = StudySettings(skipSilence = SkipSilence.DOUBLE)
+        val settings = StudySettings(playMode = StudyPlayMode.NORMAL, skipSilence = SkipSilence.DOUBLE)
         val asked = play(driver, settings, 3_500, 9_000).map { it.second }
         // The 4 s gap after the second line plays at 2x until just before the third (first tick in it: 5018 ms).
         assertEquals(StudyAction.GapSpeed(2f, (9_000L - 5_018) / 2), asked.first())
@@ -261,11 +261,11 @@ class StudyPlaybackTest {
     @Test
     fun skipSilenceGivesTheSpeedBackWhenPausedOrTurnedOff() {
         val driver = StudyPlaybackDriver()
-        val settings = StudySettings(skipSilence = SkipSilence.QUADRUPLE)
+        val settings = StudySettings(playMode = StudyPlayMode.NORMAL, skipSilence = SkipSilence.QUADRUPLE)
         assertEquals(StudyAction.GapSpeed(4f, 1_000), tick(driver, settings, 5_000))
         assertEquals(StudyAction.NormalSpeed, tick(driver, settings, 5_100, paused = true))
         assertEquals(StudyAction.GapSpeed(4f, 975), tick(driver, settings, 5_100))
-        assertEquals(StudyAction.NormalSpeed, tick(driver, StudySettings(), 5_200))
+        assertEquals(StudyAction.NormalSpeed, tick(driver, StudySettings(playMode = StudyPlayMode.NORMAL), 5_200))
         assertEquals(StudyAction.GapSpeed(4f, 950), tick(driver, settings, 5_200))
         assertEquals(StudyAction.NormalSpeed, tick(driver, settings, 5_300, videoId = "zzzzzzzzzzz"))
     }
@@ -273,7 +273,7 @@ class StudyPlaybackTest {
     @Test
     fun jumpSkipsALongGapOnceAndLandsJustBeforeTheNextLine() {
         val driver = StudyPlaybackDriver()
-        val settings = StudySettings(skipSilence = SkipSilence.JUMP)
+        val settings = StudySettings(playMode = StudyPlayMode.NORMAL, skipSilence = SkipSilence.JUMP)
         val asked = play(driver, settings, 0, 9_000).map { it.second }
         assertEquals(listOf(StudyAction.PlayFrom(9_000 - SKIP_SILENCE_JUMP_LEAD_MS)), asked)
         // Before the first line only 1 s is silent, under the shortest gap skip silence acts on.
