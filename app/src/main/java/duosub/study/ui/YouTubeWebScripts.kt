@@ -5,6 +5,7 @@ import duosub.study.data.PageCaptionTarget
 import duosub.study.data.PageTranscriptReply
 import duosub.study.data.PageTranslationReply
 import duosub.study.data.PageTranslationTarget
+import duosub.study.data.SubtitleTextSanitizer
 import org.json.JSONObject
 import org.json.JSONTokener
 
