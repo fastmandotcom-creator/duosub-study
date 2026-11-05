@@ -16,7 +16,7 @@
     <string name="study_play_mode_repeat_description">Toca cada linha algumas vezes antes de seguir. Sempre repete a linha até você tocar em outra linha ou avançar/voltar o vídeo.</string>
     <string name="study_repeat_forever">Sempre</string>
     <string name="study_play_mode_read_pair">Ler original e depois tradução</string>
-    <string name="study_play_mode_read_pair_description">Para o vídeo e lê a linha 1 e depois a linha 2 o número de vezes escolhido. O vídeo fica pausado para você ouvir. Toque em reproduzir para a próxima linha.</string>
+    <string name="study_play_mode_read_pair_description">Para o vídeo e lê a linha 1 e depois a linha 2 o número de vezes escolhido. Depois vai sozinho para a próxima linha e lê também. Não precisa tocar em reproduzir.</string>
     <string name="study_pair_read_count">Vezes do par</string>
     <string name="study_read_pair_primary_progress">Original %1$d/%2$d</string>
     <string name="study_read_pair_secondary_progress">Tradução %1$d/%2$d</string>

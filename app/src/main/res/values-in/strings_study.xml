@@ -16,7 +16,7 @@
     <string name="study_play_mode_repeat_description">Memutar setiap baris beberapa kali sebelum lanjut. Terus-menerus mengulang baris itu sampai kamu mengetuk baris lain atau menggeser video.</string>
     <string name="study_repeat_forever">Terus-menerus</string>
     <string name="study_play_mode_read_pair">Baca asli, lalu terjemahan</string>
-    <string name="study_play_mode_read_pair_description">Menghentikan video dan membaca baris 1 lalu baris 2 sebanyak yang dipilih. Video tetap berhenti agar terdengar. Tekan putar untuk baris berikutnya.</string>
+    <string name="study_play_mode_read_pair_description">Menghentikan video dan membaca baris 1 lalu baris 2 sebanyak yang dipilih. Selesai, pindah sendiri ke baris berikutnya dan membacanya juga. Tidak perlu menekan putar.</string>
     <string name="study_pair_read_count">Berapa kali pasangan dibaca</string>
     <string name="study_read_pair_primary_progress">Asli %1$d/%2$d</string>
     <string name="study_read_pair_secondary_progress">Terjemahan %1$d/%2$d</string>

@@ -123,6 +123,7 @@ internal class PairedLineReaderHost(
     fun read(
         pair: SpokenPair,
         resumeAfter: Boolean,
+        advanceAfter: Boolean = false,
     ) {
         if (pair.primary.isBlank() && pair.secondary.isBlank()) return
         val ticket = ++generation
@@ -135,9 +136,16 @@ internal class PairedLineReaderHost(
             onFinished = {
                 if (ticket != generation) return@readPair
                 progress = null
-                if (resumeAfter) controller.play()
+                if (resumeAfter) controller.play() else if (advanceAfter) advance()
             },
         )
+    }
+
+    /** After the pair has been read, stop on the next line so that line is read next. No play tap. */
+    private fun advance() {
+        val current = state ?: return
+        val next = current.segments.getOrNull(current.currentIndex + 1) ?: return
+        controller.seekPaused((next.startMs + 20L) / 1000f)
     }
 }
 
@@ -168,6 +176,7 @@ internal fun PairedLineAutoReader(
                 if (pair) DEFAULT_TARGET_LANGUAGE else host.state?.targetLanguage ?: DEFAULT_TARGET_LANGUAGE,
             ),
             resumeAfter = false,
+            advanceAfter = true,
         )
     }
 }
