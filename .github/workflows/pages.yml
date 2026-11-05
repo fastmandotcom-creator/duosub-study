@@ -23,7 +23,7 @@ concurrency:
 jobs:
   build:
     if: >-
-      github.repository == 'hoangkien1703/dual-sub-replay' && github.ref == 'refs/heads/main' &&
+      github.repository == 'fastmandotcom-creator/duosub-study' && github.ref == 'refs/heads/main' &&
       (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 10

@@ -78,7 +78,7 @@ languages and lets me replay one sentence at a time, so I built one.
 It's free, MIT-licensed, with no ads and no account. It's an APK from GitHub, not Google
 Play yet. Feedback on phones where it misbehaves is very welcome.
 
-https://hoangkien1703.github.io/dual-sub-replay/
+https://fastmandotcom-creator.github.io/duosub-study/
 
 ### r/opensource or r/coolgithubprojects
 
@@ -89,7 +89,7 @@ tap, and explains words and grammar. It's Kotlin and Jetpack Compose, MIT-licens
 on-device language data (jieba, HanLP, OpenNLP and WordNet word lists) and no server of
 its own. I'd love feedback on the code or ideas for what to add.
 
-https://github.com/hoangkien1703/dual-sub-replay
+https://github.com/fastmandotcom-creator/duosub-study
 
 ### r/LearnJapanese
 
@@ -106,7 +106,7 @@ level, and speaks a word when you tap it. It's free and open source, with no ads
 APK from GitHub, not Google Play yet. I'm the developer, so please tell me where the word
 splitting or pinyin is wrong.
 
-https://hoangkien1703.github.io/dual-sub-replay/
+https://fastmandotcom-creator.github.io/duosub-study/
 
 ### r/EnglishLearning
 
@@ -118,7 +118,7 @@ level, and save it for practice. It's free, open source and has no ads. Android 
 for now (APK from GitHub). I'm the developer and would like to know which features help
 your listening most.
 
-https://hoangkien1703.github.io/dual-sub-replay/learn-english/
+https://fastmandotcom-creator.github.io/duosub-study/learn-english/
 
 ### r/languagelearning
 
@@ -134,7 +134,7 @@ their question.
 > shows YouTube subtitles in two languages, replays a sentence with one tap, and lets you
 > tap words to look them up and save them (Anki export too). It's an APK from GitHub
 > since it isn't on Google Play yet:
-> https://hoangkien1703.github.io/dual-sub-replay/
+> https://fastmandotcom-creator.github.io/duosub-study/
 >
 > If you'd rather stay on Google Play, LingoTube (free with ads) and Trancy (free plan,
 > paid Premium) are the other options I know of.
@@ -153,7 +153,7 @@ https://alternativeto.net (Add application), then mark it as an alternative to L
 Reactor, Trancy, LingoTube and Migaku.
 
 - **Name:** DualSub Replay
-- **Website:** https://hoangkien1703.github.io/dual-sub-replay/
+- **Website:** https://fastmandotcom-creator.github.io/duosub-study/
 - **Platforms:** Android
 - **License:** Free, open source (MIT)
 - **Short description:** Learn a language with YouTube on your Android phone. Watch videos
@@ -166,7 +166,7 @@ Reactor, Trancy, LingoTube and Migaku.
   Translation uses Google Translate with an on-device fallback. Extra help for Japanese,
   Chinese and English learners. No account and no ads.
 - **Tags:** dual subtitles, YouTube, language learning, Anki, open source, no ads
-- **Source:** https://github.com/hoangkien1703/dual-sub-replay
+- **Source:** https://github.com/fastmandotcom-creator/duosub-study
 
 ## Google Play
 

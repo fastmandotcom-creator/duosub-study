@@ -4,10 +4,10 @@ How people find DualSub Replay: Google results for searches such as "dual subtit
 YouTube Android" or "phụ đề song ngữ YouTube", the GitHub repository page, and
 community posts. The repository carries the landing page (`site/`), README wording,
 and structured data. The steps below need the owner's GitHub or Google account.
-Tracking issue: [#53](https://github.com/hoangkien1703/dual-sub-replay/issues/53).
+Tracking issue: [#53](https://github.com/fastmandotcom-creator/duosub-study/issues/53).
 
-Website: https://hoangkien1703.github.io/dual-sub-replay/ (English) and
-https://hoangkien1703.github.io/dual-sub-replay/vi/ (Vietnamese).
+Website: https://fastmandotcom-creator.github.io/duosub-study/ (English) and
+https://fastmandotcom-creator.github.io/duosub-study/vi/ (Vietnamese).
 
 ## Owner steps, in priority order
 
@@ -15,7 +15,7 @@ https://hoangkien1703.github.io/dual-sub-replay/vi/ (Vietnamese).
    **GitHub Actions**. The **Publish website** workflow deploys on the next `main`
    change to `site/`; to publish immediately, use Actions → Publish website → Run workflow.
 2. **Point the repository at the website.** On the repository page, About (gear icon) →
-   Website: `https://hoangkien1703.github.io/dual-sub-replay/`. Add topics up to
+   Website: `https://fastmandotcom-creator.github.io/duosub-study/`. Add topics up to
    GitHub's limit of 20, for example `language-learning-app`, `learn-english`,
    `youtube-subtitles`, `anki`, `spaced-repetition`, and `vocabulary`.
 3. **Set the social preview.** Settings → General → Social preview → upload

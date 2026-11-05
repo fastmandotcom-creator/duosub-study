@@ -32,8 +32,9 @@ class UpdateRemindersTest {
         val parsed = parseUpdateInfo(info(minimumSafe = 55))!!
         assertEquals(UpdateInfo("1.9.0", 60, 55, digest, 34251919), parsed)
         val update = updateFromInfo(parsed, installedVersionCode = 57)!!
-        assertEquals("https://github.com/hoangkien1703/dual-sub-replay/releases/download/v1.9.0/DualSub-Replay.apk", update.downloadUrl)
-        assertEquals("https://github.com/hoangkien1703/dual-sub-replay/releases/tag/v1.9.0", update.pageUrl)
+        val releases = "https://github.com/fastmandotcom-creator/duosub-study/releases"
+        assertEquals("$releases/download/v1.9.0/DualSub-Replay.apk", update.downloadUrl)
+        assertEquals("$releases/tag/v1.9.0", update.pageUrl)
         assertEquals(digest, update.sha256)
         assertFalse(update.critical)
     }

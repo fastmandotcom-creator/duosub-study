@@ -43,7 +43,7 @@ Skip sponsors uses SponsorBlock data (https://sponsor.ajay.app), asked for while
 not stored, under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 licence
 (https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
-Source and full notices: https://github.com/hoangkien1703/dual-sub-replay/blob/main/THIRD_PARTY_NOTICES.md
+Source and full notices: https://github.com/fastmandotcom-creator/duosub-study/blob/main/THIRD_PARTY_NOTICES.md
 
 
 

@@ -31,11 +31,11 @@ class AppUpdateUiTest {
     private val update =
         AppUpdate(
             versionName = "1.7.2",
-            downloadUrl = "https://github.com/hoangkien1703/dual-sub-replay/releases/download/v1.7.2/DualSub-Replay.apk",
+            downloadUrl = "https://github.com/fastmandotcom-creator/duosub-study/releases/download/v1.7.2/DualSub-Replay.apk",
             sha256 = null,
             checksumUrl = null,
             sizeBytes = 34_251_919,
-            pageUrl = "https://github.com/hoangkien1703/dual-sub-replay/releases/tag/v1.7.2",
+            pageUrl = "https://github.com/fastmandotcom-creator/duosub-study/releases/tag/v1.7.2",
         )
 
     @After

@@ -3,7 +3,7 @@
 ## Status
 
 Implemented. Owner decision 2026-11-02 in the project thread: build "Decks + auto language decks"
-for [issue #184](https://github.com/hoangkien1703/dual-sub-replay/issues/184), picked over a
+for [issue #184](https://github.com/fastmandotcom-creator/duosub-study/issues/184), picked over a
 language filter only and over tags.
 
 ## Context / problem

@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 Please report security problems privately, not in a public issue:
-[open a private report](https://github.com/hoangkien1703/dual-sub-replay/security/advisories/new)
+[open a private report](https://github.com/fastmandotcom-creator/duosub-study/security/advisories/new)
 on GitHub (Security tab > Report a vulnerability).
 
 Include the app version (Android Settings > Apps > DualSub Replay shows it), your Android version, and the steps
@@ -11,7 +11,7 @@ that show the problem. You should get an answer within a week.
 
 ## Supported versions
 
-Only the latest release on the [Releases page](https://github.com/hoangkien1703/dual-sub-replay/releases/latest)
+Only the latest release on the [Releases page](https://github.com/fastmandotcom-creator/duosub-study/releases/latest)
 gets fixes. The app can update itself from its menu (Check for updates).
 
 ## What the app already does

@@ -16,12 +16,12 @@ class AppUpdatesTest {
         apkDigest: String = "sha256:$digest",
     ) = """
         {"tag_name":"$tag","draft":false,"prerelease":false,
-         "html_url":"https://github.com/hoangkien1703/dual-sub-replay/releases/tag/$tag",
+         "html_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/tag/$tag",
          "assets":[
           {"name":"$apkName","size":34251919,"digest":"$apkDigest",
-           "browser_download_url":"https://github.com/hoangkien1703/dual-sub-replay/releases/download/$tag/$apkName"},
+           "browser_download_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/download/$tag/$apkName"},
           {"name":"DualSub-Replay.apk.sha256","size":85,
-           "browser_download_url":"https://github.com/hoangkien1703/dual-sub-replay/releases/download/$tag/DualSub-Replay.apk.sha256"}
+           "browser_download_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/download/$tag/DualSub-Replay.apk.sha256"}
          ]}
         """.trimIndent()
 
@@ -90,9 +90,9 @@ class AppUpdatesTest {
             name: String,
             hex: String = digest,
         ) = """{"name":"$name","size":5,"digest":"sha256:$hex",
-               "browser_download_url":"https://github.com/hoangkien1703/dual-sub-replay/releases/download/preview/$name"}"""
+               "browser_download_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/download/preview/$name"}"""
         val json =
-            """{"html_url":"https://github.com/hoangkien1703/dual-sub-replay/releases/tag/preview","assets":[
+            """{"html_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/tag/preview","assets":[
                 ${asset("DualSub-Replay-PR138-build471-preview.apk")},
                 ${asset("DualSub-Replay-PR137-build480-preview.apk")},
                 ${asset("DualSub-Replay-PR138-build469-preview.apk")}]}"""

@@ -209,7 +209,7 @@ it is the owner's call and not applied without asking.
 | New unit tests: `UpdateRemindersTest` (8), `RemoteSwitchesTest` (7), `ProblemLogTest` (5), `BackgroundBackoffTest` (3); extended `GoogleWebTranslatorTest`, `AiActionsTest`, `BackgroundPrefetchTest` | Passed |
 | `python3 -m unittest discover -s tools/tests -p 'test_*.py'` (42, incl. new release-tool tests) | Passed |
 | Workflow YAML parse, `remote-config/switches.json` parse | Passed |
-| PR CI on the first head (`verify-build`, `managed-device-tests`, incl. `AppNoticesUiTest`) | Passed on [PR 181](https://github.com/hoangkien1703/dual-sub-replay/pull/181); see the PR for the final head |
+| PR CI on the first head (`verify-build`, `managed-device-tests`, incl. `AppNoticesUiTest`) | Passed on [PR 181](https://github.com/fastmandotcom-creator/duosub-study/pull/181); see the PR for the final head |
 | Release workflow writing `update-info.json` | Not run: it runs on the first release after merge (logic covered by the Python tests) |
 | Owner's phone: Report a problem (Send by email, Open GitHub in an in-app tab, Copy) | Passed on build 622 (owner, 2026-10-30), after fixes for builds 618 and 620 |
 | Release after merge | v1.8.10 published 2026-10-30 with `update-info.json` (version code 102, minimum safe 0, SHA-256 matching the `.sha256` file); `releases/latest/download/update-info.json` serves it |

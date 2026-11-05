@@ -14,17 +14,17 @@ Key facts:
 
 ## Website
 
-- [Home](https://hoangkien1703.github.io/dual-sub-replay/): features, supported languages, FAQ
-- [Best Android apps to learn languages with YouTube (2026)](https://hoangkien1703.github.io/dual-sub-replay/best-android-apps-learn-languages-youtube/): DualSub Replay, 4You, LingQ, LingoLingo, Video Lingo, LingoTube, Trancy, Migaku, Lingopie and jidoujisho compared, with sources
-- [Dual subtitles on YouTube for Android: 6 options](https://hoangkien1703.github.io/dual-sub-replay/dual-subtitles-youtube-android/): DualSub Replay, Trancy, LingoTube, Migaku, Dualsub for Firefox and Language Reactor
-- [Language Reactor alternative for Android](https://hoangkien1703.github.io/dual-sub-replay/language-reactor-alternative/)
-- [Learn English with YouTube on Android](https://hoangkien1703.github.io/dual-sub-replay/learn-english/)
-- [Learn Japanese with YouTube on Android](https://hoangkien1703.github.io/dual-sub-replay/learn-japanese/)
-- [Vietnamese version of the site](https://hoangkien1703.github.io/dual-sub-replay/vi/)
+- [Home](https://fastmandotcom-creator.github.io/duosub-study/): features, supported languages, FAQ
+- [Best Android apps to learn languages with YouTube (2026)](https://fastmandotcom-creator.github.io/duosub-study/best-android-apps-learn-languages-youtube/): DualSub Replay, 4You, LingQ, LingoLingo, Video Lingo, LingoTube, Trancy, Migaku, Lingopie and jidoujisho compared, with sources
+- [Dual subtitles on YouTube for Android: 6 options](https://fastmandotcom-creator.github.io/duosub-study/dual-subtitles-youtube-android/): DualSub Replay, Trancy, LingoTube, Migaku, Dualsub for Firefox and Language Reactor
+- [Language Reactor alternative for Android](https://fastmandotcom-creator.github.io/duosub-study/language-reactor-alternative/)
+- [Learn English with YouTube on Android](https://fastmandotcom-creator.github.io/duosub-study/learn-english/)
+- [Learn Japanese with YouTube on Android](https://fastmandotcom-creator.github.io/duosub-study/learn-japanese/)
+- [Vietnamese version of the site](https://fastmandotcom-creator.github.io/duosub-study/vi/)
 
 ## Download and source
 
-- [Latest APK](https://github.com/hoangkien1703/dual-sub-replay/releases/latest/download/DualSub-Replay.apk)
-- [Release notes](https://github.com/hoangkien1703/dual-sub-replay/releases/latest)
-- [Source code and README](https://github.com/hoangkien1703/dual-sub-replay)
-- [Privacy policy](https://github.com/hoangkien1703/dual-sub-replay/blob/main/PRIVACY.md)
+- [Latest APK](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk)
+- [Release notes](https://github.com/fastmandotcom-creator/duosub-study/releases/latest)
+- [Source code and README](https://github.com/fastmandotcom-creator/duosub-study)
+- [Privacy policy](https://github.com/fastmandotcom-creator/duosub-study/blob/main/PRIVACY.md)

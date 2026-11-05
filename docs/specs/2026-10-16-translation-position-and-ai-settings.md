@@ -9,7 +9,7 @@ covers this scope; merge and release stay with the owner.
 
 ## Context / problem
 
-[Issue #115](https://github.com/hoangkien1703/dual-sub-replay/issues/115) asks for the
+[Issue #115](https://github.com/fastmandotcom-creator/duosub-study/issues/115) asks for the
 translation to show above the original subtitle line, with a button to switch. Today the
 original line is always on top, in the overlay over the video and in the transcript panel
 (`SubtitleCard.kt`, `LearningPlayerRoot.kt`).

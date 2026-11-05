@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 internal val LICENSE_ASSETS =
     listOf("licenses/MIT.txt", "licenses/libraries.txt", "licenses/hanzi.txt", "licenses/translation.txt")
 
-internal const val PROJECT_REPOSITORY_URL = "https://github.com/hoangkien1703/dual-sub-replay"
+internal const val PROJECT_REPOSITORY_URL = "https://github.com/fastmandotcom-creator/duosub-study"
 
 @Composable
 private fun FooterLinkText(text: String) {

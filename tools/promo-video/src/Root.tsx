@@ -3,7 +3,7 @@ import {Composition} from 'remotion';
 import {PROMO_FRAMES, PromoPoster, PromoVideo, README_LOOP_FRAMES, ReadmeLoop, SocialCard, type PromoProps} from './PromoVideo';
 
 const defaultProps: PromoProps = {
-  repositoryUrl: 'github.com/hoangkien1703/dual-sub-replay',
+  repositoryUrl: 'github.com/fastmandotcom-creator/duosub-study',
 };
 
 export const PromoRoot: React.FC = () => (

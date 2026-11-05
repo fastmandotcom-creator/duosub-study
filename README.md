@@ -1,14 +1,14 @@
-[![Latest release](https://img.shields.io/github/v/release/hoangkien1703/dual-sub-replay?label=latest)](https://github.com/hoangkien1703/dual-sub-replay/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/hoangkien1703/dual-sub-replay/total?label=downloads&color=brightgreen)](https://github.com/hoangkien1703/dual-sub-replay/releases)
-[![Android 8+](https://img.shields.io/badge/Android-8.0%2B-3ddc84?logo=android&logoColor=white)](https://github.com/hoangkien1703/dual-sub-replay/releases/latest/download/DualSub-Replay.apk)
-[![CI](https://github.com/hoangkien1703/dual-sub-replay/actions/workflows/android.yml/badge.svg)](https://github.com/hoangkien1703/dual-sub-replay/actions/workflows/android.yml)
+[![Latest release](https://img.shields.io/github/v/release/fastmandotcom-creator/duosub-study?label=latest)](https://github.com/fastmandotcom-creator/duosub-study/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/fastmandotcom-creator/duosub-study/total?label=downloads&color=brightgreen)](https://github.com/fastmandotcom-creator/duosub-study/releases)
+[![Android 8+](https://img.shields.io/badge/Android-8.0%2B-3ddc84?logo=android&logoColor=white)](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk)
+[![CI](https://github.com/fastmandotcom-creator/duosub-study/actions/workflows/android.yml/badge.svg)](https://github.com/fastmandotcom-creator/duosub-study/actions/workflows/android.yml)
 [![Source: MIT](https://img.shields.io/badge/Source-MIT-26c6da.svg)](LICENSE)
 [![App distribution: GPL-3.0](https://img.shields.io/badge/App-GPL--3.0-blue.svg)](THIRD_PARTY_NOTICES.md)
 
 <h1 align="center">DualSub Replay</h1>
 
 <p align="center">
-  <a href="https://hoangkien1703.github.io/dual-sub-replay/"><img src="site/favicon.svg" alt="DualSub Replay logo. Opens the website" width="180" height="180"></a>
+  <a href="https://fastmandotcom-creator.github.io/duosub-study/"><img src="site/favicon.svg" alt="DualSub Replay logo. Opens the website" width="180" height="180"></a>
 </p>
 
 <p align="center">
@@ -16,12 +16,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/hoangkien1703/dual-sub-replay/releases/latest/download/DualSub-Replay.apk"><img src="https://img.shields.io/badge/Download_for_Android-Free-3ddc84?style=for-the-badge&logo=android&logoColor=white" alt="Download DualSub Replay for Android, free" height="56"></a>
+  <a href="https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk"><img src="https://img.shields.io/badge/Download_for_Android-Free-3ddc84?style=for-the-badge&logo=android&logoColor=white" alt="Download DualSub Replay for Android, free" height="56"></a>
 </p>
 
 <p align="center">
   Android 8.0 or newer · No account · No ads<br>
-  Want to try changes before they are released? <a href="https://github.com/hoangkien1703/dual-sub-replay/releases/tag/preview">Get a preview build</a> of an open pull request (may be less stable).
+  Want to try changes before they are released? <a href="https://github.com/fastmandotcom-creator/duosub-study/releases/tag/preview">Get a preview build</a> of an open pull request (may be less stable).
 </p>
 
 ### How to install
@@ -46,13 +46,13 @@ Android may show a warning because the app comes from GitHub instead of Google P
 
 <p align="center"><a href="docs/media/dualsub-replay-promo.mp4"><strong>▶ Watch the full video (50 seconds)</strong></a></p>
 
-### [Download DualSub Replay for Android](https://github.com/hoangkien1703/dual-sub-replay/releases/latest/download/DualSub-Replay.apk)
+### [Download DualSub Replay for Android](https://github.com/fastmandotcom-creator/duosub-study/releases/latest/download/DualSub-Replay.apk)
 
 Free · Android 8.0 or newer · See [How to install](#how-to-install) if you need help.
 
 ## Why DualSub Replay?
 
-DualSub Replay is a free, open-source **dual subtitles app for YouTube on Android**. It shows bilingual captions (the original and a translation into any of 101 languages), replays a sentence with one tap, explains words and English, Japanese and Chinese grammar, and saves words for spaced-repetition practice. [Website](https://hoangkien1703.github.io/dual-sub-replay/) · [Tiếng Việt](https://hoangkien1703.github.io/dual-sub-replay/vi/)
+DualSub Replay is a free, open-source **dual subtitles app for YouTube on Android**. It shows bilingual captions (the original and a translation into any of 101 languages), replays a sentence with one tap, explains words and English, Japanese and Chinese grammar, and saves words for spaced-repetition practice. [Website](https://fastmandotcom-creator.github.io/duosub-study/) · [Tiếng Việt](https://fastmandotcom-creator.github.io/duosub-study/vi/)
 
 - **See every meaning.** The original caption and its translation stay together while you watch.
 - **Repeat without scrubbing.** Tap a subtitle line and the video jumps back to that exact moment.
@@ -69,9 +69,9 @@ DualSub Replay is a free, open-source **dual subtitles app for YouTube on Androi
 | LingoTube | App on Google Play | Free, with ads | Dual captions with A-B repeat |
 | Language Reactor | No Android app (desktop Chrome only) | Free, paid Pro plan | Studying YouTube and Netflix on a computer |
 
-Facts checked in October 2026. See the [full comparison](https://hoangkien1703.github.io/dual-sub-replay/dual-subtitles-youtube-android/) for Migaku, Dualsub and more.
+Facts checked in October 2026. See the [full comparison](https://fastmandotcom-creator.github.io/duosub-study/dual-subtitles-youtube-android/) for Migaku, Dualsub and more.
 
-If DualSub Replay helps your learning, consider [starring the repository](https://github.com/hoangkien1703/dual-sub-replay). It helps other language learners discover the project.
+If DualSub Replay helps your learning, consider [starring the repository](https://github.com/fastmandotcom-creator/duosub-study). It helps other language learners discover the project.
 
 <p align="center">
   <img src="docs/images/dualsub-replay-japanese-english.webp" alt="DualSub Replay with a Japanese YouTube video, Japanese subtitles and English translations, the playing line's words colored by part of speech" width="280">
@@ -166,7 +166,7 @@ The interface is available in English, Tiếng Việt, Español, Português (Bra
 
 **Does it work on Android TV?** Yes, in beta. Sideload the same APK (for example with the Downloader app) and the app shows on the TV home screen with a remote-friendly layout. See [Watch on Android TV](#watch-on-android-tv-beta).
 
-**Is it on Google Play?** Not yet. Install the official APK from [GitHub releases](https://github.com/hoangkien1703/dual-sub-replay/releases/latest).
+**Is it on Google Play?** Not yet. Install the official APK from [GitHub releases](https://github.com/fastmandotcom-creator/duosub-study/releases/latest).
 
 ## Privacy
 
@@ -181,14 +181,14 @@ No account or API key is required, and the app has no analytics or advertising S
 
 > "Thank you for creating and sharing DualSub Replay. It's a great open-source app!"
 >
-> — [mrAlishah](https://github.com/hoangkien1703/dual-sub-replay/discussions/81#discussioncomment-19228373), who built [Triple Sub Replay](https://github.com/mrAlishah/triple-sub-replay), a fork that adds a third subtitle line for learning German with English and Persian, and became this project's first code contributor. The third line, video titles and notes on saved words came from Triple Sub Replay
+> — [mrAlishah](https://github.com/fastmandotcom-creator/duosub-study/discussions/81#discussioncomment-19228373), who built [Triple Sub Replay](https://github.com/mrAlishah/triple-sub-replay), a fork that adds a third subtitle line for learning German with English and Persian, and became this project's first code contributor. The third line, video titles and notes on saved words came from Triple Sub Replay
 
-Ideas and questions are welcome in [Discussions](https://github.com/hoangkien1703/dual-sub-replay/discussions). Bug reports and feature requests go to [Issues](https://github.com/hoangkien1703/dual-sub-replay/issues).
+Ideas and questions are welcome in [Discussions](https://github.com/fastmandotcom-creator/duosub-study/discussions). Bug reports and feature requests go to [Issues](https://github.com/fastmandotcom-creator/duosub-study/issues).
 
-<a href="https://star-history.com/#hoangkien1703/dual-sub-replay&Date">
+<a href="https://star-history.com/#fastmandotcom-creator/duosub-study&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=hoangkien1703/dual-sub-replay&type=Date&theme=dark">
-    <img src="https://api.star-history.com/svg?repos=hoangkien1703/dual-sub-replay&type=Date" alt="Star history of DualSub Replay on GitHub" width="600">
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=fastmandotcom-creator/duosub-study&type=Date&theme=dark">
+    <img src="https://api.star-history.com/svg?repos=fastmandotcom-creator/duosub-study&type=Date" alt="Star history of DualSub Replay on GitHub" width="600">
   </picture>
 </a>
 

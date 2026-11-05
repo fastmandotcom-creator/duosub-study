@@ -7,7 +7,7 @@ go-ahead.
 
 ## Context / problem
 
-lovoro asked on [discussion #81](https://github.com/hoangkien1703/dual-sub-replay/discussions/81#discussioncomment-19376779)
+lovoro asked on [discussion #81](https://github.com/fastmandotcom-creator/duosub-study/discussions/81#discussioncomment-19376779)
 for two things:
 
 1. Loop one sentence over and over.

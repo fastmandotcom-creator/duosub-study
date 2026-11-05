@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented. The owner asked in [#53](https://github.com/hoangkien1703/dual-sub-replay/issues/53)
+Implemented. The owner asked in [#53](https://github.com/fastmandotcom-creator/duosub-study/issues/53)
 and in the project thread for the app to reach more users, gain GitHub stars, and rank
 on Google for searches like the app. That covers this repository-side scope; merge and
 release remain the owner's decision.
@@ -35,7 +35,7 @@ learners search with, and no FAQ.
 ## User-visible behavior
 
 App: unchanged. Repository: README gains a keyword-rich intro, links to the website,
-and a short FAQ. New website at `https://hoangkien1703.github.io/dual-sub-replay/`
+and a short FAQ. New website at `https://fastmandotcom-creator.github.io/duosub-study/`
 once the owner enables Pages.
 
 ## Technical constraints / invariants
@@ -44,7 +44,7 @@ once the owner enables Pages.
 - The Pages workflow runs only on `main` in this repository, has `contents: read` for
   the build job, and grants `pages: write`/`id-token: write` only to the deploy job.
 - `robots.txt` is omitted on purpose: crawlers read it only at the host root
-  (`hoangkien1703.github.io/robots.txt`), which a project site cannot control. The
+  (`fastmandotcom-creator.github.io/robots.txt`), which a project site cannot control. The
   sitemap is submitted through Search Console instead.
 
 ## Proposed approach / plan

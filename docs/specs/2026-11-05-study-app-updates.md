@@ -8,7 +8,7 @@ Implemented 2026-11-05 (end-user report in chat: automatic update still uses the
 
 DualSub Study is published by hand in `fastmandotcom-creator/duosub-study` as tag `study-<version>` with one asset, `DualSub-Study.apk`. The published APK (study-1.0.4.7, checked 2026-11-05) is a debug build with application id `com.kienhoang.dualsubreplay.study`, versionName `1.0.4-study.7`, versionCode 41.
 
-`updateChannelFor` only knows the official app (`com.kienhoang.dualsubreplay`, not debuggable) and PR previews (`.preview`). The Study app matches neither, so its channel is `None`: it cannot update itself, and the update dialog opens the releases page of `hoangkien1703/dual-sub-replay`.
+`updateChannelFor` only knows the official app (`com.kienhoang.dualsubreplay`, not debuggable) and PR previews (`.preview`). The Study app matches neither, so its channel is `None`: it cannot update itself, and the update dialog opens the releases page of `fastmandotcom-creator/duosub-study`.
 
 ## Goals
 

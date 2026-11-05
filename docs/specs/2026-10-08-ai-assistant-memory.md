@@ -173,7 +173,7 @@ intent for this one.
   `BackupRulesTest`.
 - `AiAssistantPanelUiTest` (memory chip, Manage, edit, instructions, Undo, delete, Delete all,
   switch, chat without memory, what's-new card) passed on the CI managed device with all four
-  Android CI jobs on 4303736 ([run 37814924770](https://github.com/hoangkien1703/dual-sub-replay/actions/runs/37814924770)).
+  Android CI jobs on 4303736 ([run 37814924770](https://github.com/fastmandotcom-creator/duosub-study/actions/runs/37814924770)).
   The `ai_panel_memory_chip`, `ai_panel_memory_page` and `ai_panel_whats_new` screenshots use the
   app's dark teal theme and match the chat and settings pages around them.
 - Not verified: a live round trip with a real AI service (the owner's key from the chat may not

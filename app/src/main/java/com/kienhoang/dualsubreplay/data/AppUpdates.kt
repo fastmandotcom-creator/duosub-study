@@ -4,7 +4,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /** The repository whose GitHub releases the app updates from (owner request 2026-10-20). */
-internal const val UPDATE_REPOSITORY = "hoangkien1703/dual-sub-replay"
+internal const val UPDATE_REPOSITORY = "fastmandotcom-creator/duosub-study"
 internal const val UPDATE_LATEST_RELEASE_URL = "https://api.github.com/repos/$UPDATE_REPOSITORY/releases/latest"
 internal const val UPDATE_PREVIEW_RELEASE_URL = "https://api.github.com/repos/$UPDATE_REPOSITORY/releases/tags/preview"
 internal const val UPDATE_RELEASES_PAGE_URL = "https://github.com/$UPDATE_REPOSITORY/releases"

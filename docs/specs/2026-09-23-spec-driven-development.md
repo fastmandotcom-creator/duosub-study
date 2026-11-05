@@ -87,7 +87,7 @@ Kept the plan inside each spec, trivial-change exemption, existing
 implementation authorization, actual release metadata rules, and honest QA boundaries.
 Corrected stale caption-discovery and onboarding names in agent guidance against source.
 
-Initially planned to extend [PR #73](https://github.com/hoangkien1703/dual-sub-replay/pull/73),
+Initially planned to extend [PR #73](https://github.com/fastmandotcom-creator/duosub-study/pull/73),
 which covered release handoff. It was merged concurrently before these changes were
 uploaded. Deliver this work on `codex/spec-driven-development` against updated main,
 preserving that merged guidance. This change uses the owner's explicit skip instruction;
@@ -105,7 +105,7 @@ No application, build, release-script/workflow, signing, version, or roadmap cha
   PLAN.md is deleted and has no remaining active links. Existing docs/qa/ evidence is
   byte-for-byte unchanged; the deleted plan remains available in Git history.
 - Reviewed technical claims against actual source/build/CI and release metadata handling.
-- Verified [PR #74](https://github.com/hoangkien1703/dual-sub-replay/pull/74) is open and
+- Verified [PR #74](https://github.com/fastmandotcom-creator/duosub-study/pull/74) is open and
   has the actual `release:skip` label. Final-head Android CI and preview availability
   remain pending at this update; earlier CI is not evidence for the new head.
   The owner reviews these before merging.

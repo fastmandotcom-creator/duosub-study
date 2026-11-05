@@ -20,7 +20,7 @@ with AI" button ([grammar up to N1](2026-10-07-grammar-to-n1-and-auto-caption-la
 without kana goes through the Japanese script heuristic, so 我在银行工作了三年 is one tap target,
 colored as one noun, with no pinyin and no grammar.
 
-[PR #123](https://github.com/hoangkien1703/dual-sub-replay/pull/123) adds English and Chinese
+[PR #123](https://github.com/fastmandotcom-creator/duosub-study/pull/123) adds English and Chinese
 help together with caption-loading changes. The owner asked for Chinese on its own, in a separate
 PR from `main`, reusing #123's Chinese code where it works.
 

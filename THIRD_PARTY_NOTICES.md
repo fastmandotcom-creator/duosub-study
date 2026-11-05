@@ -120,7 +120,7 @@ The IPADIC dictionary that Kuromoji uses is not bundled in the APK. The first ti
 
 ## Obtain and build this application's source
 
-The complete application source and build scripts are available without charge at https://github.com/hoangkien1703/dual-sub-replay. For a PR preview, select the PR's exact commit; for a tagged release, select that tag. GitHub provides downloadable source archives for both commits and tags. Keep these source links beside redistributed APKs and retain upstream notices and access to the corresponding dependency sources.
+The complete application source and build scripts are available without charge at https://github.com/fastmandotcom-creator/duosub-study. For a PR preview, select the PR's exact commit; for a tagged release, select that tag. GitHub provides downloadable source archives for both commits and tags. Keep these source links beside redistributed APKs and retain upstream notices and access to the corresponding dependency sources.
 
 Use JDK 17, Android SDK 36, and the committed Gradle wrapper. Run `bash ./gradlew testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest`. Dependencies are pinned in `app/build.gradle.kts` and resolved from Maven Central/Google Maven. Building a modified debug APK requires no production signing key. Install with Android's normal APK installation flow or `adb install`; uninstall a differently signed build first if Android reports a signature mismatch (uninstalling erases local data).
 

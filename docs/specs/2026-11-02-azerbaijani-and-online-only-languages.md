@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented. Requested in [discussion #81](https://github.com/hoangkien1703/dual-sub-replay/discussions/81#discussioncomment-19351247)
+Implemented. Requested in [discussion #81](https://github.com/fastmandotcom-creator/duosub-study/discussions/81#discussioncomment-19351247)
 (an Azerbaijani user asked for Azerbaijani as an interface language). The owner picked
 "Both in one PR" on 2026-11-02: the Azerbaijani interface, and more subtitle translation
 languages so that the same user can also get Azerbaijani subtitles. The Azerbaijani

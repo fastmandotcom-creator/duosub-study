@@ -67,7 +67,7 @@ class ProblemLogTest {
         assertTrue(url.length <= MAX_PROBLEM_REPORT_URL_CHARS)
         assertTrue(
             url.startsWith(
-                "https://github.com/hoangkien1703/dual-sub-replay/issues/new?template=bug_report.yml&app-version=1.9.0&device=Pixel%208&evidence=",
+                "https://github.com/fastmandotcom-creator/duosub-study/issues/new?template=bug_report.yml&app-version=1.9.0&device=Pixel%208&evidence=",
             ),
         )
         val evidence = URLDecoder.decode(url.substringAfter("&evidence="), "UTF-8")

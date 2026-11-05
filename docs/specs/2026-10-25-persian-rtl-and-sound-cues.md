@@ -3,7 +3,7 @@
 ## Status
 
 Implemented. In the "Add Persian RTL and hide sound cues" project thread (2026-10-25) Kien asked
-for an opinion on [issue #152](https://github.com/hoangkien1703/dual-sub-replay/issues/152) and
+for an opinion on [issue #152](https://github.com/fastmandotcom-creator/duosub-study/issues/152) and
 picked **"Both, automatic RTL"**: per-line automatic direction with no direction setting, the
 Persian half-space fix, and a Hide sound descriptions switch that is **on by default**. Merge and
 release stay with the owner.

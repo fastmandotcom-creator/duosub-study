@@ -4,7 +4,7 @@
 
 Implemented. Ported from mrAlishah's fork [Triple Sub Replay](https://github.com/mrAlishah/triple-sub-replay)
 (branch `mydevelop`), after mrAlishah offered the fork's features in
-[discussion #81](https://github.com/hoangkien1703/dual-sub-replay/discussions/81#discussioncomment-19352942).
+[discussion #81](https://github.com/fastmandotcom-creator/duosub-study/discussions/81#discussioncomment-19352942).
 The owner picked three of them on 2026-11-02: the video a word was saved from, notes on a
 saved word, and the third subtitle line, off by default. The code was rewritten for this
 repository (decks, 101 languages, the current translation pipeline) rather than merged.

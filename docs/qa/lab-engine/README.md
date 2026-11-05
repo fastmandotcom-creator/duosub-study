@@ -4,7 +4,7 @@
 
 The user confirmed that `highlight-dual-sub-app` release `preview-16` provides the desired word timing on their phone. This port replaces the unsuccessful Adaptive/Live/Transcript arbitration in PR #63.
 
-Reference: https://github.com/hoangkien1703/highlight-dual-sub-app/tree/ecceeffbaeb52e495f3cf82c1d71e6916d61d872
+Reference: https://github.com/fastmandotcom-creator/highlight-dual-sub-app/tree/ecceeffbaeb52e495f3cf82c1d71e6916d61d872
 
 ## Behavior retained
 

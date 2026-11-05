@@ -10,7 +10,7 @@ import re
 import subprocess
 
 
-OWNER = "hoangkien1703"
+OWNER = "fastmandotcom-creator"
 GRADLE = "app/build.gradle.kts"
 VERSION = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
 MARKER = re.compile(r"<!-- automatic-release-v1 (\{[^\n]+\}) -->")

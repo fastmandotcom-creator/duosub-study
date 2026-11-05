@@ -12,13 +12,13 @@ import automatic_release as release
 
 SOURCE = 'plugins {}\nval appVersionCode = 35\nval appVersionName = "1.0.4"\n// app code\n'
 PR = {"number": 72, "merged": True, "merge_commit_sha": "merge72",
-      "merged_by": {"login": "hoangkien1703"}, "head": {"sha": "head72"},
-      "base": {"ref": "main", "repo": {"full_name": "hoangkien1703/dual-sub-replay"}},
+      "merged_by": {"login": "fastmandotcom-creator"}, "head": {"sha": "head72"},
+      "base": {"ref": "main", "repo": {"full_name": "fastmandotcom-creator/duosub-study"}},
       "labels": [], "body": ""}
 
 
 class FakeGitHub:
-    repository = "hoangkien1703/dual-sub-replay"
+    repository = "fastmandotcom-creator/duosub-study"
 
     def __init__(self):
         self.releases = [{"id": 1, "tag_name": "v1.0.4", "target_commitish": "main",

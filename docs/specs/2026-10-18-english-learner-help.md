@@ -16,7 +16,7 @@ grammar with AI" button ([Chinese spec](2026-10-18-chinese-learner-help.md)). En
 list plus suffix guesses: most words fall back to "Noun", "light" in "this light" and in "light
 the fire" get the same color, the card shows no dictionary form, and there are no grammar cards.
 
-[PR #123](https://github.com/hoangkien1703/dual-sub-replay/pull/123) has an English part (an
+[PR #123](https://github.com/fastmandotcom-creator/duosub-study/pull/123) has an English part (an
 OpenNLP tagger run without the library, a rule-based lemmatizer, a CEFR grammar catalogue with
 167 points and its text in 8 languages) mixed with caption-loading changes the owner reported as
 still buggy. The owner asked for a separate PR from `main`; #123's English code may be reused.

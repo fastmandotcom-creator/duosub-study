@@ -8,7 +8,7 @@ opened. That request does not authorize merging or publishing.
 
 ## Context / problem
 
-- [#57](https://github.com/hoangkien1703/dual-sub-replay/issues/57): dual-subtitle translations
+- [#57](https://github.com/fastmandotcom-creator/duosub-study/issues/57): dual-subtitle translations
   read unnaturally. **Short paired phrases** is the default format, and it translated each
   display row of 48 characters or fewer on its own
   (`translatePlaybackWindow` → `translate(row.originalText)`). ML Kit never saw the whole

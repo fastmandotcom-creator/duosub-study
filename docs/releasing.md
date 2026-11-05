@@ -11,7 +11,7 @@ Pull requests use the committed wrapper to run formatting and complexity checks,
 
 ## Automatic official releases
 
-When **hoangkien1703 merges a PR into `main`**, the **Release merged PR** workflow checks that the latest Android CI run for the PR's final commit succeeded, including both jobs: `verify-build` and `managed-device-tests`. It then builds a production-signed official APK. Merges no longer publish a preview APK of `main`; the preview release only holds open PRs' test APKs. Direct pushes and merges by other accounts do not publish releases.
+When **fastmandotcom-creator merges a PR into `main`**, the **Release merged PR** workflow checks that the latest Android CI run for the PR's final commit succeeded, including both jobs: `verify-build` and `managed-device-tests`. It then builds a production-signed official APK. Merges no longer publish a preview APK of `main`; the preview release only holds open PRs' test APKs. Direct pushes and merges by other accounts do not publish releases.
 
 By default, each eligible merge increments the highest existing or reserved stable patch version: `1.0.4 → 1.0.5` (and `1.0.9 → 1.0.10`). It also increments Android's internal `versionCode` above all prior stable releases and reservations. Preview tags do not affect official version selection. **Do not manually bump the Gradle constants in feature PRs.**
 

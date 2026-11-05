@@ -10,7 +10,7 @@ from urllib.parse import urljoin, urlparse
 
 ROOT = Path(__file__).resolve().parents[2]
 SITE = ROOT / "site"
-BASE_URL = "https://hoangkien1703.github.io/dual-sub-replay/"
+BASE_URL = "https://fastmandotcom-creator.github.io/duosub-study/"
 # Each English page and its Vietnamese translation, as paths under site/.
 PAGE_PAIRS = [
     ("", "vi/"),

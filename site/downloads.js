@@ -5,7 +5,7 @@
 
   var CACHE_KEY = 'dualsub-download-count';
   var CACHE_MS = 60 * 60 * 1000;
-  var API = 'https://api.github.com/repos/hoangkien1703/dual-sub-replay/releases?per_page=100&page=';
+  var API = 'https://api.github.com/repos/fastmandotcom-creator/duosub-study/releases?per_page=100&page=';
 
   function show(total) {
     var formatted = total.toLocaleString(document.documentElement.lang || 'en');

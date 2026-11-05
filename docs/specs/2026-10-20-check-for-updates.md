@@ -51,7 +51,7 @@ GitHub.", so people visit GitHub and download every release by hand.
 - `REQUEST_INSTALL_PACKAGES` is a normal (install-time) permission and is removed from
   `tools/report_apk.py`'s forbidden list for this owner-requested feature. No other permission is
   added; no notification permission.
-- Requests only to `https://api.github.com/repos/hoangkien1703/dual-sub-replay/releases/...`;
+- Requests only to `https://api.github.com/repos/fastmandotcom-creator/duosub-study/releases/...`;
   downloads only from `github.com` and GitHub's release-asset hosts, size-capped.
 - Every download is verified against GitHub's SHA-256 asset `digest` (official releases fall back
   to the `.sha256` asset). The APK's package name must match the running app and its version code
