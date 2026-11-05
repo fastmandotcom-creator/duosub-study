@@ -19,6 +19,13 @@ internal const val OFFICIAL_APK_NAME = "DualSub-Replay.apk"
 internal const val OFFICIAL_APK_CHECKSUM_NAME = "$OFFICIAL_APK_NAME.sha256"
 internal const val OFFICIAL_APPLICATION_ID = "com.kienhoang.dualsubreplay"
 
+/** DualSub Study is published by hand as `study-<version>` with one asset, in its own repository. */
+internal const val STUDY_APPLICATION_ID = "$OFFICIAL_APPLICATION_ID.study"
+internal const val STUDY_UPDATE_REPOSITORY = "fastmandotcom-creator/duosub-study"
+internal const val STUDY_LATEST_RELEASE_URL = "https://api.github.com/repos/$STUDY_UPDATE_REPOSITORY/releases/latest"
+internal const val STUDY_RELEASES_PAGE_URL = "https://github.com/$STUDY_UPDATE_REPOSITORY/releases"
+internal const val STUDY_APK_NAME = "DualSub-Study.apk"
+
 /** No release APK is near this; a bigger download is refused. */
 internal const val MAX_UPDATE_BYTES = 150L * 1024 * 1024
 
@@ -45,6 +52,9 @@ internal sealed interface UpdateChannel {
         val build: Int,
     ) : UpdateChannel
 
+    /** DualSub Study: the newest release of its own repository, published as a debug build. */
+    data object Study : UpdateChannel
+
     /** A locally built copy, signed with another key: it cannot update itself. */
     data object None : UpdateChannel
 }
@@ -56,6 +66,7 @@ internal fun updateChannelFor(
     debuggable: Boolean,
     versionName: String,
 ): UpdateChannel {
+    if (applicationId == STUDY_APPLICATION_ID) return UpdateChannel.Study
     if (applicationId == OFFICIAL_APPLICATION_ID && !debuggable) return UpdateChannel.Official
     val preview = PREVIEW_VERSION.find(versionName)
     if (applicationId == "$OFFICIAL_APPLICATION_ID.preview" && preview != null) {
@@ -168,6 +179,33 @@ internal fun parseOfficialRelease(
         checksumUrl = checksum?.optString("browser_download_url")?.takeIf(String::isNotBlank),
         sizeBytes = apk.optLong("size"),
         pageUrl = release.optString("html_url").ifBlank { UPDATE_RELEASES_PAGE_URL },
+    )
+}
+
+private val STUDY_TAG = Regex("""^study-(\d+(?:\.\d+){0,3})$""")
+private val STUDY_INSTALLED_VERSION = Regex("""^(\d+(?:\.\d+)*)-study\.(\d+)$""")
+
+/** The installed `1.0.4-study.7` as the number `1.0.4.7` that the tag `study-1.0.4.7` carries. */
+internal fun studyInstalledVersion(versionName: String): String =
+    STUDY_INSTALLED_VERSION.find(versionName.trim())?.let { "${it.groupValues[1]}.${it.groupValues[2]}" } ?: versionName
+
+/** The latest Study release when it is newer than [installedVersion]; null when up to date or not a Study release. */
+internal fun parseStudyRelease(
+    json: String,
+    installedVersion: String,
+): AppUpdate? {
+    val release = JSONObject(json)
+    if (release.optBoolean("draft") || release.optBoolean("prerelease")) return null
+    val version = STUDY_TAG.find(release.getString("tag_name"))?.groupValues?.get(1) ?: return null
+    if (compareVersions(version, studyInstalledVersion(installedVersion)) <= 0) return null
+    val apk = release.getJSONArray("assets").objects().firstOrNull { it.optString("name") == STUDY_APK_NAME } ?: return null
+    return AppUpdate(
+        versionName = version,
+        downloadUrl = apk.getString("browser_download_url"),
+        sha256 = sha256Digest(apk.optString("digest")),
+        checksumUrl = null,
+        sizeBytes = apk.optLong("size"),
+        pageUrl = release.optString("html_url").ifBlank { STUDY_RELEASES_PAGE_URL },
     )
 }
 

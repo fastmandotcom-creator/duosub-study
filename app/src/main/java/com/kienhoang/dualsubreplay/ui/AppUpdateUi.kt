@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.kienhoang.dualsubreplay.BuildConfig
 import com.kienhoang.dualsubreplay.R
+import com.kienhoang.dualsubreplay.data.STUDY_RELEASES_PAGE_URL
 import com.kienhoang.dualsubreplay.data.UPDATE_PREVIEW_PAGE_URL
 import com.kienhoang.dualsubreplay.data.UPDATE_RELEASES_PAGE_URL
 import com.kienhoang.dualsubreplay.data.UpdateChannel
@@ -93,6 +94,13 @@ internal fun CheckForUpdatesRow(onOpen: () -> Unit) {
     }
 }
 
+private fun releasesPageFor(channel: UpdateChannel): String =
+    when (channel) {
+        is UpdateChannel.Preview -> UPDATE_PREVIEW_PAGE_URL
+        UpdateChannel.Study -> STUDY_RELEASES_PAGE_URL
+        else -> UPDATE_RELEASES_PAGE_URL
+    }
+
 /** The update dialog, shown from the drawer or when an automatic update waits for a tap. */
 @Composable
 internal fun AppUpdateDialogHost(channel: UpdateChannel = AppUpdater.channel(LocalContext.current)) {
@@ -129,7 +137,7 @@ internal fun AppUpdateDialogHost(channel: UpdateChannel = AppUpdater.channel(Loc
                 is UpdateState.Ready, is UpdateState.Failed -> UpdateButton(R.string.updates_not_now, "update_not_now", close)
                 UpdateState.UpToDate ->
                     UpdateButton(R.string.updates_whats_new, "update_whats_new") {
-                        open(if (channel is UpdateChannel.Preview) UPDATE_PREVIEW_PAGE_URL else UPDATE_RELEASES_PAGE_URL)
+                        open(releasesPageFor(channel))
                     }
                 else -> Unit
             }

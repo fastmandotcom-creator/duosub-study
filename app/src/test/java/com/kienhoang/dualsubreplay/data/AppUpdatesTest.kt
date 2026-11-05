@@ -32,6 +32,9 @@ class AppUpdatesTest {
             UpdateChannel.Preview(138, 470),
             updateChannelFor("com.kienhoang.dualsubreplay.preview", true, "1.0.4-pr138-build470"),
         )
+        // DualSub Study is published as a debug build under its own application id.
+        assertEquals(UpdateChannel.Study, updateChannelFor("com.kienhoang.dualsubreplay.study", true, "1.0.4-study.7"))
+        assertEquals(UpdateChannel.Study, updateChannelFor("com.kienhoang.dualsubreplay.study", false, "1.0.4-study.7"))
         // A local debug build is signed with another key, and the release smoke build is a test copy.
         assertEquals(UpdateChannel.None, updateChannelFor("com.kienhoang.dualsubreplay", true, "1.0.4"))
         assertEquals(UpdateChannel.None, updateChannelFor("com.kienhoang.dualsubreplay.releasesmoke", false, "1.0.4"))
@@ -99,6 +102,54 @@ class AppUpdatesTest {
         assertEquals(digest, update.sha256)
         assertNull(parsePreviewRelease(json, UpdateChannel.Preview(138, 471)))
         assertNull(parsePreviewRelease(json, UpdateChannel.Preview(140, 1)))
+    }
+
+    private fun study(
+        tag: String,
+        apkName: String = STUDY_APK_NAME,
+        prerelease: Boolean = false,
+        draft: Boolean = false,
+    ) = """
+        {"tag_name":"$tag","draft":$draft,"prerelease":$prerelease,
+         "html_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/tag/$tag",
+         "assets":[
+          {"name":"$apkName","size":63657211,"digest":"sha256:$digest",
+           "browser_download_url":"https://github.com/fastmandotcom-creator/duosub-study/releases/download/$tag/$apkName"}
+         ]}
+        """.trimIndent()
+
+    @Test
+    fun aNewerStudyReleaseIsOfferedToTheInstalledStudyBuild() {
+        val update = parseStudyRelease(study("study-1.0.4.8"), "1.0.4-study.7")!!
+        assertEquals("1.0.4.8", update.versionName)
+        assertEquals(digest, update.sha256)
+        assertEquals(63657211L, update.sizeBytes)
+        assertTrue(update.downloadUrl.endsWith("/study-1.0.4.8/DualSub-Study.apk"))
+        assertTrue(update.downloadUrl.startsWith("https://github.com/fastmandotcom-creator/duosub-study/"))
+        assertTrue(update.pageUrl.endsWith("/releases/tag/study-1.0.4.8"))
+        // The first Study release has three numbers and sorts below the four-number ones.
+        assertNull(parseStudyRelease(study("study-1.0.4"), "1.0.4-study.2"))
+        assertEquals("1.0.4.2", parseStudyRelease(study("study-1.0.4.2"), "1.0.4")!!.versionName)
+        assertEquals("1.0.5", parseStudyRelease(study("study-1.0.5"), "1.0.4-study.9")!!.versionName)
+    }
+
+    @Test
+    fun theSameOrAnOlderStudyReleaseIsUpToDate() {
+        assertNull(parseStudyRelease(study("study-1.0.4.7"), "1.0.4-study.7"))
+        assertNull(parseStudyRelease(study("study-1.0.4.6"), "1.0.4-study.7"))
+        // 7 is a number, not text: 10 is newer than 9.
+        assertEquals("1.0.4.10", parseStudyRelease(study("study-1.0.4.10"), "1.0.4-study.9")!!.versionName)
+    }
+
+    @Test
+    fun onlyAStudyReleaseWithItsApkIsOffered() {
+        assertNull(parseStudyRelease(study("study-1.0.4.8", apkName = "Other.apk"), "1.0.4-study.7"))
+        assertNull(parseStudyRelease(study("study-1.0.4.8", prerelease = true), "1.0.4-study.7"))
+        assertNull(parseStudyRelease(study("study-1.0.4.8", draft = true), "1.0.4-study.7"))
+        assertNull(parseStudyRelease(study("v1.9.0"), "1.0.4-study.7"))
+        assertNull(parseStudyRelease(study("preview"), "1.0.4-study.7"))
+        assertEquals("1.0.4.7", studyInstalledVersion("1.0.4-study.7"))
+        assertEquals("1.0.4", studyInstalledVersion("1.0.4"))
     }
 
     @Test

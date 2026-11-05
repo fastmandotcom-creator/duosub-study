@@ -17,6 +17,7 @@ import com.kienhoang.dualsubreplay.data.MAX_UPDATE_BYTES
 import com.kienhoang.dualsubreplay.data.ProblemArea
 import com.kienhoang.dualsubreplay.data.ProblemLog
 import com.kienhoang.dualsubreplay.data.ReminderMemory
+import com.kienhoang.dualsubreplay.data.STUDY_LATEST_RELEASE_URL
 import com.kienhoang.dualsubreplay.data.UPDATE_INFO_URL
 import com.kienhoang.dualsubreplay.data.UPDATE_LATEST_RELEASE_URL
 import com.kienhoang.dualsubreplay.data.UPDATE_PREVIEW_RELEASE_URL
@@ -26,6 +27,7 @@ import com.kienhoang.dualsubreplay.data.isAllowedUpdateHost
 import com.kienhoang.dualsubreplay.data.parseOfficialRelease
 import com.kienhoang.dualsubreplay.data.parsePreviewRelease
 import com.kienhoang.dualsubreplay.data.parseSha256File
+import com.kienhoang.dualsubreplay.data.parseStudyRelease
 import com.kienhoang.dualsubreplay.data.parseUpdateInfo
 import com.kienhoang.dualsubreplay.data.updateChannelFor
 import com.kienhoang.dualsubreplay.data.updateFromInfo
@@ -347,6 +349,7 @@ internal object AppUpdater {
                     when (val channel = channel(context)) {
                         UpdateChannel.Official -> officialUpdate()
                         is UpdateChannel.Preview -> parsePreviewRelease(fetchText(UPDATE_PREVIEW_RELEASE_URL), channel)
+                        UpdateChannel.Study -> parseStudyRelease(fetchText(STUDY_LATEST_RELEASE_URL), BuildConfig.VERSION_NAME)
                         UpdateChannel.None -> null
                     }
                 if (update == null) UpdateState.UpToDate else UpdateState.Available(update)
