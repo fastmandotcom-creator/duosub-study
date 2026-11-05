@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented 2026-11-05. End-user APK release will run from the next matching push to `main`.
+Implemented 2026-11-05. Publish an end-user APK with `python3 tools/publish_study_apk.py` after pushing the code to `main`.
 
 ## Context / problem
 
@@ -14,7 +14,7 @@ DualSub Study is published in `fastmandotcom-creator/duosub-study` as tag `study
 
 - A Study build (`duosub.study.study`) checks, downloads, verifies and installs updates from `fastmandotcom-creator/duosub-study` releases, through the same dialog, reminder and automatic-update settings as the official app.
 - The dialog's "What's new" and "open releases" links go to the Study repository.
-- A push to `main` that changes shipped app code automatically builds and publishes the next Study APK release directly, without a PR, unit-test suite, or managed-device test gate.
+- One local command builds and publishes the next Study APK after its source commit is on `main`, without a PR or test-suite gate.
 
 ## Non-goals
 
@@ -33,8 +33,7 @@ Settings → App updates and the drawer's Check for updates work in Study. A rel
 - Downloads stay limited to GitHub hosts.
 - The installed `X.Y.Z-study.N` and the tag `study-X.Y.Z.N` are compared as the numbers `X.Y.Z.N`. A tag `study-1.0.4` equals `1.0.4`.
 - Each Study release must raise versionCode and use versionName `X.Y.Z-study.N`, as 1.0.4-study.7 does; the updater cannot work otherwise.
-- Study APK releases use the persistent CI debug-signing key and must keep the same certificate as the previous public Study APK so Android can install updates over it.
-- Release work is limited to shipped-app/build changes; documentation, test-only, and website-only changes do not start an APK build.
+- Study APK releases use the existing local signing key and must keep the same certificate as the previous public Study APK so Android can install updates over it. The private key never leaves the build machine.
 
 ## Proposed approach / plan
 
@@ -42,7 +41,7 @@ Settings → App updates and the drawer's Check for updates work in Study. A rel
 - `parseStudyRelease` in `data/AppUpdates.kt`, next to `parseOfficialRelease`.
 - `AppUpdater.checkNow` reads the Study latest release for that channel.
 - `AppUpdateUi` opens the Study releases page for that channel.
-- A successful push-triggered workflow publishes exactly one verified `DualSub-Study.apk`; unrelated pushes do not start APK builds.
+- `python3 tools/publish_study_apk.py` publishes exactly one verified `DualSub-Study.apk`, and refuses to publish unless the local APK has the current package, a newer version, and the same signing certificate as the previous release.
 - Android unit, lint, and managed-device suites remain available only by manual workflow dispatch and do not delay APK release.
 
 ## Acceptance criteria
@@ -51,21 +50,21 @@ Settings → App updates and the drawer's Check for updates work in Study. A rel
 - [x] `parseStudyRelease` offers `study-1.0.4.8` to `1.0.4-study.7`, and nothing for `study-1.0.4.7`, an older tag, a draft or prerelease, or a release without `DualSub-Study.apk`.
 - [x] The offered download is the asset's URL with its SHA-256 digest.
 - [ ] On a device: Check for updates in an older Study build offers the newer release and installs it (needs a signed older build; not run).
-- [x] App-code pushes to `main` publish the Study APK without starting the general Android test workflow.
-- [x] The publishing workflow checks package/version/signing continuity, reuses a draft for the same source commit, and publishes `DualSub-Study.apk`.
+- [x] Study APK publication is a single local command after a direct push to `main`.
+- [x] The publishing command checks package/version/signing continuity and publishes `DualSub-Study.apk`.
 
 ## Validation
 
 - Unit tests in `AppUpdatesTest`.
 - Not run: instrumented UI, a real update install on a device.
-- Owner request: no test suite or separate verification run for this release-workflow simplification. The first matching push will exercise the APK build and signing checks.
+- Owner request: no test suite or separate verification run for this release-flow simplification. Publishing the next APK exercises the necessary build and signing checks.
 
 ## Release workflow implementation
 
-- Direct pushes to `main` that change app or build inputs run one cached Gradle `assembleDebug` build for `duosub.study.study`; tests, lint, and managed-device tests remain manual-only.
+- Run `python3 tools/publish_study_apk.py` after the app commit is pushed to `main`; it performs one cached local Gradle `assembleDebug` build for `duosub.study.study`.
 - Release numbering follows the existing `study-X.Y.Z.N` channel and uses a monotonically increasing Android version code.
-- The workflow requires the existing cached signing key and compares its APK certificate with the current public Study APK before publishing.
-- Website publishing is not coupled to APK releases.
+- It reuses the local key that signed the current public APK, compares the built certificate with that APK, then uploads and publishes the asset.
+- No GitHub signing secret or automated website publish is required. Android tests remain available through manual workflow dispatch only.
 
 ## Release intent
 
