@@ -110,19 +110,19 @@ class TranslationPositionAndThemeUiTest {
             }
         }
 
-        composeRule.onNodeWithTag("read_pair_focus_primary").assertExists()
-        composeRule.onNodeWithTag("read_pair_focus_secondary").assertDoesNotExist()
-        composeRule.onNodeWithTag("read_pair_overlay_focus_primary").assertExists()
-        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary").assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_focus_primary", useUnmergedTree = true).assertExists()
+        composeRule.onNodeWithTag("read_pair_focus_secondary", useUnmergedTree = true).assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertExists()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertDoesNotExist()
         saveUiEvidence("paired-reading-primary-focus", composeRule.onRoot().captureToImage())
 
         preferences.edit().putString(APP_COLOR_THEME_PREFERENCE, AppColorThemeOption.LIGHT.key).commit()
         composeRule.runOnIdle { side = ReadSide.SECONDARY }
         composeRule.waitForIdle()
-        composeRule.onNodeWithTag("read_pair_focus_primary").assertDoesNotExist()
-        composeRule.onNodeWithTag("read_pair_focus_secondary").assertExists()
-        composeRule.onNodeWithTag("read_pair_overlay_focus_primary").assertDoesNotExist()
-        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary").assertExists()
+        composeRule.onNodeWithTag("read_pair_focus_primary", useUnmergedTree = true).assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_focus_secondary", useUnmergedTree = true).assertExists()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertExists()
         saveUiEvidence("paired-reading-secondary-focus", composeRule.onRoot().captureToImage())
     }
 
