@@ -75,7 +75,7 @@ jobs:
         run: |
           badging="$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk | head -n 1)"
           echo "$badging"
-          if [[ "$badging" != *"name='com.kienhoang.dualsubreplay.preview'"* ]]; then
+          if [[ "$badging" != *"name='duosub.study.preview'"* ]]; then
             echo "Preview APK does not use the isolated preview application id" >&2
             exit 1
           fi

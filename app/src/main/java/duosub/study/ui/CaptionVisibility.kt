@@ -1,0 +1,85 @@
+package duosub.study.ui
+
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import duosub.study.R
+
+internal const val ORIGINAL_VISIBILITY = "original_caption_visibility"
+internal const val TRANSLATED_VISIBILITY = "translated_caption_visibility"
+
+enum class CaptionVisibility(
+    @StringRes val labelRes: Int,
+) {
+    ALWAYS(R.string.settings_caption_visibility_always),
+    PAUSED(R.string.settings_caption_visibility_paused),
+    NEVER(R.string.settings_caption_visibility_never),
+    ;
+
+    fun visible(paused: Boolean): Boolean = this == ALWAYS || (this == PAUSED && paused)
+}
+
+internal fun storedCaptionVisibility(value: String?): CaptionVisibility =
+    CaptionVisibility.entries.firstOrNull { it.name == value } ?: CaptionVisibility.ALWAYS
+
+internal fun DualSubUiState.showOriginal() = studyCaptionVisibility(originalVisibility, studyPlayMode).visible(playbackPaused)
+
+internal fun DualSubUiState.showTranslation() = studyCaptionVisibility(translatedVisibility, studyPlayMode).visible(playbackPaused)
+
+/** Hiding the transcript for an overlay must not disconnect its live timing source. */
+internal fun shouldCaptureCaptionsForPresentation(
+    state: DualSubUiState,
+    mode: PlayerExperienceMode,
+): Boolean =
+    (state.subtitlePanelVisible || mode == PlayerExperienceMode.SCROLL_FRIENDLY_OVERLAY) &&
+        (state.liveFallback || shouldCaptureLiveCaptions(state.generatedCaptions, state.wordHighlightEnabled))
+
+/** Only a loaded transcript sets the page's track; live fallback takes its language from the page. */
+internal fun captionTrackTarget(state: DualSubUiState): CaptionTrackTarget? {
+    if (state.liveFallback) return null
+    val videoId = state.activeVideoId ?: return null
+    val language = state.resolvedSourceLanguage ?: return null
+    return CaptionTrackTarget(videoId, language, state.generatedCaptions)
+}
+
+@Composable
+internal fun CaptionVisibilitySettings() {
+    val context = LocalContext.current
+    val preferences = remember(context) { context.getSharedPreferences("dual_sub_preferences", 0) }
+    Column {
+        listOf(
+            ORIGINAL_VISIBILITY to R.string.settings_original_captions_visibility,
+            TRANSLATED_VISIBILITY to R.string.settings_translated_captions_visibility,
+        ).forEach { (key, labelRes) ->
+            var selected by remember { mutableStateOf(storedCaptionVisibility(preferences.getString(key, null))) }
+            var expanded by remember { mutableStateOf(false) }
+            Column {
+                TextButton(onClick = { expanded = true }) { Text(stringResource(labelRes, stringResource(selected.labelRes))) }
+                DropdownMenu(expanded, { expanded = false }) {
+                    CaptionVisibility.entries.forEach { mode ->
+                        DropdownMenuItem(text = { Text(stringResource(mode.labelRes)) }, onClick = {
+                            selected = mode
+                            preferences.edit().putString(key, mode.name).apply()
+                            expanded = false
+                        })
+                    }
+                }
+            }
+        }
+    }
+}
+
+internal fun shouldSuppressNativeCaptions(
+    state: DualSubUiState,
+    liveCapture: Boolean,
+    mode: PlayerExperienceMode,
+): Boolean =
+    liveCapture || mode == PlayerExperienceMode.SCROLL_FRIENDLY_OVERLAY ||
+        state.originalVisibility != CaptionVisibility.ALWAYS || state.translatedVisibility != CaptionVisibility.ALWAYS ||
+        state.studyPlayMode == StudyPlayMode.LISTEN_FIRST

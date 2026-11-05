@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kienhoang.dualsubreplay.benchmarktests"
+    namespace = "duosub.study.benchmarktests"
     compileSdk = 37
     targetProjectPath = ":app"
     defaultConfig {

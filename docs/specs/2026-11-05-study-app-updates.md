@@ -6,13 +6,13 @@ Implemented 2026-11-05 (end-user report in chat: automatic update still uses the
 
 ## Context / problem
 
-DualSub Study is published by hand in `fastmandotcom-creator/duosub-study` as tag `study-<version>` with one asset, `DualSub-Study.apk`. The published APK (study-1.0.4.7, checked 2026-11-05) is a debug build with application id `com.kienhoang.dualsubreplay.study`, versionName `1.0.4-study.7`, versionCode 41.
+DualSub Study is published by hand in `fastmandotcom-creator/duosub-study` as tag `study-<version>` with one asset, `DualSub-Study.apk`. The published APK (study-1.0.4.7, checked 2026-11-05) is a debug build with application id `duosub.study.study`, versionName `1.0.4-study.7`, versionCode 41.
 
-`updateChannelFor` only knows the official app (`com.kienhoang.dualsubreplay`, not debuggable) and PR previews (`.preview`). The Study app matches neither, so its channel is `None`: it cannot update itself, and the update dialog opens the releases page of `fastmandotcom-creator/duosub-study`.
+`updateChannelFor` only knows the official app (`duosub.study`, not debuggable) and PR previews (`.preview`). The Study app matches neither, so its channel is `None`: it cannot update itself, and the update dialog opens the releases page of `fastmandotcom-creator/duosub-study`.
 
 ## Goals
 
-- A Study build (`com.kienhoang.dualsubreplay.study`) checks, downloads, verifies and installs updates from `fastmandotcom-creator/duosub-study` releases, through the same dialog, reminder and automatic-update settings as the official app.
+- A Study build (`duosub.study.study`) checks, downloads, verifies and installs updates from `fastmandotcom-creator/duosub-study` releases, through the same dialog, reminder and automatic-update settings as the official app.
 - The dialog's "What's new" and "open releases" links go to the Study repository.
 
 ## Non-goals
@@ -42,7 +42,7 @@ Settings → App updates and the drawer's Check for updates work in Study. A rel
 
 ## Acceptance criteria
 
-- [x] `updateChannelFor` returns `Study` for `com.kienhoang.dualsubreplay.study`, debuggable or not.
+- [x] `updateChannelFor` returns `Study` for `duosub.study.study`, debuggable or not.
 - [x] `parseStudyRelease` offers `study-1.0.4.8` to `1.0.4-study.7`, and nothing for `study-1.0.4.7`, an older tag, a draft or prerelease, or a release without `DualSub-Study.apk`.
 - [x] The offered download is the asset's URL with its SHA-256 digest.
 - [ ] On a device: Check for updates in an older Study build offers the newer release and installs it (needs a signed older build; not run).

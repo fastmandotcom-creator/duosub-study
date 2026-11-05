@@ -8,13 +8,13 @@ import report_failed_tests
 
 RESULTS = """<?xml version='1.0' encoding='UTF-8' ?>
 <testsuite name="pixel2Api36" tests="3" failures="1" errors="1">
-  <testcase name="passes" classname="com.kienhoang.dualsubreplay.ui.FineTest" />
-  <testcase name="appWorkAroundThePageStaysWithinItsCpuBudget" classname="com.kienhoang.dualsubreplay.ui.PageCpuUseTest">
+  <testcase name="passes" classname="duosub.study.ui.FineTest" />
+  <testcase name="appWorkAroundThePageStaysWithinItsCpuBudget" classname="duosub.study.ui.PageCpuUseTest">
     <failure>java.lang.AssertionError: Paused used 6.4 ms of CPU a second
 	at org.junit.Assert.fail(Assert.java:89)
 	at org.junit.Assert.assertTrue(Assert.java:42)</failure>
   </testcase>
-  <testcase name="crashes" classname="com.kienhoang.dualsubreplay.ui.CrashTest">
+  <testcase name="crashes" classname="duosub.study.ui.CrashTest">
     <error message="java.lang.IllegalStateException: boom" />
   </testcase>
 </testsuite>

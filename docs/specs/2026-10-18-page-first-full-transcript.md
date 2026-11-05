@@ -14,7 +14,7 @@ today's download becomes the fallback. That authorizes this scope, not merge or 
 
 ## Context / problem
 
-- The app downloads captions with its own OkHttp requests ([`YouTubeCaptionProvider.kt`](../../app/src/main/java/com/kienhoang/dualsubreplay/data/YouTubeCaptionProvider.kt)):
+- The app downloads captions with its own OkHttp requests ([`YouTubeCaptionProvider.kt`](../../app/src/main/java/duosub/study/data/YouTubeCaptionProvider.kt)):
   watch page, then Innertube `/youtubei/v1/player` with eight client profiles, then the
   track's `/api/timedtext` address. These requests carry no cookies, no visitor data and no
   proof-of-origin token (`pot`).

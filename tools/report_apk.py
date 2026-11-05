@@ -104,7 +104,7 @@ def parse_axml_strings_and_permissions(raw_bytes: bytes):
         for s in strings:
             if "permission." in s or s.endswith("_PERMISSION"):
                 permissions.add(s)
-            if s.startswith("com.kienhoang.dualsubreplay"):
+            if s.startswith("duosub.study"):
                 if package_name is None:
                     package_name = s
     except Exception as e:

@@ -29,7 +29,7 @@ rows without network traffic or altering the user's production database. These
 fixtures and the exported benchmark activity are absent from production APKs.
 
 ```powershell
-.\gradlew.bat :benchmark:connectedBenchmarkAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=com.kienhoang.dualsubreplay.benchmarktests.AppBenchmarks' --max-workers=2
+.\gradlew.bat :benchmark:connectedBenchmarkAndroidTest '-Pandroid.testInstrumentationRunnerArguments.class=duosub.study.benchmarktests.AppBenchmarks' --max-workers=2
 ```
 
 Use a physical device for acceptance. Emulator runs require the explicit
@@ -43,7 +43,7 @@ package and excluding benchmark-only activity rules. Regenerate with an
 unminified profile-generation variant:
 
 ```powershell
-.\gradlew.bat :benchmark:connectedBenchmarkAndroidTest '-PprofileGeneration=true' '-Pandroid.testInstrumentationRunnerArguments.class=com.kienhoang.dualsubreplay.benchmarktests.AppBaselineProfile' --max-workers=2
+.\gradlew.bat :benchmark:connectedBenchmarkAndroidTest '-PprofileGeneration=true' '-Pandroid.testInstrumentationRunnerArguments.class=duosub.study.benchmarktests.AppBaselineProfile' --max-workers=2
 ```
 
 Review the generated text profile in test additional outputs, remove rules for

@@ -1,0 +1,426 @@
+package duosub.study.ui
+
+import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import duosub.study.R
+import duosub.study.data.*
+import java.text.DateFormat
+import java.util.Date
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+@Composable
+internal fun intervalLabel(interval: Long): String {
+    if (interval < DAY_MS) return stringResource(R.string.practice_interval_ten_minutes)
+    val days = (interval / DAY_MS).toInt()
+    return pluralStringResource(R.plurals.practice_interval_days, days, days)
+}
+
+@StringRes
+private fun ratingLabel(rating: ReviewRating): Int =
+    when (rating) {
+        ReviewRating.AGAIN -> R.string.practice_rating_again
+        ReviewRating.HARD -> R.string.practice_rating_hard
+        ReviewRating.GOOD -> R.string.practice_rating_good
+        ReviewRating.EASY -> R.string.practice_rating_easy
+    }
+
+/** A review button's label: the rating and the wait until the word comes back. */
+@Composable
+private fun ratingText(
+    rating: ReviewRating,
+    interval: Long,
+): String = stringResource(R.string.practice_rating_with_interval, stringResource(ratingLabel(rating)), intervalLabel(interval))
+
+@Composable
+internal fun SavedWordsScreen(
+    repository: VocabularyRepository,
+    onOnline: (SavedWord) -> Unit,
+    onPause: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val words by repository.words.collectAsStateWithLifecycle()
+    val malformed by repository.malformedRecords.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val pronouncer = rememberWordPronouncer()
+    var search by remember { mutableStateOf("") }
+    var selectedId by remember { mutableStateOf<String?>(null) }
+    var practice by remember { mutableStateOf(false) }
+    var queue by remember { mutableStateOf<List<String>>(emptyList()) }
+    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    var busy by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<Int?>(null) }
+    var confirmDelete by remember { mutableStateOf<SavedWord?>(null) }
+    var onlinePreview by remember { mutableStateOf(false) }
+    val selected = words.firstOrNull { it.id == if (practice) queue.firstOrNull() else selectedId }
+    var revealed by remember(selected?.id, practice) { mutableStateOf(false) }
+    var editedMeaning by remember(selected?.id, selected?.meaning) { mutableStateOf(selected?.meaning.orEmpty()) }
+    var editedNotes by remember(selected?.id, selected?.notes) { mutableStateOf(selected?.notes.orEmpty()) }
+    var videoFilter by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
+    var openDeck by remember { mutableStateOf<PracticeDeck?>(null) }
+    var renamingDeck by remember { mutableStateOf<String?>(null) }
+    var deletingDeck by remember { mutableStateOf<String?>(null) }
+    val decks = deckSummaries(words, now)
+    val named = namedDecks(words)
+    val currentDeck = openDeck?.takeIf { deck -> decks.any { it.deck == deck } }
+    val showDeckList = currentDeck == null && decks.size > 1
+    val videos = practiceVideos(words)
+    val shownVideo = videoFilter?.takeIf { id -> videos.any { it.videoId == id } }
+    val shown =
+        (currentDeck?.let { deck -> words.filter { deckOf(it) == deck } } ?: words)
+            .filter { shownVideo == null || it.videoId == shownVideo }
+    val due = shown.filter { it.dueAt <= now }.sortedBy { it.dueAt }
+    val locale = currentInterfaceLocale()
+    val searchLabel = stringResource(R.string.practice_search_label)
+    val pronounceLabel = stringResource(R.string.practice_pronounce)
+    val showMeaningLabel = stringResource(R.string.practice_show_meaning)
+    val originalSentenceNote = stringResource(R.string.practice_video_uses_original_sentence)
+    val playOnlineLabel = stringResource(R.string.practice_play_online_example)
+    val onlineExampleLabel = stringResource(R.string.practice_online_example)
+    val backLabel = stringResource(R.string.practice_back_to_saved_words)
+    val deleteWordLabel = stringResource(R.string.practice_delete_word)
+
+    LaunchedEffect(Unit) {
+        try { repository.refresh() }
+        catch (cancel: CancellationException) { throw cancel }
+        catch (_: Exception) { error = R.string.practice_load_failed }
+        while (true) { now = System.currentTimeMillis(); delay(30_000) }
+    }
+    DisposableEffect(Unit) { onDispose { onPause(); pronouncer.stop() } }
+
+    fun action(block: suspend () -> Unit) {
+        if (busy) return
+        busy = true
+        scope.launch {
+            try { block(); error = null }
+            catch (cancel: CancellationException) { throw cancel }
+            catch (_: Exception) { error = R.string.practice_update_failed }
+            finally { busy = false }
+        }
+    }
+    fun returnFromVideo() { onPause(); onlinePreview = false }
+
+    // Leaving a word keeps notes and a meaning typed but not saved yet.
+    fun saveNotesIfChanged() {
+        val word = selected ?: return
+        val notes = editedNotes.trim().take(MAX_WORD_NOTES_LENGTH)
+        val meaning = editedMeaning.trim().ifEmpty { word.meaning }
+        if (notes != word.notes || meaning != word.meaning) {
+            action { repository.update(word.id) { it.copy(notes = notes, meaning = meaning) } }
+        }
+    }
+
+    if (onlinePreview) {
+        BackHandler { returnFromVideo() }
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+            Surface(tonalElevation = 8.dp, modifier = Modifier.padding(16.dp)) {
+                Column(Modifier.padding(12.dp)) {
+                    Text(stringResource(R.string.practice_example_video_title))
+                    Text(stringResource(R.string.practice_example_video_unavailable_hint), style = MaterialTheme.typography.bodySmall)
+                    TextButton(onClick = ::returnFromVideo, modifier = Modifier.testTag("return_to_words")) {
+                        Text(stringResource(R.string.practice_return_to_practice))
+                    }
+                }
+            }
+        }
+        return
+    }
+
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Surface(Modifier.fillMaxWidth(0.96f).fillMaxHeight(0.9f), shape = MaterialTheme.shapes.large) {
+            BackHandler(enabled = currentDeck != null && selected == null && !practice) { openDeck = null }
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.practice_title), style = MaterialTheme.typography.titleLarge)
+                    CloseIconButton(onDismiss, tag = "practice_close")
+                }
+                error?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.error) }
+                if (malformed > 0) {
+                    Text(
+                        pluralStringResource(R.plurals.practice_malformed_records, malformed, malformed),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+                if (selected == null) {
+                    if (practice) {
+                        Text(stringResource(R.string.practice_session_complete), modifier = Modifier.testTag("practice_complete"))
+                        Text(stringResource(R.string.practice_session_complete_body))
+                        TextButton(onClick = { practice = false }) { Text(backLabel) }
+                    } else {
+                        if (currentDeck == null) {
+                            PracticeTransferControls(repository, words)
+                        } else {
+                            DeckHeader(
+                                currentDeck,
+                                onBack = { openDeck = null },
+                                onRename = { renamingDeck = currentDeck.name },
+                                onDelete = { deletingDeck = currentDeck.name },
+                            )
+                        }
+                        Text(
+                            stringResource(
+                                R.string.practice_word_summary,
+                                pluralStringResource(R.plurals.practice_word_count, shown.size, shown.size),
+                                pluralStringResource(R.plurals.practice_due_count, due.size, due.size),
+                            ),
+                        )
+                        Button(enabled = due.isNotEmpty(), modifier = Modifier.testTag("practice_words"), onClick = {
+                            queue = due.map { it.id }; practice = true
+                        }) { Text(stringResource(R.string.practice_due_words_button)) }
+                        OutlinedTextField(search, { search = it }, label = { Text(searchLabel) }, modifier = Modifier.fillMaxWidth())
+                        if (videos.isNotEmpty()) VideoFilterChip(videos, shownVideo) { videoFilter = it }
+                        if (words.isEmpty()) Text(stringResource(R.string.practice_empty_hint))
+                        else if (due.isEmpty()) shown.minOfOrNull { it.dueAt }?.let {
+                            val next = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, locale).format(Date(it))
+                            Text(stringResource(R.string.practice_next_review, next), style = MaterialTheme.typography.bodySmall)
+                        }
+                        if (showDeckList && search.isBlank() && shownVideo == null) {
+                            DeckList(decks, { openDeck = it }, Modifier.weight(1f))
+                        } else {
+                            LazyColumn(Modifier.weight(1f)) {
+                                items(shown.filter { matchesPracticeSearch(it, search) }, key = { it.id }) { word ->
+                                    ListItem(headlineContent = { Text(word.word) }, supportingContent = { Text(word.meaning) },
+                                        modifier = Modifier.clickable { selectedId = word.id }.testTag("saved_word_${word.id}"))
+                                    HorizontalDivider()
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(selected.word, style = MaterialTheme.typography.headlineMedium)
+                        selected.reading?.let { Text(it) }
+                        TextButton(onClick = {
+                            onPause()
+                            pronouncer.speak(spokenWord(selected.word, selected.reading), selected.wordLanguage)
+                        }) { Text(pronounceLabel) }
+                        pronouncer.message?.let { Text(it) }
+                        if (pronouncer.showSpeechSettings) {
+                            TextButton(
+                                onClick = pronouncer::openSpeechSettings,
+                                modifier = Modifier.testTag("speech_settings"),
+                            ) {
+                                Text(stringResource(R.string.practice_speech_settings))
+                            }
+                        }
+                        if (practice && !revealed) {
+                            // The front of the card, as on the Anki card: the word's own line as a hint, translations hidden.
+                            PracticeExample(selected, revealed = false)
+                            Button(onClick = { revealed = true }, modifier = Modifier.testTag("reveal_meaning")) { Text(showMeaningLabel) }
+                        } else {
+                            MeaningPanel(
+                                meaning = if (practice) selected.meaning else editedMeaning,
+                                language = selected.meaningLanguage,
+                                loading = false,
+                                enabled = !busy,
+                                onChange = { editedMeaning = it },
+                                editable = !practice,
+                                onDone = {
+                                    val meaning = editedMeaning.trim()
+                                    if (meaning.isNotEmpty() && meaning != selected.meaning) {
+                                        action { repository.update(selected.id) { it.copy(meaning = meaning) } }
+                                    }
+                                },
+                                textTag = if (practice) "review_meaning" else "word_meaning_text",
+                            )
+                            if (!practice) {
+                                DeckChip(selected.deck, selected.wordLanguage, named, { deck ->
+                                    action { repository.update(selected.id) { it.copy(deck = deck) } }
+                                }, enabled = !busy, tag = "word_deck")
+                            }
+                            PracticeExample(selected, revealed = true)
+                            if (selected.translated) Text(originalSentenceNote, style = MaterialTheme.typography.bodySmall)
+                            if (practice) {
+                                if (selected.notes.isNotBlank()) {
+                                    Text(stringResource(R.string.practice_notes_label), style = MaterialTheme.typography.labelMedium)
+                                    Text(selected.notes, modifier = Modifier.testTag("review_notes"))
+                                }
+                            } else {
+                                OutlinedTextField(
+                                    editedNotes,
+                                    { editedNotes = it.take(MAX_WORD_NOTES_LENGTH) },
+                                    label = { Text(stringResource(R.string.practice_notes_label)) },
+                                    minLines = 2,
+                                    modifier = Modifier.fillMaxWidth().testTag("word_notes"),
+                                )
+                                TextButton(
+                                    enabled = !busy && editedNotes.trim() != selected.notes,
+                                    onClick = { saveNotesIfChanged() },
+                                    modifier = Modifier.testTag("save_notes"),
+                                ) { Text(stringResource(R.string.practice_save_notes)) }
+                            }
+                            if (selected.online) TextButton(onClick = {
+                                pronouncer.stop(); onlinePreview = true; onOnline(selected)
+                            }, modifier = Modifier.testTag("play_online_clip")) { Text(playOnlineLabel) }
+                            if (practice) {
+                                // Two rows of two, so all four answers fit on a phone without scrolling.
+                                ReviewRating.entries.chunked(2).forEach { pair ->
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        pair.forEach { rating ->
+                                            OutlinedButton(
+                                                enabled = !busy,
+                                                modifier = Modifier.weight(1f).testTag("review_${rating.name.lowercase()}"),
+                                                onClick = {
+                                                    action {
+                                                        repository.update(selected.id) { reviewWord(it, rating, System.currentTimeMillis()) }
+                                                        queue = queue.drop(1)
+                                                        pronouncer.stop()
+                                                    }
+                                                },
+                                            ) { Text(ratingText(rating, reviewInterval(selected.intervalMs, rating)), textAlign = TextAlign.Center) }
+                                        }
+                                    }
+                                }
+                            } else if (validClipRange(selected.videoId, selected.startMs, selected.endMs)) {
+                                ClipChoice(onlineExampleLabel, selected.online, { enabled -> action { repository.update(selected.id) { it.copy(online = enabled) } } }, "saved_online_choice")
+                            }
+                        }
+                    }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        TextButton(onClick = {
+                            if (!practice) saveNotesIfChanged()
+                            selectedId = null; practice = false; pronouncer.stop()
+                        }) { Text(backLabel) }
+                        if (!practice) TextButton(enabled = !busy, onClick = { confirmDelete = selected }) { Text(deleteWordLabel) }
+                    }
+                }
+            }
+        }
+    }
+    renamingDeck?.let { old ->
+        DeckNameDialog(
+            title = stringResource(R.string.practice_deck_rename),
+            initial = old,
+            confirmLabel = stringResource(R.string.practice_deck_rename_confirm),
+            onConfirm = { typed ->
+                renamingDeck = null
+                resolveDeckName(typed, named - old)?.let { new ->
+                    action {
+                        repository.updateWhere({ it.deck == old }) { it.copy(deck = new) }
+                        replaceRememberedDeck(context, old, new)
+                        openDeck = PracticeDeck(name = new)
+                    }
+                }
+            },
+            onDismiss = { renamingDeck = null },
+        )
+    }
+    deletingDeck?.let { name ->
+        DeleteDeckDialog(name, onDelete = {
+            deletingDeck = null
+            action {
+                repository.updateWhere({ it.deck == name }) { it.copy(deck = null) }
+                replaceRememberedDeck(context, name, null)
+                openDeck = null
+            }
+        }, onKeep = { deletingDeck = null })
+    }
+    confirmDelete?.let { word ->
+        val deleteTitle = stringResource(R.string.practice_delete_word_title, word.word)
+        val deleteLabel = stringResource(R.string.practice_delete)
+        val keepLabel = stringResource(R.string.practice_keep)
+        AlertDialog(onDismissRequest = { confirmDelete = null }, title = { Text(deleteTitle) },
+            text = { Text(stringResource(R.string.practice_delete_word_body)) },
+            confirmButton = { TextButton(onClick = {
+                confirmDelete = null
+                action { repository.remove(word.id); selectedId = null }
+            }) { Text(deleteLabel) } }, dismissButton = { TextButton(onClick = { confirmDelete = null }) { Text(keepLabel) } })
+    }
+}
+
+/**
+ * The word's example in a tinted box: its own line first, with the word in bold accent color as in the
+ * word card, then the other lines smaller and dimmer, and the video it came from. Before "Show meaning"
+ * ([revealed] false) only the word's own line shows.
+ */
+@Composable
+private fun PracticeExample(
+    word: SavedWord,
+    revealed: Boolean,
+) {
+    val colors = MaterialTheme.colorScheme
+    val own = if (word.translated) word.translatedSentence ?: word.sentence else word.sentence
+    val lines = if (revealed) listOfNotNull(word.sentence, word.translatedSentence, word.thirdSentence) else listOf(own)
+    if (lines.all { it.isBlank() } && (!revealed || word.sourceTitle == null)) return
+    Surface(
+        color = colors.surfaceVariant.copy(alpha = 0.5f),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth().testTag("word_example"),
+    ) {
+        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            lines.filter { it.isNotBlank() }.forEach { line ->
+                val main = line == own
+                PracticeSentence(
+                    text = withWordHighlighted(line, word.word, colors.primary),
+                    style = if (main) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyMedium,
+                    color = if (main) colors.onSurface else colors.onSurfaceVariant,
+                    modifier = if (line == word.thirdSentence && revealed) Modifier.testTag("word_third_sentence") else Modifier,
+                )
+            }
+            if (revealed) {
+                word.sourceTitle?.let { title ->
+                    Text(
+                        stringResource(R.string.practice_from_video, title),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.onSurfaceVariant,
+                        modifier = Modifier.testTag("word_source_title"),
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** [text] with the first appearance of [word] in bold [color], like the Anki card's sentence. */
+internal fun withWordHighlighted(
+    text: String,
+    word: String,
+    color: Color,
+): AnnotatedString {
+    val at = if (word.isBlank()) -1 else text.indexOf(word, ignoreCase = true)
+    return buildAnnotatedString {
+        append(text)
+        if (at >= 0) addStyle(SpanStyle(color = color, fontWeight = FontWeight.Bold), at, at + word.length)
+    }
+}
+
+/** A subtitle line in Practice: a Persian, Arabic or Hebrew line reads right to left from its own side (issue #152). */
+@Composable
+private fun PracticeSentence(
+    text: AnnotatedString,
+    style: TextStyle,
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    Text(text, modifier.lineSide(text, LocalLayoutDirection.current), color = color, style = style.inLineDirection())
+}

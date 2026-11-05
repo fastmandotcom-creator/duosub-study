@@ -178,11 +178,11 @@ androidComponents {
 }
 
 android {
-    namespace = "com.kienhoang.dualsubreplay"
+    namespace = "duosub.study"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.kienhoang.dualsubreplay"
+        applicationId = "duosub.study"
         minSdk = 26
         targetSdk = 36
         versionCode = previewVersionCode ?: appVersionCode

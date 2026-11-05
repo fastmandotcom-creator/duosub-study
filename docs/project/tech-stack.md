@@ -8,7 +8,7 @@ version snapshot here drifts, and update relevant documentation with lasting cha
 
 | Area | Current context | Source of truth |
 | --- | --- | --- |
-| Android application | `:app`, `com.kienhoang.dualsubreplay`; min SDK 26, compile/target SDK 36 | [App build](../../app/build.gradle.kts) |
+| Android application | `:app`, `duosub.study`; min SDK 26, compile/target SDK 36 | [App build](../../app/build.gradle.kts) |
 | Language/build | Kotlin 2.3.21, AGP 9.3.2, JDK 17; committed Gradle 9.5.0 wrapper | [Root build](../../build.gradle.kts), [wrapper](../../gradle/wrapper/gradle-wrapper.properties), [CI](../../.github/workflows/android.yml) |
 | UI | Jetpack Compose / Material 3; Compose BOM 2026.06.01 | [App dependencies](../../app/build.gradle.kts) |
 | Translation/network | ML Kit Translate 17.0.3, OkHttp, Kotlin coroutines | [App dependencies](../../app/build.gradle.kts) |
@@ -23,7 +23,7 @@ version snapshot here drifts, and update relevant documentation with lasting cha
 ## Component boundaries
 
 Paths below are relative to
-[`app/src/main/java/com/kienhoang/dualsubreplay`](../../app/src/main/java/com/kienhoang/dualsubreplay).
+[`app/src/main/java/duosub/study`](../../app/src/main/java/duosub/study).
 
 - `ui/DualSubApp.kt` and `ui/LearningPlayerRoot.kt` compose the learning interface.
   `ui/AppViewModel.kt` coordinates selection, caption loading, translation, playback

@@ -2,14 +2,14 @@
 
 ## Project
 
-Android app (`:app`, package `com.kienhoang.dualsubreplay`) with a separate test-only `:benchmark` module: Kotlin 2.3.21, Jetpack Compose / Material 3, AGP 9.3.2, committed Gradle 9.5 wrapper (no local Gradle needed), JDK 17, compile/target SDK 36, minSdk 26.
+Android app (`:app`, package `duosub.study`) with a separate test-only `:benchmark` module: Kotlin 2.3.21, Jetpack Compose / Material 3, AGP 9.3.2, committed Gradle 9.5 wrapper (no local Gradle needed), JDK 17, compile/target SDK 36, minSdk 26.
 
 ## Commands (Windows)
 
 ```powershell
 .\gradlew.bat formatCheck complexityCheck testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest   # CI parity
 .\gradlew.bat pixel2Api36DebugAndroidTest                                          # instrumented tests on managed device
-.\gradlew.bat testDebugUnitTest --tests "com.kienhoang.dualsubreplay.data.SubtitleMergerTest"   # one test class
+.\gradlew.bat testDebugUnitTest --tests "duosub.study.data.SubtitleMergerTest"   # one test class
 ```
 
 - Managed-device tests require the API 36 AOSP x86_64 system image. On headless hosts add `-Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect` (CI also passes `--no-parallel --max-workers=2`).

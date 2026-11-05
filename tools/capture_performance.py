@@ -28,7 +28,7 @@ launches = []
 pss = []
 for index in range(args.runs):
     adb("shell", "am", "force-stop", args.package)
-    launch = adb("shell", "am", "start", "-W", "-n", args.package + "/com.kienhoang.dualsubreplay.MainActivity")
+    launch = adb("shell", "am", "start", "-W", "-n", args.package + "/duosub.study.MainActivity")
     assert "Status: ok" in launch, launch
     (args.output / f"startup-{index}.txt").write_text(launch)
     launches.append(int(re.search(r"TotalTime:\s*(\d+)", launch)[1]))

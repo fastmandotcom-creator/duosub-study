@@ -13,7 +13,7 @@ design. That authorizes this scope, not merge or release.
 - The native YouTube app cannot host our features without modifying YouTube itself, which
   breaks YouTube's terms and every YouTube update. A floating overlay over the YouTube app and
   a separate player were discussed and not chosen.
-- Our page scripts ([`YouTubeWebScripts.kt`](../../app/src/main/java/com/kienhoang/dualsubreplay/ui/YouTubeWebScripts.kt))
+- Our page scripts ([`YouTubeWebScripts.kt`](../../app/src/main/java/duosub/study/ui/YouTubeWebScripts.kt))
   add work on the page's main thread: a snapshot poll every 100 ms, and a `MutationObserver`
   over the whole document that reads the captions after **every** DOM change. YouTube changes
   its DOM constantly (time display, feed and comments loading while scrolling), so the observer

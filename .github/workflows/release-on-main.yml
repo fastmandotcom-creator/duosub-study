@@ -165,7 +165,7 @@ jobs:
           fi
           badging="$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$release_apk" | head -n 1)"
           echo "$badging"
-          if [[ "$badging" != *"name='com.kienhoang.dualsubreplay'"* ]] ||
+          if [[ "$badging" != *"name='duosub.study'"* ]] ||
              [[ "$badging" != *"versionName='$EXPECTED_VERSION'"* ]] ||
              [[ "$badging" != *"versionCode='$EXPECTED_CODE'"* ]]; then
             echo "Official APK package/version differs from the release reservation" >&2

@@ -22,7 +22,7 @@ PAGE_PAIRS = [
 ]
 PAGES = {path + "index.html": BASE_URL + path for pair in PAGE_PAIRS for path in pair}
 LANGUAGES_SOURCE = (
-    ROOT / "app/src/main/java/com/kienhoang/dualsubreplay/translation/TranslationLanguages.kt"
+    ROOT / "app/src/main/java/duosub/study/translation/TranslationLanguages.kt"
 )
 
 

@@ -1,0 +1,363 @@
+package duosub.study.ui
+
+import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import duosub.study.R
+import duosub.study.data.AnalyzedToken
+import duosub.study.data.LanguageAwareTokenizer
+import duosub.study.data.SubtitleSegment
+import duosub.study.data.WordTap
+
+@Composable
+internal fun CompactSubtitleCard(
+    segment: SubtitleSegment,
+    active: Boolean,
+    fontScale: Float,
+    onReplay: () -> Unit,
+    activeWordIndex: Int = -1,
+    originalColor: Color = subtitleColor(DEFAULT_ORIGINAL_COLOR_KEY, appThemeIsLight()),
+    translatedColor: Color = subtitleColor(DEFAULT_TRANSLATED_COLOR_KEY, appThemeIsLight()),
+    highlightColor: Color = subtitleColor(DEFAULT_HIGHLIGHT_COLOR_KEY, appThemeIsLight()),
+    wordLearningEnabled: Boolean = false,
+    wordLearningTarget: String = DEFAULT_WORD_LEARNING_TARGET,
+    wordLearningActiveOnly: Boolean = true,
+    tapToLearnEnabled: Boolean = true,
+    resolvedSourceLanguage: String? = null,
+    targetLanguage: String = "vi",
+    isDownloadingTranslationModel: Boolean = false,
+    translationUnavailable: Boolean = false,
+    onWordClick: (WordTap) -> Unit = {},
+    replayEnabled: Boolean = true,
+    showOriginal: Boolean = true,
+    showTranslation: Boolean = true,
+    translationPosition: TranslationPosition = TranslationPosition.BELOW,
+    /** Goes before the row's click, for a focus requester (TV layout). */
+    focusModifier: Modifier = Modifier,
+    /** Settings → Languages → Third line: plain text under the other lines; null shows nothing. */
+    thirdText: String? = null,
+) {
+    if (!showOriginal && !showTranslation) return
+    val rowState = stringResource(if (active) R.string.player_active_subtitle else R.string.player_subtitle)
+    OutlinedCard(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .semantics { stateDescription = rowState }
+                .then(focusModifier)
+                .tvFocusRing()
+                .clickable(enabled = replayEnabled, onClick = onReplay),
+        border =
+            BorderStroke(
+                width = if (active) 2.dp else 1.dp,
+                color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+            ),
+        colors =
+            CardDefaults.outlinedCardColors(
+                containerColor =
+                    if (active) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surfaceContainerLow,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ),
+        shape = RoundedCornerShape(10.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (replayEnabled) {
+                Card(
+                    modifier = Modifier.size(34.dp),
+                    shape = CircleShape,
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                        ),
+                ) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Default.PlayArrow,
+                            contentDescription = stringResource(R.string.player_replay_paragraph),
+                            modifier = Modifier.size(22.dp),
+                            tint = if (active) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                }
+            }
+            if (replayEnabled) Spacer(Modifier.size(9.dp))
+            Column(Modifier.weight(1f)) {
+                val isSentenceEligibleForPos = !wordLearningActiveOnly || active
+                // true marks the translation line.
+                val lines = subtitleLineOrder(false.takeIf { showOriginal }, true.takeIf { showTranslation }, translationPosition)
+                lines.forEach { translated ->
+                    if (translated) {
+                        TranslatedCardText(
+                            segment,
+                            active,
+                            activeWordIndex,
+                            fontScale,
+                            originalColor,
+                            translatedColor,
+                            highlightColor,
+                            wordLearningEnabled,
+                            wordLearningTarget,
+                            isSentenceEligibleForPos,
+                            tapToLearnEnabled,
+                            resolvedSourceLanguage,
+                            targetLanguage,
+                            stringResource(pendingTranslationTextRes(isDownloadingTranslationModel, translationUnavailable)),
+                            onWordClick,
+                            onReplay,
+                        )
+                    } else {
+                        OriginalCardText(
+                            segment,
+                            active,
+                            activeWordIndex,
+                            fontScale,
+                            originalColor,
+                            translatedColor,
+                            highlightColor,
+                            wordLearningEnabled,
+                            wordLearningTarget,
+                            isSentenceEligibleForPos,
+                            tapToLearnEnabled,
+                            resolvedSourceLanguage,
+                            targetLanguage,
+                            isDownloadingTranslationModel,
+                            onWordClick,
+                            onReplay,
+                        )
+                    }
+                }
+                thirdText?.let { ThirdLineText(it, fontScale, translatedColor, Modifier.padding(top = 2.dp)) }
+            }
+        }
+    }
+}
+
+/** The third line: plain text (no word taps) in the translation's color, a little smaller; right to left by its own script. */
+@Composable
+internal fun ThirdLineText(
+    text: String,
+    fontScale: Float,
+    color: Color,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Unspecified,
+) {
+    val annotated = AnnotatedString(text)
+    Text(
+        text = annotated,
+        modifier =
+            (
+                if (textAlign ==
+                    TextAlign.Unspecified
+                ) {
+                    modifier.lineSide(annotated, LocalLayoutDirection.current)
+                } else {
+                    modifier
+                }
+            ).testTag("third_line"),
+        style = LocalTextStyle.current.inLineDirection(),
+        textAlign = textAlign,
+        fontSize = (13 * fontScale).sp,
+        lineHeight = (17 * fontScale).sp,
+        color = color.copy(alpha = color.alpha * THIRD_LINE_ALPHA),
+    )
+}
+
+/** The third line is a touch lighter than the translation, so the eye still reads the first two first. */
+private const val THIRD_LINE_ALPHA = 0.85f
+
+@Composable
+private fun OriginalCardText(
+    segment: SubtitleSegment,
+    active: Boolean,
+    activeWordIndex: Int,
+    fontScale: Float,
+    originalColor: Color,
+    translatedColor: Color,
+    highlightColor: Color,
+    wordLearningEnabled: Boolean,
+    wordLearningTarget: String,
+    isSentenceEligibleForPos: Boolean,
+    tapToLearnEnabled: Boolean,
+    resolvedSourceLanguage: String?,
+    targetLanguage: String,
+    isDownloadingTranslationModel: Boolean,
+    onWordClick: (WordTap) -> Unit,
+    onReplay: () -> Unit,
+) {
+    val shouldHighlightPos =
+        wordLearningEnabled && isSentenceEligibleForPos && (wordLearningTarget == "original" || wordLearningTarget == "both")
+    val annotatedOriginal =
+        rememberAnnotatedSubtitleText(
+            text = segment.originalText,
+            words = segment.words,
+            activeWordIndex = if (active) activeWordIndex else -1,
+            baseColor = originalColor,
+            highlightColor = highlightColor,
+            wordLearningEnabled = shouldHighlightPos,
+            languageCode = resolvedSourceLanguage,
+            markNewWords = true,
+        )
+    if (wordLearningEnabled && tapToLearnEnabled) {
+        SelectableSubtitleText(
+            text = segment.originalText,
+            annotated = annotatedOriginal,
+            style =
+                TextStyle(
+                    fontSize = (17 * fontScale).sp,
+                    lineHeight = (22 * fontScale).sp,
+                    fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
+                    color = originalColor,
+                ),
+            languageCode = resolvedSourceLanguage,
+            segment = segment,
+            translated = false,
+            highlightColor = highlightColor,
+            onWordClick = onWordClick,
+            onBlankTap = onReplay,
+        )
+    } else {
+        Text(
+            text = annotatedOriginal,
+            modifier = Modifier.lineSide(annotatedOriginal, LocalLayoutDirection.current),
+            style = LocalTextStyle.current.inLineDirection(),
+            fontSize = (17 * fontScale).sp,
+            lineHeight = (22 * fontScale).sp,
+            fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
+            color = originalColor,
+        )
+    }
+    Spacer(Modifier.height(2.dp))
+}
+
+@Composable
+private fun TranslatedCardText(
+    segment: SubtitleSegment,
+    active: Boolean,
+    activeWordIndex: Int,
+    fontScale: Float,
+    originalColor: Color,
+    translatedColor: Color,
+    highlightColor: Color,
+    wordLearningEnabled: Boolean,
+    wordLearningTarget: String,
+    isSentenceEligibleForPos: Boolean,
+    tapToLearnEnabled: Boolean,
+    resolvedSourceLanguage: String?,
+    targetLanguage: String,
+    fallbackText: String,
+    onWordClick: (WordTap) -> Unit,
+    onReplay: () -> Unit,
+) {
+    val shouldHighlightTrans =
+        wordLearningEnabled && isSentenceEligibleForPos && (wordLearningTarget == "translation" || wordLearningTarget == "both")
+    val translatedText = segment.translatedText
+    // Tokens only feed word colors and tap-to-learn, so skip tokenizing when neither is on.
+    val needsOriginalTokens = shouldHighlightTrans || (wordLearningEnabled && tapToLearnEnabled)
+    val originalTokens: List<AnalyzedToken> =
+        remember(segment.originalText, resolvedSourceLanguage, needsOriginalTokens, tokenizerRevision()) {
+            if (needsOriginalTokens) {
+                LanguageAwareTokenizer.tokenize(segment.originalText, resolvedSourceLanguage)
+            } else {
+                emptyList()
+            }
+        }
+    val annotatedTrans =
+        if (shouldHighlightTrans && translatedText != null) {
+            rememberAnnotatedSubtitleText(
+                text = translatedText,
+                words = emptyList(),
+                activeWordIndex = -1,
+                baseColor = translatedColor,
+                highlightColor = highlightColor,
+                wordLearningEnabled = true,
+                languageCode = targetLanguage,
+                alignedOriginalTokens = originalTokens,
+            )
+        } else {
+            AnnotatedString(translatedText ?: fallbackText)
+        }
+    if (wordLearningEnabled && tapToLearnEnabled && translatedText != null) {
+        SelectableSubtitleText(
+            text = translatedText,
+            annotated = annotatedTrans,
+            style =
+                TextStyle(
+                    fontSize = (14 * fontScale).sp,
+                    lineHeight = (18 * fontScale).sp,
+                    color = translatedColor,
+                ),
+            languageCode = targetLanguage,
+            segment = segment,
+            translated = true,
+            highlightColor = highlightColor,
+            onWordClick = onWordClick,
+            onBlankTap = onReplay,
+            alignedOriginalTokens = originalTokens,
+        )
+    } else {
+        Text(
+            text = annotatedTrans,
+            modifier = Modifier.lineSide(annotatedTrans, LocalLayoutDirection.current),
+            style = LocalTextStyle.current.inLineDirection(),
+            fontSize = (14 * fontScale).sp,
+            lineHeight = (18 * fontScale).sp,
+            color = translatedColor,
+        )
+    }
+}
+
+/** What a row shows under its original line until its translation arrives. */
+@StringRes
+internal fun pendingTranslationTextRes(
+    downloadingModel: Boolean,
+    translationUnavailable: Boolean,
+): Int =
+    when {
+        translationUnavailable -> R.string.player_translation_unavailable
+        downloadingModel -> R.string.player_downloading_translation_model
+        else -> R.string.player_translating
+    }

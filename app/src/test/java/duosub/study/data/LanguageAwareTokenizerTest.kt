@@ -1,0 +1,170 @@
+package duosub.study.data
+
+import duosub.study.ui.findWordAtOffset
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+
+class LanguageAwareTokenizerTest {
+    @Before
+    fun loadEnglishAndChinese() {
+        // The app tags English and splits Chinese once their bundled data loads; test that, not the stand-in.
+        assertTrue(EnglishMorphology.awaitReady())
+        assertTrue(ChineseMorphology.awaitReady())
+    }
+
+    @Test
+    fun aLineSplitAgainComesFromTheCacheUntilAnAnalyzerLoads() {
+        val first = LanguageAwareTokenizer.tokenize("The cache keeps this line", "en")
+
+        assertTrue(first === LanguageAwareTokenizer.tokenize("The cache keeps this line", "en"))
+        assertTrue(first !== LanguageAwareTokenizer.tokenize("The cache keeps this line", "fr"))
+    }
+
+    @Test
+    fun segmentsJapaneseTextIntoMorphemes() {
+        val text = "日本語を勉強します"
+        val tokens = LanguageAwareTokenizer.tokenize(text, languageCode = "ja")
+
+        assertTrue("Should split into multiple tokens, got ${tokens.size}", tokens.size > 1)
+        val surfaces = tokens.map { it.text }
+        assertTrue("Tokens should cover the text", surfaces.joinToString("").replace(" ", "") == text)
+        val woToken = tokens.find { it.text == "を" }
+        assertNotNull("Should identify particle を", woToken)
+        assertEquals(PartOfSpeech.PARTICLE, woToken?.partOfSpeech)
+    }
+
+    @Test
+    fun segmentsJapaneseKatakanaAndKanji() {
+        val text = "ラーメンを食べる"
+        val tokens = LanguageAwareTokenizer.tokenize(text, languageCode = "ja")
+
+        assertTrue(tokens.size >= 3)
+        assertEquals("ラーメン", tokens[0].text)
+        assertEquals(PartOfSpeech.NOUN, tokens[0].partOfSpeech)
+        assertEquals("を", tokens[1].text)
+        assertEquals(PartOfSpeech.PARTICLE, tokens[1].partOfSpeech)
+    }
+
+    @Test
+    fun tagsEnglishWordsWithPartOfSpeech() {
+        val text = "The quick brown fox jumps over the lazy dog"
+        val tokens = LanguageAwareTokenizer.tokenize(text, languageCode = "en")
+
+        assertEquals(9, tokens.size)
+        assertEquals(PartOfSpeech.PARTICLE, tokens[0].partOfSpeech) // "The" -> article/grammar particle
+        assertEquals(PartOfSpeech.NOUN, tokens[3].partOfSpeech) // fox
+        assertEquals(PartOfSpeech.PREPOSITION, tokens[5].partOfSpeech) // over -> preposition
+    }
+
+    @Test
+    fun findsWordAtOffsetCorrectly() {
+        val text = "Learning Kotlin is fun"
+        val tokenKotlin = findWordAtOffset(text, charOffset = 11, languageCode = "en")
+
+        assertNotNull(tokenKotlin)
+        assertEquals("Kotlin", tokenKotlin?.text)
+        assertEquals(9, tokenKotlin?.startIndex)
+        assertEquals(15, tokenKotlin?.endIndex)
+
+        val outOfBounds = findWordAtOffset(text, charOffset = 100, languageCode = "en")
+        assertNull(outOfBounds)
+    }
+
+    @Test
+    fun findsJapaneseWordAtOffset() {
+        val text = "桜の花が咲く"
+        val tokenHana = findWordAtOffset(text, charOffset = 2, languageCode = "ja")
+
+        assertNotNull(tokenHana)
+        assertEquals("花", tokenHana?.text)
+    }
+
+    @Test
+    fun colorForPartOfSpeechIsDistinct() {
+        val nounColor = PartOfSpeech.NOUN.colorHex
+        val verbColor = PartOfSpeech.VERB.colorHex
+        val particleColor = PartOfSpeech.PARTICLE.colorHex
+        val unalignedColor = PartOfSpeech.UNALIGNED.colorHex
+
+        assertTrue(nounColor != verbColor)
+        assertTrue(verbColor != particleColor)
+        assertTrue(unalignedColor != nounColor)
+        assertEquals(0xFF78909CL, unalignedColor)
+    }
+
+    @Test
+    fun alignsTranslationTokensAndColorsUnalignedWordsInDarkGray() {
+        val originalText = "Both Cursor and OpenAI in order to get as many"
+        val originalTokens = LanguageAwareTokenizer.tokenize(originalText, "en")
+        val translationText = "Cả con trỏ và Openai để có được nhiều"
+
+        val alignedTokens =
+            LanguageAwareTokenizer.alignAndTokenizeTranslation(
+                translationText = translationText,
+                originalTokens = originalTokens,
+                translationLanguage = "vi",
+            )
+
+        assertTrue(alignedTokens.isNotEmpty())
+        val openaiToken = alignedTokens.find { it.text.equals("Openai", ignoreCase = true) }
+        assertNotNull(openaiToken)
+        assertEquals(PartOfSpeech.NOUN, openaiToken?.partOfSpeech)
+
+        val duocToken = alignedTokens.find { it.text == "được" }
+        assertNotNull(duocToken)
+        assertEquals(PartOfSpeech.UNALIGNED, duocToken?.partOfSpeech)
+        assertEquals(0xFF78909CL, duocToken?.partOfSpeech?.colorHex)
+    }
+
+    @Test
+    fun classifiesEnglishPronounsAndConjunctionsDistinctly() {
+        val text = "Both you and I"
+        val tokens = LanguageAwareTokenizer.tokenize(text, "en")
+        assertEquals(PartOfSpeech.CONJUNCTION, tokens[0].partOfSpeech)
+        assertEquals(PartOfSpeech.PRONOUN, tokens[1].partOfSpeech)
+        assertEquals(PartOfSpeech.CONJUNCTION, tokens[2].partOfSpeech)
+        assertEquals(PartOfSpeech.PRONOUN, tokens[3].partOfSpeech)
+    }
+
+    @Test
+    fun keepsWordsNextToInvisibleFormatCharacters() {
+        // Caption text can carry zero-width spaces, word joiners and direction marks after a word.
+        listOf('\u200B', '\u2060', '\u200E', '\uFEFF').forEach { mark ->
+            val text = "there's plenty$mark of situations of people$mark"
+            val words = LanguageAwareTokenizer.tokenize(text, "en").map { it.text }
+            assertEquals(listOf("there's", "plenty", "of", "situations", "of", "people"), words)
+        }
+    }
+
+    @Test
+    fun keepsCurlyApostropheWordsWhole() {
+        val tokens = LanguageAwareTokenizer.tokenize("I don\u2019t think there\u2019s time", "en")
+
+        assertEquals(listOf("I", "don\u2019t", "think", "there\u2019s", "time"), tokens.map { it.text })
+    }
+
+    @Test
+    fun keepsAccentedLatinWordsWhole() {
+        val tokens = LanguageAwareTokenizer.tokenize("Un café très naïf", "fr")
+
+        assertEquals(listOf("Un", "café", "très", "naïf"), tokens.map { it.text })
+    }
+
+    @Test
+    fun keepsPersianHalfSpaceWordsWhole() {
+        val text = "من می\u200Cخواهم کتاب\u200Cها را بخوانم"
+
+        assertEquals(
+            listOf("من", "می\u200Cخواهم", "کتاب\u200Cها", "را", "بخوانم"),
+            LanguageAwareTokenizer.tokenize(text, "fa").map { it.text },
+        )
+        assertEquals(
+            listOf("من", "می\u200Cخواهم", "کتاب\u200Cها", "را", "بخوانم"),
+            LanguageAwareTokenizer.alignAndTokenizeTranslation(text, emptyList(), "fa").map { it.text },
+        )
+    }
+}

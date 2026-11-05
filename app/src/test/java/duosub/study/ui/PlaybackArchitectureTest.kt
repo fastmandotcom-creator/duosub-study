@@ -1,0 +1,382 @@
+package duosub.study.ui
+
+import duosub.study.data.SubtitleSegment
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import org.json.JSONObject
+
+class PlaybackArchitectureTest {
+    @Test
+    fun browseVideoSelectionNormalizesEverySupportedWatchRoute() {
+        val expected = BrowseVideoSelection(
+            videoId = "dQw4w9WgXcQ",
+            canonicalUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        )
+
+        assertEquals(expected, browseVideoSelection("https://m.youtube.com/shorts/dQw4w9WgXcQ"))
+        assertEquals(expected, browseVideoSelection("https://youtu.be/dQw4w9WgXcQ"))
+        assertNull(browseVideoSelection("https://m.youtube.com/results?search_query=english"))
+    }
+
+    @Test
+    fun singleWebSurfaceAcceptsOnlyYouTubeMainFrameUrls() {
+        assertTrue(isYouTubeWebUrl("https://m.youtube.com/watch?v=dQw4w9WgXcQ"))
+        assertTrue(isYouTubeWebUrl("https://www.youtube.com/shorts/dQw4w9WgXcQ"))
+        assertFalse(isYouTubeWebUrl("https://youtu.be/dQw4w9WgXcQ"))
+        assertFalse(isYouTubeWebUrl("https://example.com/watch?v=dQw4w9WgXcQ"))
+        assertFalse(isYouTubeWebUrl("javascript:alert(1)"))
+    }
+
+    @Test
+    fun mainFrameNavigationSeparatesGoogleSignInFromYouTubeAndExternalLinks() {
+        assertEquals(
+            EmbeddedNavigationDecision.YOUTUBE_WEB,
+            classifyMainFrameUrl("https://m.youtube.com/watch?v=dQw4w9WgXcQ"),
+        )
+        assertEquals(
+            EmbeddedNavigationDecision.GOOGLE_SIGN_IN,
+            classifyMainFrameUrl("https://accounts.google.com/ServiceLogin?service=youtube"),
+        )
+        assertEquals(
+            EmbeddedNavigationDecision.GOOGLE_SIGN_IN,
+            classifyMainFrameUrl("https://accounts.youtube.com/accounts/SetSID"),
+        )
+        assertEquals(
+            EmbeddedNavigationDecision.GOOGLE_SIGN_IN,
+            classifyMainFrameUrl("https://consent.google.com/m?continue=youtube"),
+        )
+        assertEquals(
+            EmbeddedNavigationDecision.GOOGLE_SIGN_IN,
+            classifyMainFrameUrl("https://accounts.googleusercontent.com/checkcookie"),
+        )
+        assertEquals(
+            EmbeddedNavigationDecision.GOOGLE_SIGN_IN,
+            classifyMainFrameUrl("https://myaccount.google.com/signinoptions/security-checkup"),
+        )
+        assertEquals(
+            EmbeddedNavigationDecision.OPEN_EXTERNAL,
+            classifyMainFrameUrl("https://example.com/help"),
+        )
+        assertEquals(
+            EmbeddedNavigationDecision.BLOCK,
+            classifyMainFrameUrl("javascript:alert(1)"),
+        )
+        assertEquals(
+            EmbeddedNavigationDecision.BLOCK,
+            classifyMainFrameUrl("intent://accounts.google.com/#Intent;end"),
+        )
+        assertTrue(shouldOpenInsideApp(EmbeddedNavigationDecision.YOUTUBE_WEB))
+        assertTrue(shouldOpenInsideApp(EmbeddedNavigationDecision.GOOGLE_SIGN_IN))
+        assertFalse(shouldOpenInsideApp(EmbeddedNavigationDecision.OPEN_EXTERNAL))
+        assertFalse(shouldOpenInsideApp(EmbeddedNavigationDecision.BLOCK))
+    }
+
+    @Test
+    fun authenticatedYouTubeCookieDetectionIgnoresGuestCookies() {
+        assertFalse(hasAuthenticatedYouTubeCookie(null))
+        assertFalse(hasAuthenticatedYouTubeCookie("PREF=abc; YSC=def; VISITOR_INFO1_LIVE=ghi"))
+        assertTrue(hasAuthenticatedYouTubeCookie("PREF=abc; LOGIN_INFO=account-session"))
+        assertTrue(hasAuthenticatedYouTubeCookie("__Secure-3PSID=secure-session; YSC=def"))
+    }
+
+    @Test
+    fun signOutNavigationsAreDistinguishedFromSignInPages() {
+        assertTrue(
+            isSignOutNavigation(
+                "https://accounts.google.com/Logout?continue=https%3A%2F%2Fwww.youtube.com%2F",
+            ),
+        )
+        assertTrue(
+            isSignOutNavigation(
+                "https://accounts.google.com/SignOutOptions?hl=en&continue=https://www.youtube.com/",
+            ),
+        )
+        assertTrue(isSignOutNavigation("https://accounts.youtube.com/Logout"))
+        assertFalse(isSignOutNavigation("https://accounts.google.com/ServiceLogin?service=youtube"))
+        assertFalse(isSignOutNavigation("https://www.youtube.com/logout"))
+        assertFalse(isSignOutNavigation("http://accounts.google.com/Logout"))
+        assertFalse(isSignOutNavigation("not a url"))
+    }
+
+    @Test
+    fun autoReturnOnlyFiresWhenSessionCookiesAppearFreshly() {
+        assertFalse(
+            shouldAutoReturnAfterSignIn(startedWithSessionCookies = false, sessionCookiesPresent = false),
+        )
+        assertTrue(
+            shouldAutoReturnAfterSignIn(startedWithSessionCookies = false, sessionCookiesPresent = true),
+        )
+        assertFalse(
+            shouldAutoReturnAfterSignIn(startedWithSessionCookies = true, sessionCookiesPresent = false),
+        )
+        assertFalse(
+            shouldAutoReturnAfterSignIn(startedWithSessionCookies = true, sessionCookiesPresent = true),
+        )
+    }
+
+    @Test
+    fun activeSignInKeepsUnknownHostsEmbeddedInsteadOfChrome() {
+        assertTrue(
+            shouldOpenInsideApp(EmbeddedNavigationDecision.OPEN_EXTERNAL, signInEmbeddingActive = true),
+        )
+        assertFalse(
+            shouldOpenInsideApp(EmbeddedNavigationDecision.OPEN_EXTERNAL, signInEmbeddingActive = false),
+        )
+        assertTrue(
+            shouldOpenInsideApp(EmbeddedNavigationDecision.YOUTUBE_WEB, signInEmbeddingActive = false),
+        )
+        assertTrue(
+            shouldOpenInsideApp(EmbeddedNavigationDecision.GOOGLE_SIGN_IN, signInEmbeddingActive = false),
+        )
+        assertFalse(
+            shouldOpenInsideApp(EmbeddedNavigationDecision.BLOCK, signInEmbeddingActive = true),
+        )
+    }
+
+    @Test
+    fun playbackSnapshotParsesWebViewJavascriptResult() {
+        val raw = "\"{\\\"url\\\":\\\"https://m.youtube.com/watch?v=dQw4w9WgXcQ\\\",\\\"currentSecond\\\":12.5}\""
+
+        assertEquals(
+            WebPlaybackSnapshot(
+                url = "https://m.youtube.com/watch?v=dQw4w9WgXcQ",
+                currentSecond = 12.5f,
+            ),
+            parseWebPlaybackSnapshot(raw),
+        )
+        assertNull(parseWebPlaybackSnapshot("null"))
+        assertNull(parseWebPlaybackSnapshot("not-json"))
+    }
+
+    @Test
+    fun playbackSnapshotCarriesSanitizedLiveCaptionSample() {
+        val payload = JSONObject()
+            .put("url", "https://m.youtube.com/watch?v=dQw4w9WgXcQ")
+            .put("currentSecond", 12.5)
+            .put(
+                "liveCaption",
+                JSONObject()
+                    .put("text", "  Hello   world  ")
+                    .put("revision", 7)
+                    .put("mediaSecond", 12.25)
+                    .put("present", true),
+            )
+
+        assertEquals(
+            LiveCaptionSample("Hello world", 7, 12_250, present = true),
+            parseWebPlaybackSnapshot(JSONObject.quote(payload.toString()))?.liveCaption,
+        )
+
+        payload.getJSONObject("liveCaption").put("text", "x".repeat(MAX_LIVE_CAPTION_TEXT_LENGTH + 1))
+        assertNull(
+            parseWebPlaybackSnapshot(JSONObject.quote(payload.toString()))?.liveCaption,
+        )
+    }
+
+    @Test
+    fun playbackScriptsRecheckTheExecutingYouTubeOrigin() {
+        assertTrue(WEB_PLAYBACK_SNAPSHOT_SCRIPT.contains("window.location.protocol !== 'https:'"))
+        assertTrue(WEB_PLAYBACK_SNAPSHOT_SCRIPT.contains("host.endsWith('.youtube.com')"))
+        assertTrue(WEB_PLAYBACK_SNAPSHOT_SCRIPT.contains("controlsVisible"))
+        assertTrue(WEB_PLAYBACK_SNAPSHOT_SCRIPT.contains("ytp-autohide"))
+        assertTrue(webReplayScript(1f).contains("window.location.protocol !== 'https:'"))
+        assertTrue(webReplayScript(1f).contains("host.endsWith('.youtube.com')"))
+        val enabled = webLiveCaptionConfigurationScript(enabled = true)
+        val disabled = webLiveCaptionConfigurationScript(enabled = false)
+        assertTrue(enabled.contains("window.location.protocol !== 'https:'"))
+        assertTrue(enabled.contains("currentHost.endsWith('.youtube.com')"))
+        assertTrue(enabled.contains("new MutationObserver"))
+        // Only caption changes are read right away; the rest of YouTube's page churn waits for the poll.
+        assertTrue(enabled.contains("if (state.touchesCaptions(records)) state.recordCaption();"))
+        assertTrue(enabled.contains(".ytmClosedCaptioningButtonButton"))
+        assertTrue(enabled.contains("ytInitialPlayerResponse"))
+        assertTrue(enabled.contains("player.loadModule('captions')"))
+        assertTrue(enabled.contains("player.setOption('captions', 'track', track)"))
+        assertTrue(disabled.contains("existing.restoreCaptions()"))
+        // Captions take their time from video.currentTime; no callback runs on every video frame.
+        assertFalse(enabled.contains("requestVideoFrameCallback"))
+        assertTrue(enabled.contains("state.ensureCaptions()"))
+        assertTrue(disabled.contains("existing.restoreCaptions()"))
+        assertTrue(WEB_PLAYBACK_SNAPSHOT_SCRIPT.contains(LIVE_CAPTION_CAPTURE_STATE_KEY))
+        val speed = webPlaybackSpeedScript(0.75f)
+        assertTrue(speed.contains("window.location.protocol !== 'https:'"))
+        assertTrue(speed.contains("host.endsWith('.youtube.com')"))
+        assertTrue(speed.contains("video.playbackRate = 0.75;"))
+        assertTrue(webPlaybackSpeedScript(9f).contains("video.playbackRate = 2.0;"))
+        assertTrue(webPlaybackSpeedScript(Float.NaN).contains("video.playbackRate = 1.0;"))
+        assertTrue(webPlayScript().contains("window.location.protocol !== 'https:'"))
+        assertTrue(webPlayScript().contains("host.endsWith('.youtube.com')"))
+        assertTrue(webPlayScript().contains("video.play()"))
+    }
+
+    @Test
+    fun captionTrackSyncFollowsTheLoadedTranscriptOnTrustedPagesOnly() {
+        val script = webCaptionTrackSyncScript(CaptionTrackTarget("abcdefghijk", "ja", generated = false))
+
+        assertTrue(script.contains("window.location.protocol !== 'https:'"))
+        assertTrue(script.contains("currentHost.endsWith('.youtube.com')"))
+        assertTrue(script.contains("""sync.target = {"videoId":"abcdefghijk","languageCode":"ja","generated":false};"""))
+        assertTrue(webCaptionTrackSyncScript(null).contains("sync.target = null;"))
+        assertTrue(script.contains("player.setOption('captions', 'track', sync.optionTrack(player, wanted))"))
+        assertTrue(WEB_PLAYBACK_SNAPSHOT_SCRIPT.contains(CAPTION_TRACK_SYNC_STATE_KEY))
+        assertTrue(webLiveCaptionConfigurationScript(true).contains("trackSync.choose(player)"))
+        // Every snapshot poll runs the sync: the spoken language is worked out once per video and track list.
+        assertTrue(script.contains("if (!target && sync.spokenFor !== spokenKey) {"))
+        // Romaji (ja-Latn) is never shown in place of the Japanese track.
+        assertTrue(script.contains("sync.romanized(track.languageCode) === sync.romanized(language)"))
+    }
+
+    @Test
+    fun livePollSkipsTheCaptionButtonSearchOnceCaptionsAreOn() {
+        val enabled = webLiveCaptionConfigurationScript(true)
+        val earlyReturn = enabled.indexOf("if (activeTrack && state.captionWasEnabled !== null) return;")
+
+        assertTrue(earlyReturn >= 0)
+        assertTrue(earlyReturn < enabled.indexOf("const button = state.captionButton();"))
+    }
+
+    @Test
+    fun captionTrackTargetComesOnlyFromALoadedTranscript() {
+        val loaded =
+            DualSubUiState(activeVideoId = "abcdefghijk", resolvedSourceLanguage = "ja", generatedCaptions = true)
+
+        assertEquals(CaptionTrackTarget("abcdefghijk", "ja", generated = true), captionTrackTarget(loaded))
+        assertNull(captionTrackTarget(loaded.copy(resolvedSourceLanguage = null)))
+        assertNull(captionTrackTarget(loaded.copy(activeVideoId = null)))
+        assertNull(captionTrackTarget(loaded.copy(liveFallback = true)))
+    }
+
+    @Test
+    fun captionScriptsDoNotReplaceYouTubePlaybackSettings() {
+        val scripts = listOf(
+            WEB_PLAYBACK_SNAPSHOT_SCRIPT,
+            webLiveCaptionConfigurationScript(true),
+            webLiveCaptionConfigurationScript(false),
+            webCaptionTrackSyncScript(CaptionTrackTarget("abcdefghijk", "ja", generated = false)),
+            webCaptionVisibilityScript(true),
+            webCaptionVisibilityScript(false),
+        )
+        scripts.forEach { script ->
+            assertFalse(script.contains("dualsub-settings-overlay"))
+            assertFalse(script.contains("handleSettingsCapture"))
+            assertFalse(script.contains("setPlaybackRate"))
+            assertFalse(script.contains("preventDefault"))
+        }
+    }
+
+    @Test
+    fun replayScriptSeeksAndResumesTheNativePageVideo() {
+        val script = webReplayScript(42.25f)
+
+        assertTrue(script.contains("document.querySelectorAll('video')"))
+        assertTrue(script.contains("video.currentTime = 42.25"))
+        assertTrue(script.contains("video.play()"))
+        assertTrue(webReplayScript(-2f).contains("video.currentTime = 0.0"))
+        assertTrue(webReplayScript(Float.NaN).contains("video.currentTime = 0.0"))
+    }
+
+    @Test
+    fun controllerSanitizesReplaySecondsAndIgnoresStaleUnbinds() {
+        val controller = YouTubeWebController()
+        val firstValues = mutableListOf<Float>()
+        val firstToken = controller.bind(firstValues::add)
+        val currentValues = mutableListOf<Float>()
+        val currentToken = controller.bind(currentValues::add)
+
+        controller.unbind(firstToken)
+        controller.replayFrom(12.25f)
+        controller.replayFrom(-4f)
+        controller.replayFrom(Float.NaN)
+
+        assertTrue(firstValues.isEmpty())
+        assertEquals(listOf(12.25f, 0f, 0f), currentValues)
+
+        controller.unbind(currentToken)
+        controller.replayFrom(9f)
+        assertEquals(listOf(12.25f, 0f, 0f), currentValues)
+    }
+
+    @Test
+    fun activeSubtitleUsesStartInclusiveEndExclusiveBoundariesAndGaps() {
+        val segments = listOf(
+            SubtitleSegment(1, 1_000, 2_000, "First", null),
+            SubtitleSegment(2, 2_500, 3_000, "Second", null),
+        )
+
+        assertEquals(-1, activeSubtitleIndex(segments, 999))
+        assertEquals(0, activeSubtitleIndex(segments, 1_000))
+        assertEquals(0, activeSubtitleIndex(segments, 1_999))
+        assertEquals(-1, activeSubtitleIndex(segments, 2_000))
+        assertEquals(-1, activeSubtitleIndex(segments, 2_499))
+        assertEquals(1, activeSubtitleIndex(segments, 2_500))
+        assertEquals(-1, activeSubtitleIndex(segments, 3_000))
+    }
+
+    @Test
+    fun activeSubtitleStaysInPlaceUntilItReachesTheBottomOfThePanel() {
+        val visibleItems = listOf(4, 5, 6, 7)
+
+        assertFalse(shouldPromoteActiveSubtitle(5, visibleItems))
+        assertFalse(shouldPromoteActiveSubtitle(6, visibleItems))
+        assertTrue(shouldPromoteActiveSubtitle(7, visibleItems))
+    }
+
+    @Test
+    fun activeSubtitlePromotesAfterASeekBeyondTheVisiblePanel() {
+        assertTrue(shouldPromoteActiveSubtitle(12, listOf(4, 5, 6, 7)))
+        assertFalse(shouldPromoteActiveSubtitle(-1, listOf(4, 5, 6, 7)))
+        assertFalse(shouldPromoteActiveSubtitle(7, emptyList()))
+    }
+
+    @Test
+    fun activeRowRevealMovesOnlyAsFarAsTheClippedPart() {
+        // Fits: no scroll.
+        assertEquals(0, revealScrollDelta(offset = 300, size = 100, viewportStart = 0, viewportEnd = 400))
+        // Pause translations pushed the bottom 60 px past the edge: scroll just those 60 px.
+        assertEquals(60, revealScrollDelta(offset = 360, size = 100, viewportStart = 0, viewportEnd = 400))
+        // Clipped at the top: scroll back to its top.
+        assertEquals(-20, revealScrollDelta(offset = -20, size = 100, viewportStart = 0, viewportEnd = 400))
+        // Taller than the panel: align its top rather than its bottom.
+        assertEquals(50, revealScrollDelta(offset = 50, size = 500, viewportStart = 0, viewportEnd = 400))
+    }
+
+    @Test
+    fun bringingBackAPushedRowMovesItFromWhereScrollToItemLeftIt() {
+        // Mid-transcript, scrollToItem puts the row at the top: move it down into the bottom slot.
+        assertEquals(-300, bottomSlotScrollDelta(offset = 0, size = 100, viewportEnd = 400))
+        // Among the last rows scrollToItem cannot lift it that far and it is already in the bottom
+        // slot. Moving it down by the free space again pushed it off screen, so the list kept
+        // scrolling back and forth and the app froze when a video ended and paused.
+        assertEquals(0, bottomSlotScrollDelta(offset = 300, size = 100, viewportEnd = 400))
+        // One more row below it: move down only by that row.
+        assertEquals(-60, bottomSlotScrollDelta(offset = 240, size = 100, viewportEnd = 400))
+    }
+
+    @Test
+    fun activeSubtitleFollowsRewindsAndSkippedSeeksImmediately() {
+        assertTrue(shouldFollowPlaybackSeek(previousIndex = 12, currentIndex = 5))
+        assertTrue(shouldFollowPlaybackSeek(previousIndex = 4, currentIndex = 40))
+        assertFalse(shouldFollowPlaybackSeek(previousIndex = 4, currentIndex = 5))
+        assertFalse(shouldFollowPlaybackSeek(previousIndex = -1, currentIndex = 3))
+        assertFalse(shouldFollowPlaybackSeek(previousIndex = 3, currentIndex = -1))
+    }
+
+    @Test
+    fun subtitlePanelHidesAfterEnoughDistanceOrAFastDownwardFling() {
+        assertTrue(shouldHideSubtitlePanel(200f, 1_000f, 0f, 72f))
+        assertTrue(shouldHideSubtitlePanel(20f, 1_000f, 1_600f, 72f))
+        assertFalse(shouldHideSubtitlePanel(100f, 1_000f, 400f, 72f))
+        assertFalse(shouldHideSubtitlePanel(200f, 1_000f, -2_000f, 220f))
+    }
+
+    @Test
+    fun sourcePreferenceUsesTheChosenCaptionAndFallsBackToAuto() {
+        assertEquals(emptyList<String>(), preferredCaptionLanguages("auto"))
+        assertEquals(listOf("ja"), preferredCaptionLanguages("ja"))
+        assertEquals("ja", resolvedSourcePreference("ja", "ja-JP"))
+        assertEquals("auto", resolvedSourcePreference("ja", "en-US"))
+    }
+}
