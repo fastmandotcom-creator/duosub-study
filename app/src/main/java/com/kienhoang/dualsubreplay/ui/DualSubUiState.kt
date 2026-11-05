@@ -54,7 +54,7 @@ data class DualSubUiState(
     val segments: List<SubtitleSegment> = emptyList(),
     val playbackPaused: Boolean = false,
     /** Settings → Study tools → Play mode; Listen first shows subtitles only while paused. */
-    val studyPlayMode: StudyPlayMode = StudyPlayMode.NORMAL,
+    val studyPlayMode: StudyPlayMode = StudyPlayMode.READ_PAIR,
     val originalVisibility: CaptionVisibility = CaptionVisibility.ALWAYS,
     val translatedVisibility: CaptionVisibility = CaptionVisibility.ALWAYS,
     val currentIndex: Int = -1,

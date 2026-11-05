@@ -16,7 +16,7 @@
     <string name="study_play_mode_repeat_description">各行を何回か再生してから次に進みます。「無制限」では、別の行をタップするかシークするまで同じ行を繰り返します。</string>
     <string name="study_repeat_forever">無制限</string>
     <string name="study_play_mode_read_pair">原文を読んでから訳</string>
-    <string name="study_play_mode_read_pair_description">原文を読んだあと訳を読み、その組を繰り返します。2回なら原文、訳、原文、訳です。意味を直後に聞くと、長く覚えられます。</string>
+    <string name="study_play_mode_read_pair_description">動画を止めて、1行目、次に2行目を選んだ回数だけ読みます。聞こえるように動画は止まったままです。再生で次の行へ進みます。</string>
     <string name="study_pair_read_count">組を読む回数</string>
     <string name="study_read_pair_primary_progress">原文 %1$d/%2$d</string>
     <string name="study_read_pair_secondary_progress">訳 %1$d/%2$d</string>

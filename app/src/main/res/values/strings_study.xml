@@ -16,7 +16,7 @@
     <string name="study_play_mode_repeat_description">Plays each line several times before going on. Forever loops it until you tap another line or seek.</string>
     <string name="study_repeat_forever">Forever</string>
     <string name="study_play_mode_read_pair">Read primary, then secondary</string>
-    <string name="study_play_mode_read_pair_description">Reads the original line, then its translation, and repeats that pair. Two times is hello, then the meaning, then hello, then the meaning again. Hearing the meaning right after the original helps it stick.</string>
+    <string name="study_play_mode_read_pair_description">Stops the video and reads line 1, then line 2, the chosen number of times. The video stays paused so you can hear them. Press play for the next line.</string>
     <string name="study_pair_read_count">Times to read the pair</string>
     <string name="study_read_pair_primary_progress">Primary %1$d/%2$d</string>
     <string name="study_read_pair_secondary_progress">Secondary %1$d/%2$d</string>

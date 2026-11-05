@@ -299,7 +299,7 @@ class StudyPlaybackTest {
         assertEquals(StudyPlayMode.READ_PAIR, storedStudyPlayMode("read_pair"))
         assertEquals(StudyPlayMode.LISTEN_FIRST, storedStudyPlayMode("listen_first"))
         assertEquals(StudyPlayMode.NORMAL, storedStudyPlayMode("shadowing"))
-        assertEquals(StudyPlayMode.NORMAL, storedStudyPlayMode(null))
+        assertEquals(StudyPlayMode.READ_PAIR, storedStudyPlayMode(null))
         assertEquals(SkipSilence.JUMP, storedSkipSilence("jump"))
         assertEquals(SkipSilence.OFF, storedSkipSilence("8x"))
         assertEquals(5, storedStudyRepeatCount(5))

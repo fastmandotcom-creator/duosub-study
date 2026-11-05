@@ -16,7 +16,7 @@
     <string name="study_play_mode_repeat_description">각 줄을 여러 번 재생한 뒤 다음으로 넘어갑니다. 계속을 고르면 다른 줄을 탭하거나 탐색할 때까지 그 줄을 반복합니다.</string>
     <string name="study_repeat_forever">계속</string>
     <string name="study_play_mode_read_pair">원문을 읽고 나서 번역</string>
-    <string name="study_play_mode_read_pair_description">원문을 읽은 다음 번역을 읽고, 그 쌍을 반복합니다. 2회는 원문, 번역, 원문, 번역입니다. 뜻을 바로 들으면 더 오래 기억합니다.</string>
+    <string name="study_play_mode_read_pair_description">동영상을 멈추고 1행, 그다음 2행을 선택한 횟수만큼 읽습니다. 들을 수 있도록 동영상은 멈춘 채로 둡니다. 재생을 누르면 다음 행으로 갑니다.</string>
     <string name="study_pair_read_count">쌍을 읽는 횟수</string>
     <string name="study_read_pair_primary_progress">원문 %1$d/%2$d</string>
     <string name="study_read_pair_secondary_progress">번역 %1$d/%2$d</string>

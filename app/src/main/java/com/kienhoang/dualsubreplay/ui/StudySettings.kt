@@ -144,7 +144,7 @@ internal const val DEFAULT_PAIR_READ_COUNT = 2
 internal fun storedPairReadCount(value: Int): Int = value.takeIf { it in PAIR_READ_COUNTS } ?: DEFAULT_PAIR_READ_COUNT
 
 internal data class StudySettings(
-    val playMode: StudyPlayMode = StudyPlayMode.NORMAL,
+    val playMode: StudyPlayMode = StudyPlayMode.READ_PAIR,
     val repeatCount: Int = DEFAULT_STUDY_REPEAT_COUNT,
     val pairReadCount: Int = DEFAULT_PAIR_READ_COUNT,
     val skipSilence: SkipSilence = SkipSilence.OFF,
@@ -167,7 +167,8 @@ internal data class StudySettings(
 }
 
 internal fun storedStudyPlayMode(value: String?): StudyPlayMode =
-    StudyPlayMode.entries.firstOrNull { it.storageValue == value } ?: StudyPlayMode.NORMAL
+    StudyPlayMode.entries.firstOrNull { it.storageValue == value }
+        ?: if (value == null) StudyPlayMode.READ_PAIR else StudyPlayMode.NORMAL
 
 internal fun storedSkipSilence(value: String?): SkipSilence =
     SkipSilence.entries.firstOrNull { it.storageValue == value } ?: SkipSilence.OFF

@@ -1196,7 +1196,7 @@ class AppViewModel internal constructor(
                 customColorsEnabled = true,
                 originalVisibility = CaptionVisibility.ALWAYS,
                 translatedVisibility = CaptionVisibility.ALWAYS,
-                studyPlayMode = StudyPlayMode.NORMAL,
+                studyPlayMode = StudyPlayMode.READ_PAIR,
                 captionFormat = CaptionFormat.SHORT_PHRASES,
                 translationPosition = TranslationPosition.BELOW,
                 transcriptFollow = TranscriptFollow.PAGE,

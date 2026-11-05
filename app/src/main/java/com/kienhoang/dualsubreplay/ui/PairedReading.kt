@@ -110,6 +110,11 @@ internal class PairedLineReaderHost(
     val clipPlaying: Boolean get() = controller.clipPlaying
     private var generation = 0
 
+    /** Stops the video so the spoken lines can be heard. */
+    fun hold() {
+        controller.pause()
+    }
+
     fun readCurrent(resumeAfter: Boolean) {
         val pair = state?.let(::currentSpokenPair) ?: return
         read(pair, resumeAfter)
@@ -144,21 +149,25 @@ internal fun PairedLineAutoReader(
     mode: StudyPlayMode,
 ) {
     val line = state.segments.getOrNull(state.currentIndex)
-    val translated = line?.translatedText != null
+    val shown = line?.let(state::studyLine)
+    val translated = !shown?.translatedText.isNullOrBlank()
     LaunchedEffect(state.activeVideoId, line?.id, mode, translated, state.translationError) {
-        if (mode != StudyPlayMode.READ_PAIR || state.liveFallback || line == null || line.originalText.isBlank()) return@LaunchedEffect
+        if (mode != StudyPlayMode.READ_PAIR || state.liveFallback || shown == null || shown.originalText.isBlank()) return@LaunchedEffect
         if (host.clipPlaying) return@LaunchedEffect
+        host.hold()
         if (!translated && state.translationError == null && state.translatedVisibility != CaptionVisibility.NEVER) {
             delay(PAIR_READ_TRANSLATION_WAIT_MS)
         }
+        val latest = host.state?.segments?.getOrNull(host.state?.currentIndex ?: -1)?.let { host.state?.studyLine(it) } ?: shown
+        val pair = host.state?.usesVietnameseEnglishPair() == true
         host.read(
             SpokenPair(
-                line.originalText.trim(),
-                state.resolvedSourceLanguage ?: "en",
-                line.translatedText?.trim().orEmpty(),
-                state.targetLanguage,
+                latest.originalText.trim(),
+                if (pair) DEFAULT_SOURCE_LANGUAGE else host.state?.resolvedSourceLanguage ?: DEFAULT_SOURCE_LANGUAGE,
+                latest.translatedText?.trim().orEmpty(),
+                if (pair) DEFAULT_TARGET_LANGUAGE else host.state?.targetLanguage ?: DEFAULT_TARGET_LANGUAGE,
             ),
-            resumeAfter = true,
+            resumeAfter = false,
         )
     }
 }
