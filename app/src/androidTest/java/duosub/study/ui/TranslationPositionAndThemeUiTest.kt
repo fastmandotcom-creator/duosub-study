@@ -145,12 +145,13 @@ class TranslationPositionAndThemeUiTest {
                             translationPosition = TranslationPosition.BELOW,
                         )
                         LearningSubtitleOverlay(
-                            content = learningOverlayContent(
-                                state,
-                                context.resources.uiStrings(),
-                                readingSegmentId = segment.id.takeIf { side != null },
-                                readingSide = side,
-                            )!!,
+                            content =
+                                learningOverlayContent(
+                                    state,
+                                    context.resources.uiStrings(),
+                                    readingSegmentId = segment.id.takeIf { side != null },
+                                    readingSide = side,
+                                )!!,
                             fontScale = 1f,
                             translationPosition = TranslationPosition.BELOW,
                             onSettings = {},
