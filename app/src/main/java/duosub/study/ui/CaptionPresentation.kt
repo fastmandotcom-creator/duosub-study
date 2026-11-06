@@ -8,6 +8,11 @@ import duosub.study.R
 import duosub.study.data.SubtitleSegment
 import duosub.study.data.SubtitleWord
 
+internal data class SubtitleTextRange(
+    val start: Int,
+    val endExclusive: Int,
+)
+
 internal data class LearningOverlayContent(
     val originalText: String?,
     val translatedText: String?,
@@ -19,6 +24,16 @@ internal data class LearningOverlayContent(
     val thirdText: String? = null,
     /** The side currently spoken by paired reading, if this overlay is showing that sentence. */
     val readingSide: ReadSide? = null,
+    /** The active short-caption phrase's range in each full sentence shown during paired reading. */
+    val spokenOriginalRange: SubtitleTextRange? = null,
+    val spokenTranslatedRange: SubtitleTextRange? = null,
+)
+
+private data class OverlaySentencePresentation(
+    val fragment: SubtitleSegment,
+    val rawSentence: SubtitleSegment,
+    val shownSentence: SubtitleSegment,
+    val translation: SentenceTranslationContent,
 )
 
 /** Looks up the app's own texts, so plain JVM tests can pass a stub instead of Android resources. */
@@ -88,21 +103,59 @@ private fun unfilteredLearningOverlayContent(
     // that is only a piece of a longer sentence ("…did not splash") is the "torn last part" the
     // learner sees in landscape. Expand such a row to its whole sentence, which the portrait panel
     // already shows as its stacked rows; the fragment's own words stay the reading anchor.
-    val active =
+    val presentation =
         activeRaw?.let { row ->
+            val translation = sentenceTranslationContent(state.segments, row)
             val slice = row.sentence
             val whole =
-                if (slice == null || slice.cuts.isEmpty()) row
-                else row.copy(
-                    originalText = slice.text,
-                    translatedText = sentenceTranslation(state.segments, row),
-                    words = sentenceWords(state.segments, row),
-                )
-            state.studyLine(whole)
+                if (slice == null || slice.cuts.isEmpty()) {
+                    row
+                } else {
+                    row.copy(
+                        originalText = slice.text,
+                        translatedText = translation.text,
+                        words = sentenceWords(state.segments, row),
+                    )
+                }
+            OverlaySentencePresentation(
+                fragment = row,
+                rawSentence = whole,
+                shownSentence = state.studyLine(whole),
+                translation = translation,
+            )
         }
-    if (active != null) {
-        val fragment = activeRaw
-        val wordOffset = fragment?.let { sentenceWordOffset(state.segments, it) } ?: 0
+    if (presentation != null) {
+        val active = presentation.shownSentence
+        val fragment = presentation.fragment
+        val wholeRaw = presentation.rawSentence
+        val shownFragment = state.studyLine(fragment)
+        val spokenOriginalRange =
+            if (readingSegmentId != null) {
+                rangeForShownText(
+                    fullText = active.originalText,
+                    sourceText = wholeRaw.originalText,
+                    sourceRange = sentenceFragmentRange(fragment),
+                    translatedText = wholeRaw.translatedText,
+                    translatedRange = presentation.translation.activeRange,
+                    fragmentText = shownFragment.originalText,
+                )
+            } else {
+                null
+            }
+        val spokenTranslatedRange =
+            if (readingSegmentId != null) {
+                rangeForShownText(
+                    fullText = active.translatedText,
+                    sourceText = wholeRaw.originalText,
+                    sourceRange = sentenceFragmentRange(fragment),
+                    translatedText = wholeRaw.translatedText,
+                    translatedRange = presentation.translation.activeRange,
+                    fragmentText = shownFragment.translatedText,
+                )
+            } else {
+                null
+            }
+        val wordOffset = sentenceWordOffset(state.segments, fragment)
         val adjustedWord = state.activeWordIndex
         val activeWord =
             if (adjustedWord >= 0) adjustedWord + wordOffset else -1
@@ -115,6 +168,8 @@ private fun unfilteredLearningOverlayContent(
             words = active.words,
             thirdText = state.thirdLineFor(active),
             readingSide = readingSide.takeIf { readingSegmentId != null },
+            spokenOriginalRange = spokenOriginalRange,
+            spokenTranslatedRange = spokenTranslatedRange,
         )
     }
     val status =
@@ -126,7 +181,10 @@ private fun unfilteredLearningOverlayContent(
 }
 
 /** The timed words of the whole sentence [row] belongs to, so karaoke follows the full sentence. */
-internal fun sentenceWords(rows: List<SubtitleSegment>, row: SubtitleSegment): List<SubtitleWord> {
+internal fun sentenceWords(
+    rows: List<SubtitleSegment>,
+    row: SubtitleSegment,
+): List<SubtitleWord> {
     val slice = row.sentence ?: return row.words
     val sameSentence = rows.filter { it.sentence?.text == slice.text }
     val ordered = sameSentence.sortedBy { it.sentence?.index ?: 0 }
@@ -136,21 +194,84 @@ internal fun sentenceWords(rows: List<SubtitleSegment>, row: SubtitleSegment): L
 /** The full translation of the sentence [row] belongs to: the translations of that sentence's own
  * display rows, in row order, joined with one space. Rows still pending are skipped, so the
  * sentence reads on from the rows that have answered; null when none is translated yet. */
-internal fun sentenceTranslation(rows: List<SubtitleSegment>, row: SubtitleSegment): String? {
-    val slice = row.sentence ?: return row.translatedText
+internal data class SentenceTranslationContent(
+    val text: String?,
+    val activeRange: SubtitleTextRange?,
+)
+
+internal fun sentenceTranslation(
+    rows: List<SubtitleSegment>,
+    row: SubtitleSegment,
+): String? = sentenceTranslationContent(rows, row).text
+
+internal fun sentenceTranslationContent(
+    rows: List<SubtitleSegment>,
+    row: SubtitleSegment,
+): SentenceTranslationContent {
+    val slice = row.sentence ?: return SentenceTranslationContent(row.translatedText, fullTextRange(row.translatedText))
     val ordered =
         rows
-            .filter { it.sentence?.text == slice.text && it.translatedText != null }
+            .filter { it.sentence?.text == slice.text && !it.translatedText.isNullOrBlank() }
             .sortedBy { it.sentence?.index ?: 0 }
-    val parts = ordered.map { it.translatedText.orEmpty() }.filter { it.isNotBlank() }
-    return parts.joinToString(" ").takeIf { it.isNotEmpty() }
+    val parts = mutableListOf<String>()
+    var activeRange: SubtitleTextRange? = null
+    var length = 0
+    ordered.forEach { sibling ->
+        val part = sibling.translatedText?.takeIf(String::isNotBlank) ?: return@forEach
+        if (parts.isNotEmpty()) length++
+        val start = length
+        length += part.length
+        if (sibling.sentence?.index == slice.index) activeRange = SubtitleTextRange(start, length)
+        parts += part
+    }
+    return SentenceTranslationContent(parts.joinToString(" ").takeIf(String::isNotEmpty), activeRange)
+}
+
+internal fun sentenceFragmentRange(row: SubtitleSegment): SubtitleTextRange? {
+    val slice = row.sentence ?: return fullTextRange(row.originalText)
+    if (slice.cuts.isEmpty()) return fullTextRange(row.originalText)
+    if (slice.index !in 0..slice.cuts.size) return null
+    val startBound = slice.cuts.getOrNull(slice.index - 1) ?: 0
+    val endBound = slice.cuts.getOrNull(slice.index) ?: slice.text.length
+    if (startBound !in 0..slice.text.length || endBound !in startBound..slice.text.length) return null
+    val text = row.originalText.trim()
+    if (text.isEmpty()) return null
+    val start = slice.text.indexOf(text, startBound)
+    return start
+        .takeIf { it >= startBound && it + text.length <= endBound }
+        ?.let { SubtitleTextRange(it, it + text.length) }
+}
+
+private fun fullTextRange(text: String?): SubtitleTextRange? = text?.takeIf(String::isNotBlank)?.let { SubtitleTextRange(0, it.length) }
+
+private fun rangeForShownText(
+    fullText: String?,
+    sourceText: String,
+    sourceRange: SubtitleTextRange?,
+    translatedText: String?,
+    translatedRange: SubtitleTextRange?,
+    fragmentText: String?,
+): SubtitleTextRange? {
+    if (fullText.isNullOrBlank() || fragmentText.isNullOrBlank()) return null
+    val exactRange =
+        when (fullText) {
+            sourceText -> sourceRange
+            translatedText -> translatedRange
+            else -> null
+        }
+    if (exactRange != null && exactRange.endExclusive <= fullText.length) return exactRange
+    val start = fullText.indexOf(fragmentText)
+    return start.takeIf { it >= 0 }?.let { SubtitleTextRange(it, it + fragmentText.length) }
 }
 
 /** How many whole-sentence words sit before [row]'s own words, so a fragment word index maps onto the joined list. */
-internal fun sentenceWordOffset(rows: List<SubtitleSegment>, row: SubtitleSegment): Int {
+internal fun sentenceWordOffset(
+    rows: List<SubtitleSegment>,
+    row: SubtitleSegment,
+): Int {
     val slice = row.sentence ?: return 0
     return rows
-        .filter { it.sentence?.text == slice.text && (it.sentence?.index ?: 0) < slice.index }
+        .filter { it.sentence?.text == slice.text && it.sentence.index < slice.index }
         .sumOf { it.words.size }
 }
 

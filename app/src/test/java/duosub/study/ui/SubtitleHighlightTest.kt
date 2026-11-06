@@ -1,6 +1,7 @@
 package duosub.study.ui
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import duosub.study.data.ChineseMorphology
 import duosub.study.data.EnglishMorphology
@@ -125,6 +126,21 @@ class SubtitleWordHighlightTest {
         assertEquals(TextDecoration.Underline, activeStyle.textDecoration)
         assertEquals(Color.Unspecified, activeStyle.background)
         assertEquals(null, activeStyle.fontWeight)
+    }
+
+    @Test
+    fun spokenCaptionPhraseKeepsTheFullSentenceAndAddsAnAccentBackground() {
+        val text = AnnotatedString("The next phrase is highlighted.")
+        val range = SubtitleTextRange(4, 9)
+
+        val annotated = annotatedSpokenPhrase(text, range, Color.Yellow)
+        val style = annotated.spanStyles.single()
+
+        assertEquals(text.text, annotated.text)
+        assertEquals(range.start, style.start)
+        assertEquals(range.endExclusive, style.end)
+        assertEquals(Color.Yellow.copy(alpha = 0.38f), style.item.background)
+        assertEquals(TextDecoration.Underline, style.item.textDecoration)
     }
 
     @Test fun returnsEmptyWithoutWordsOrText() {

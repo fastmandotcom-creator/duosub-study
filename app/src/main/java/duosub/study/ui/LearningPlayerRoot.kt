@@ -840,11 +840,19 @@ internal fun LearningSubtitleOverlay(
                                     languageCode = originalLanguageCode,
                                     markNewWords = true,
                                 )
+                            val spokenAnnotated =
+                                remember(annotated, content.readingSide, content.spokenOriginalRange, highlightColor) {
+                                    annotatedSpokenPhrase(
+                                        annotated,
+                                        content.spokenOriginalRange.takeIf { content.readingSide == ReadSide.PRIMARY },
+                                        highlightColor,
+                                    )
+                                }
                             PairedReadingFocusLine(readingFocus, "read_pair_overlay_focus_primary") {
                                 if (wordLearningEnabled && tapToLearnEnabled) {
                                     SelectableSubtitleText(
                                         text = original,
-                                        annotated = annotated,
+                                        annotated = spokenAnnotated,
                                         style =
                                             TextStyle(
                                                 fontSize = (17f * fontScale).sp,
@@ -863,7 +871,7 @@ internal fun LearningSubtitleOverlay(
                                     )
                                 } else {
                                     Text(
-                                        text = annotated,
+                                        text = spokenAnnotated,
                                         modifier =
                                             if (isFullscreen) {
                                                 Modifier
@@ -912,11 +920,19 @@ internal fun LearningSubtitleOverlay(
                                 } else {
                                     AnnotatedString(translated)
                                 }
+                            val spokenAnnotated =
+                                remember(annotated, content.readingSide, content.spokenTranslatedRange, highlightColor) {
+                                    annotatedSpokenPhrase(
+                                        annotated,
+                                        content.spokenTranslatedRange.takeIf { content.readingSide == ReadSide.SECONDARY },
+                                        highlightColor,
+                                    )
+                                }
                             PairedReadingFocusLine(readingFocus, "read_pair_overlay_focus_secondary") {
                                 if (wordLearningEnabled && tapToLearnEnabled) {
                                     SelectableSubtitleText(
                                         text = translated,
-                                        annotated = annotated,
+                                        annotated = spokenAnnotated,
                                         style =
                                             TextStyle(
                                                 fontSize = (14f * fontScale).sp,
@@ -936,7 +952,7 @@ internal fun LearningSubtitleOverlay(
                                     )
                                 } else {
                                     Text(
-                                        text = annotated,
+                                        text = spokenAnnotated,
                                         modifier =
                                             if (isFullscreen) {
                                                 Modifier

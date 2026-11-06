@@ -85,7 +85,7 @@ class TranslationPositionAndThemeUiTest {
     fun pairedReadingVisiblyEmphasizesOnlyTheSideBeingSpoken() {
         preferences.edit().putString(APP_COLOR_THEME_PREFERENCE, AppColorThemeOption.DEEP_TEAL.key).commit()
         var side by mutableStateOf<ReadSide?>(ReadSide.PRIMARY)
-        val segment = SubtitleSegment(1, 0, 2_000, "Xin chào", "Hello")
+        val segment = SubtitleSegment(1, 0, 2_000, "Xin chào thế giới", "Hello world")
         composeRule.setContent {
             DuoSubTheme {
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -99,7 +99,16 @@ class TranslationPositionAndThemeUiTest {
                             translationPosition = TranslationPosition.BELOW,
                         )
                         LearningSubtitleOverlay(
-                            content = LearningOverlayContent("Xin chào", "Hello", null, segment = segment, readingSide = side),
+                            content =
+                                LearningOverlayContent(
+                                    "Xin chào thế giới",
+                                    "Hello world",
+                                    null,
+                                    segment = segment,
+                                    readingSide = side,
+                                    spokenOriginalRange = SubtitleTextRange(0, "Xin chào".length),
+                                    spokenTranslatedRange = SubtitleTextRange(0, "Hello".length),
+                                ),
                             fontScale = 1f,
                             translationPosition = TranslationPosition.BELOW,
                             onSettings = {},

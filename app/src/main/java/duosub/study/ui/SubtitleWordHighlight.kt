@@ -27,6 +27,27 @@ internal data class SubtitleWordSpan(
     val end: Int,
 )
 
+internal fun annotatedSpokenPhrase(
+    text: AnnotatedString,
+    range: SubtitleTextRange?,
+    highlightColor: Color,
+): AnnotatedString {
+    if (range == null || range.start < 0 || range.endExclusive > text.length || range.start >= range.endExclusive) {
+        return text
+    }
+    return buildAnnotatedString {
+        append(text)
+        addStyle(
+            SpanStyle(
+                background = highlightColor.copy(alpha = 0.38f),
+                textDecoration = TextDecoration.Underline,
+            ),
+            range.start,
+            range.endExclusive,
+        )
+    }
+}
+
 /**
  * Maps caption word timings onto character ranges of [text]. Broken auto-caption
  * chunks are skipped individually so one malformed timing token does not disable

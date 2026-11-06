@@ -2,10 +2,10 @@
 
 ## Status
 
-Implemented. Kien requested the landscape/fullscreen correction and a visible highlight
-on the line currently spoken by TTS (2026-11-06). This follows the earlier overlay
-investigation; the previous attempt was reverted, and this request authorizes
-implementing the behavior. It does not authorize publishing a release.
+Implemented; local build and lint pass. Kien requested the landscape/fullscreen correction,
+a visible highlight on the line currently spoken by TTS, and clearer phrase-level tracking
+for long captions (2026-11-06). The owner authorized publishing a Study APK if validation
+is satisfactory.
 
 ## Context / problem
 
@@ -22,13 +22,16 @@ highlight the active language.
   is speaking, even after playback advances.
 - Highlight only the currently spoken language line in that overlay, using the existing
   read-pair focus styling.
+- In a long sentence, highlight the current spoken short-caption phrase within the full
+  sentence, advancing through the punctuation/phrase chunks TTS reads.
+- Keep each language's existing text color, so the two sides remain easy to distinguish.
 - Return to following the playback caption and remove the focus when TTS finishes.
 
 ## Non-goals
 
 - Change TTS text, timing, playback, translation, or the portrait transcript panel.
 - Add a new highlight style or user setting.
-- Publish a release as part of this implementation.
+- Publish only if the implementation passes the applicable validation checks.
 
 ## User-visible behavior
 
@@ -48,9 +51,11 @@ caption again. The portrait panel retains its existing behavior.
 
 1. Relay `readingSegmentId` and the active `readingSide` from `DuoSubApp` across the
    `CompositionLocal` boundary to the overlay content built in `LearningPlayerRoot`.
-2. Keep the existing overlay focus rendering driven by `LearningOverlayContent.readingSide`.
-3. Add unit coverage for the overlay remaining on the read segment while `currentIndex`
-   advances, and instrumented coverage that the overlay highlights only the active side.
+2. Derive the active source and translated phrase ranges from `SentenceSlice` and the
+   ordered translated fragments; account for the Vietnamese/English display swap.
+3. Apply a subtle, theme-aware background to the active phrase while keeping the
+   existing per-language text colors and line-level read-pair focus.
+4. Add coverage for source/translation ranges, phrase focus, and focus clearing after TTS.
 
 ## Acceptance criteria
 
@@ -60,15 +65,17 @@ caption again. The portrait panel retains its existing behavior.
 - [x] When no paired-reading segment is active, the overlay follows the playback index and
   neither line has read-pair focus.
 - [x] Existing whole-sentence rendering and portrait-panel focus behavior remain intact.
+- [ ] During a long-sentence read, the overlay keeps the full sentence visible and colors
+  only the currently spoken source/translated phrase; the active phrase changes with TTS.
 
 ## Validation plan
 
 | Category | Command/scenario and expected result | Environment / applicability |
 | --- | --- | --- |
-| Unit tests | `./gradlew testDebugUnitTest --tests "duosub.study.ui.LearningPlayerRootTest"` passes | Local Android SDK; test-source compilation may be blocked by an existing unrelated error in `AiSubtitleTranslatorTest.kt` |
-| Android build | `ANDROID_HOME="$HOME/Library/Android/sdk" ANDROID_SDK_ROOT="$HOME/Library/Android/sdk" ./gradlew assembleDebug` passes | Local Android SDK |
-| Instrumented | `./gradlew assembleDebugAndroidTest` passes and the paired-reading focus test shows only the spoken line highlighted | Android test toolchain |
-| Physical-device/manual | In landscape YouTube fullscreen, let paired reading advance while TTS speaks; the displayed pair stays fixed, the spoken side is highlighted, and the overlay follows playback after TTS ends | Owner's phone; not established by offline tests |
+| Unit tests | `./gradlew testDebugUnitTest --tests "duosub.study.ui.LearningPlayerRootTest"` | Blocked before test execution by the pre-existing `AiSubtitleTranslatorTest.kt:111` compile error: too many arguments to `withTranslation` |
+| Android build and lint | `assembleDebug assembleDebugAndroidTest lintDebug` | Passed on local Android SDK; Android test APK compiled |
+| Instrumented | Run the paired-reading focus UI test on API 36 | Not run; no managed/connected device available |
+| Physical-device/manual | In landscape YouTube fullscreen, let paired reading advance while TTS speaks; the displayed pair stays fixed, the spoken side is highlighted, and the overlay follows playback after TTS ends | Not run; no device verification |
 
 ## Risks / edge cases
 
@@ -79,24 +86,22 @@ caption again. The portrait panel retains its existing behavior.
 
 ## Release intent
 
-Study channel (default). No APK publication requested; publish only when the owner
-explicitly asks.
+Study channel (default). Owner authorized a Study APK if validation is satisfactory.
+Publication is withheld because the unit-test compilation failure prevents confirming
+the new phrase-range unit coverage.
 
 ## Implementation result
 
-`DuoSubApp` now relays the reader's segment id and active side to
-`LearningPlayerRoot`, which builds the shared overlay content from that snapshot.
-This crosses the existing `CompositionLocal` boundary while keeping the portrait panel
-and fullscreen/landscape overlays on the same TTS state. The overlay's existing
-`PairedReadingFocusLine` styling provides the active-line background and border. The
-instrumented focus test also checks that the highlight disappears when reading ends.
+`DuoSubApp` relays the reader's segment id and active side to `LearningPlayerRoot`,
+which builds the shared overlay content from that snapshot. Phrase ranges are derived
+from the active `SentenceSlice` and the translation fragments in sentence order. Pending
+or unavailable translations have no translated phrase range. The full sentence stays
+visible; only the active fragment gets a subtle background and underline inside the
+already focused language line. Each language keeps its existing text color.
 
 ## Validation result
 
-- Passed: `ANDROID_HOME="$HOME/Library/Android/sdk" ANDROID_SDK_ROOT="$HOME/Library/Android/sdk" ./gradlew assembleDebug assembleDebugAndroidTest` — app and instrumented test code compile.
-- Passed: `ANDROID_HOME="$HOME/Library/Android/sdk" ANDROID_SDK_ROOT="$HOME/Library/Android/sdk" ./gradlew lintDebug`.
-- Not passed: `ANDROID_HOME="$HOME/Library/Android/sdk" ANDROID_SDK_ROOT="$HOME/Library/Android/sdk" ./gradlew testDebugUnitTest --tests 'duosub.study.ui.LearningPlayerRootTest'` — existing unrelated compile error at `AiSubtitleTranslatorTest.kt:111` (too many arguments to `withTranslation`).
-- Not run to completion: `pixel2Api36DebugAndroidTest` for `TranslationPositionAndThemeUiTest#pairedReadingVisiblyEmphasizesOnlyTheSideBeingSpoken` — managed emulator could not start after five attempts; instrumented APK compilation passed.
-- Not passed: `formatCheck` — this host has `python3` but no `python` command. Running `python3 tools/check_format_ratchet.py` also reports existing formatting-budget violations in unrelated files.
-- Not passed: `complexityCheck` — reports `SubtitlePanel` at 115 lines against the 100-line limit; the function is outside this change.
-- Not run: physical-device landscape/fullscreen and live YouTube behavior; requires the owner's phone.
+The phrase-range checks were added, but the focused unit-test task could not compile the
+test source set due to the unrelated `AiSubtitleTranslatorTest.kt:111` error. The debug
+APK, Android test APK, and lint all built successfully. Instrumented runtime and physical
+device checks were not available, so no Study APK was published.

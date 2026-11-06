@@ -88,31 +88,34 @@ class LearningPlayerRootTest {
         val fragments = listOf(sentence.substring(0, cut1), sentence.substring(cut1, cut2), sentence.substring(cut2))
         val cuts = listOf(cut1, cut2)
         val slice2 = SentenceSlice(sentence, cuts, 2)
-        val fragment2 = SubtitleSegment(
-            id = 2,
-            startMs = 4_000,
-            endMs = 6_000,
-            originalText = fragments[2],
-            translatedText = "before flushing.",
-            words = emptyList(),
-            sentence = slice2,
-        )
-        val sibling1 = fragment2.copy(
-            id = 1,
-            startMs = 2_000,
-            endMs = 4_000,
-            originalText = fragments[1],
-            translatedText = "he carefully closed the lid",
-            sentence = SentenceSlice(sentence, cuts, 1),
-        )
-        val sibling0 = fragment2.copy(
-            id = 0,
-            startMs = 0,
-            endMs = 2_000,
-            originalText = fragments[0],
-            translatedText = "According to the young man,",
-            sentence = SentenceSlice(sentence, cuts, 0),
-        )
+        val fragment2 =
+            SubtitleSegment(
+                id = 2,
+                startMs = 4_000,
+                endMs = 6_000,
+                originalText = fragments[2],
+                translatedText = "before flushing.",
+                words = emptyList(),
+                sentence = slice2,
+            )
+        val sibling1 =
+            fragment2.copy(
+                id = 1,
+                startMs = 2_000,
+                endMs = 4_000,
+                originalText = fragments[1],
+                translatedText = "he carefully closed the lid",
+                sentence = SentenceSlice(sentence, cuts, 1),
+            )
+        val sibling0 =
+            fragment2.copy(
+                id = 0,
+                startMs = 0,
+                endMs = 2_000,
+                originalText = fragments[0],
+                translatedText = "According to the young man,",
+                sentence = SentenceSlice(sentence, cuts, 0),
+            )
         val state =
             DuoSubUiState(
                 activeVideoId = "dQw4w9WgXcQ",
@@ -130,6 +133,85 @@ class LearningPlayerRootTest {
             content?.translatedText,
         )
         assertEquals(sentence, content?.segment?.originalText)
+
+        val speakingMiddlePhrase =
+            learningOverlayContent(
+                state,
+                TestUiStrings,
+                readingSegmentId = sibling1.id,
+                readingSide = ReadSide.SECONDARY,
+            )
+        val sourceStart = sentence.indexOf(fragments[1])
+        val translatedStart =
+            "According to the young man, he carefully closed the lid before flushing."
+                .indexOf("he carefully closed the lid")
+        assertEquals(sentence, speakingMiddlePhrase?.originalText)
+        assertEquals(ReadSide.SECONDARY, speakingMiddlePhrase?.readingSide)
+        assertEquals(
+            SubtitleTextRange(sourceStart, sourceStart + fragments[1].length),
+            speakingMiddlePhrase?.spokenOriginalRange,
+        )
+        assertEquals(
+            SubtitleTextRange(translatedStart, translatedStart + sibling1.translatedText!!.length),
+            speakingMiddlePhrase?.spokenTranslatedRange,
+        )
+    }
+
+    @Test
+    fun spokenPhraseRangesFollowTheVietnameseEnglishDisplayOrder() {
+        val sentence = "The original sentence is split here."
+        val firstText = "The original sentence"
+        val secondText = "is split here."
+        val firstTranslation = "Câu gốc"
+        val secondTranslation = "được chia ở đây."
+        val cuts = listOf(sentence.indexOf(secondText))
+        val first =
+            SubtitleSegment(
+                id = 1,
+                startMs = 0,
+                endMs = 2_000,
+                originalText = firstText,
+                translatedText = firstTranslation,
+                sentence = SentenceSlice(sentence, cuts, 0),
+            )
+        val second =
+            SubtitleSegment(
+                id = 2,
+                startMs = 2_000,
+                endMs = 4_000,
+                originalText = secondText,
+                translatedText = secondTranslation,
+                sentence = SentenceSlice(sentence, cuts, 1),
+            )
+        val state =
+            DuoSubUiState(
+                activeVideoId = "dQw4w9WgXcQ",
+                resolvedSourceLanguage = "en",
+                targetLanguage = "en",
+                segments = listOf(first, second),
+                currentIndex = 0,
+            )
+
+        val content =
+            learningOverlayContent(
+                state,
+                TestUiStrings,
+                readingSegmentId = second.id,
+                readingSide = ReadSide.PRIMARY,
+            )
+        val translatedSentence = "$firstTranslation $secondTranslation"
+        val translatedStart = translatedSentence.indexOf(secondTranslation)
+
+        assertEquals(translatedSentence, content?.originalText)
+        assertEquals(sentence, content?.translatedText)
+        assertEquals(
+            SubtitleTextRange(translatedStart, translatedStart + secondTranslation.length),
+            content?.spokenOriginalRange,
+        )
+        assertEquals(
+            SubtitleTextRange(cuts.single(), sentence.length),
+            content?.spokenTranslatedRange,
+        )
     }
 
     @Test
