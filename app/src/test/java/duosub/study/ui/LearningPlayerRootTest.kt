@@ -196,6 +196,57 @@ class LearningPlayerRootTest {
     }
 
     @Test
+    fun automaticLandscapeOverlayIsHeldBackWhileAPairedReadingIsActive() {
+        // Landscape + auto overlay would normally replace the transcript panel with a one-line
+        // overlay, but the read-pair TTS speaks both lines, so the bilingual panel must stay
+        // open while the paired reader is mid-reading instead of hiding the learner's text.
+        assertTrue(
+            shouldUseAutomaticLandscapeOverlay(
+                PlayerExperienceMode.TRANSCRIPT_PANEL,
+                autoLandscape = true,
+                orientation = Configuration.ORIENTATION_LANDSCAPE,
+                pairedReadingActive = false,
+            ),
+        )
+        assertFalse(
+            shouldUseAutomaticLandscapeOverlay(
+                PlayerExperienceMode.TRANSCRIPT_PANEL,
+                autoLandscape = true,
+                orientation = Configuration.ORIENTATION_LANDSCAPE,
+                pairedReadingActive = true,
+            ),
+        )
+    }
+
+    @Test
+    fun anyStudyPlayModeOtherThanNormalNeedsTheLandscapeBilingualPanel() {
+        // The landscape auto-overlay is held back for every study play mode that pauses the video
+        // at each line and speaks it, so the panel (all bilingual sentences, like portrait) is not
+        // collapsed to a one-line overlay while the learner is following along with the TTS.
+        fun panelNeeded(mode: StudyPlayMode, knownWords: Boolean): Boolean {
+            val knownWordsMode = if (knownWords) KnownWordsMode.AUTO else KnownWordsMode.OFF
+            val settings = StudySettings(playMode = mode, knownWordsMode = knownWordsMode)
+            return settings.effectivePlayMode != StudyPlayMode.NORMAL
+        }
+
+        assertEquals(false, panelNeeded(StudyPlayMode.NORMAL, true))
+
+        listOf(
+            StudyPlayMode.PAUSE_AFTER_LINE,
+            StudyPlayMode.READ_FIRST,
+            StudyPlayMode.LISTEN_FIRST,
+            StudyPlayMode.REPEAT_LINE,
+            StudyPlayMode.READ_PAIR,
+        ).forEach { mode ->
+            assertTrue("play mode $mode should keep the bilingual panel open in landscape", panelNeeded(mode, true))
+        }
+
+        // One new word needs the known-word list; without it the driver plays normally, so no panel.
+        assertEquals(false, panelNeeded(StudyPlayMode.NEW_WORD_LINES, false))
+        assertEquals(true, panelNeeded(StudyPlayMode.NEW_WORD_LINES, true))
+    }
+
+    @Test
     fun overlayDragAndPlayerControlAvoidanceStayBounded() {
         assertEquals(1f, overlayPositionAfterDrag(0.8f, 100f, 100f))
         assertEquals(0f, overlayPositionAfterDrag(0.2f, -100f, 100f))

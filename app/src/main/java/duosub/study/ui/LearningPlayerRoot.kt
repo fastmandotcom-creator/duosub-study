@@ -228,10 +228,12 @@ internal fun shouldUseAutomaticLandscapeOverlay(
     mode: PlayerExperienceMode,
     autoLandscape: Boolean,
     orientation: Int,
+    pairedReadingActive: Boolean = false,
 ): Boolean =
     mode == PlayerExperienceMode.TRANSCRIPT_PANEL &&
         autoLandscape &&
-        orientation == Configuration.ORIENTATION_LANDSCAPE
+        orientation == Configuration.ORIENTATION_LANDSCAPE &&
+        !pairedReadingActive
 
 internal fun portraitLearningOverlayTopPaddingDp(
     screenWidthDp: Int,
@@ -432,12 +434,21 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
 
     // A remote cannot reach the floating subtitle box: the TV layout always uses the panel.
     val tvLayout by rememberTvLayout()
+    val pairedReader = LocalPairedReading.current
+    val pairedReadingActive = pairedReader?.readingSegmentId != null
+    // A study play mode that pauses the video at each line (Read pair, Read first, Listen first,
+    // Repeat each line, Pause after each line, One new word) needs the bilingual panel open so
+    // the learner follows the line being spoken; landscape auto-overlay would hide it.
+    val studySettings = rememberStudySettings().value
+    val studyPlayModeNeedsPanel = studySettings.effectivePlayMode != StudyPlayMode.NORMAL
+    val keepBilingualPanelOpen = pairedReadingActive || studyPlayModeNeedsPanel
     val automaticLandscapeOverlay =
         !tvLayout &&
             shouldUseAutomaticLandscapeOverlay(
                 mode = mode,
                 autoLandscape = autoOverlayLandscape,
                 orientation = configuration.orientation,
+                pairedReadingActive = keepBilingualPanelOpen,
             )
     val automaticFullscreenOverlay =
         mode == PlayerExperienceMode.TRANSCRIPT_PANEL && autoOverlayFullscreen && youtubeFullscreen
@@ -453,8 +464,15 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
 
     // Fullscreen and landscape auto-overlay are temporary. Restore the transcript panel only after
     // every automatic overlay condition has ended, so landscape/fullscreen transitions do not flicker.
-    LaunchedEffect(automaticPresentationOverlay, mode) {
-        if (automaticPresentationOverlay) {
+    // While the bilingual panel must stay open (a study play mode pauses and speaks each line, or a
+    // read-pair is being spoken), the auto-landscape overlay is held back instead of hiding the
+    // panel the learner watches along.
+    LaunchedEffect(
+        automaticPresentationOverlay,
+        mode,
+        keepBilingualPanelOpen,
+    ) {
+        if (automaticPresentationOverlay && !keepBilingualPanelOpen) {
             if (mode == PlayerExperienceMode.TRANSCRIPT_PANEL && state.subtitlePanelVisible) {
                 restoreTranscriptAfterAutomaticOverlay = true
             }
@@ -470,18 +488,20 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
     }
 
     // Opening another video normally re-opens the transcript panel. While overlay presentation is
-    // active, collapse it again so comments and recommendations remain directly scrollable.
-    LaunchedEffect(effectiveMode, state.activeVideoId, state.subtitlePanelVisible) {
+    // active, collapse it again so comments and recommendations remain directly scrollable. The
+    // bilingual panel is kept open instead while a study play mode needs it, so a spoken line is
+    // always visible on screen next to the video.
+    LaunchedEffect(effectiveMode, state.activeVideoId, state.subtitlePanelVisible, keepBilingualPanelOpen) {
         if (
             effectiveMode == PlayerExperienceMode.SCROLL_FRIENDLY_OVERLAY &&
             state.activeVideoId != null &&
-            state.subtitlePanelVisible
+            state.subtitlePanelVisible &&
+            !keepBilingualPanelOpen
         ) {
             viewModel.hideSubtitlePanel()
         }
     }
 
-    val pairedReader = LocalPairedReading.current
     val overlayContent = learningOverlayContent(state)
     val translationPosition = effectiveStudyTranslationPosition(state, readingPairActive = pairedReader?.readingSegmentId != null)
     val controlsLiftDp =
