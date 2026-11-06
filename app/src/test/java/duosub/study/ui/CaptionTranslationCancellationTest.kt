@@ -223,7 +223,7 @@ class CaptionTranslationCancellationTest {
     }
 
     @Test
-    fun shortRowsAreTranslatedThroughTheirWholeSentence() =
+    fun shortRowsAreTranslatedFromTheirOwnText() =
         runBlocking {
             val sentence = "The French Revolution temporarily stalled relocation efforts."
             val display =
@@ -235,8 +235,8 @@ class CaptionTranslationCancellationTest {
             check(display.map { it.originalText } == listOf("The French Revolution temporarily stalled", "relocation efforts."))
             val dictionary =
                 mapOf(
-                    sentence to "Cuộc Cách mạng Pháp tạm thời làm đình trệ các nỗ lực di dời.",
                     display[0].originalText to "Cuộc Cách mạng Pháp tạm thời bị đình trệ",
+                    display[1].originalText to "các nỗ lực di dời.",
                 )
             withStore(display) { store ->
                 val requests = MutableStateFlow(CaptionPlaybackRequest(0, paused = false, enabled = true))
@@ -251,8 +251,8 @@ class CaptionTranslationCancellationTest {
                     }
                 try {
                     val output = withTimeout(5000) { ready.await() }
-                    check(inputs == listOf(sentence, display[0].originalText)) { inputs }
-                    check(output.map { it.translatedText } == listOf("Cuộc Cách mạng Pháp tạm thời làm đình trệ", "các nỗ lực di dời.")) {
+                    check(inputs == display.map { it.originalText }) { inputs }
+                    check(output.map { it.translatedText } == listOf("Cuộc Cách mạng Pháp tạm thời bị đình trệ", "các nỗ lực di dời.")) {
                         output.map { it.translatedText }
                     }
                 } finally {

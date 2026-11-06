@@ -29,8 +29,8 @@ class TranslationUpgradesTest {
 
     private val ai =
         mapOf(
-            sentence to "Thực tế là có hai chuyện khác nhau đang diễn ra cùng lúc.",
             prefix to "Thực tế là có hai chuyện khác nhau",
+            sentence.substring(cut) to "đang diễn ra cùng lúc.",
             "Not translated yet." to "Chưa dịch.",
         )
 
@@ -45,7 +45,7 @@ class TranslationUpgradesTest {
 
     @Test fun rowsAlreadyShowingTheAiTranslationStayAsTheyAre() {
         val upgraded = withUpgrades(googleRows) { ai[it] }
-        // Without the prefix the cut would be proportional; the shown rows already read as the AI's, so they are kept.
+        // Rows already showing the exact AI result are kept without another copy.
         val again = withUpgrades(upgraded) { if (it == prefix) null else ai[it] }
         assertSame(upgraded, again)
     }

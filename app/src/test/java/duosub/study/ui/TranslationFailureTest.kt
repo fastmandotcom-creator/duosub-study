@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.nio.file.Files
@@ -127,12 +128,12 @@ class TranslationFailureTest {
         }
 
     @Test
-    fun failedSentencePrefixStillSplitsTheWholeSentenceTranslation() =
+    fun aFailedRowDoesNotInventTranslationForTheNextRow() =
         runBlocking {
             val sentence = "The French Revolution temporarily stalled relocation efforts."
             val display = captionDisplaySegments(listOf(SubtitleSegment(0, 0, 4000, sentence)), CaptionFormat.SHORT_PHRASES, natural = true)
             check(display.size == 2)
-            val translation = "Cuộc Cách mạng Pháp tạm thời làm đình trệ các nỗ lực di dời."
+            val firstTranslation = "Cuộc Cách mạng Pháp tạm thời bị đình trệ"
             withStore(display) { store ->
                 val requests = MutableStateFlow(CaptionPlaybackRequest(0, paused = false, enabled = true))
                 val ready = CompletableDeferred<List<SubtitleSegment>>()
@@ -140,14 +141,14 @@ class TranslationFailureTest {
                 val job =
                     launch {
                         translatePlaybackWindow(store, requests, { text ->
-                            if (text == sentence) translation else throw IllegalStateException("prefix failed")
+                            if (text == display[0].originalText) firstTranslation else throw IllegalStateException("row failed")
                         }, { failures += it }) { snapshot, preparing -> if (!preparing) ready.complete(snapshot) }
                     }
                 try {
                     val output = withTimeout(5000) { ready.await() }
-                    assertTrue(output.all { !it.translatedText.isNullOrBlank() })
-                    assertEquals(translation, output.joinToString(" ") { it.translatedText.orEmpty() })
-                    assertTrue(failures.isEmpty())
+                    assertEquals(firstTranslation, output[0].translatedText)
+                    assertNull(output[1].translatedText)
+                    assertEquals(1, failures.size)
                 } finally {
                     job.cancelAndJoin()
                 }
