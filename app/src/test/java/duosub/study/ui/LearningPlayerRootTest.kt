@@ -230,6 +230,81 @@ class LearningPlayerRootTest {
     }
 
     @Test
+    fun spokenVietnamesePhraseHighlightsItsMatchingEnglishTranslationSlice() {
+        val sentence = "Xin chào, các bạn!"
+        val firstStart = 0
+        val secondStart = sentence.indexOf("các bạn")
+        val cuts = listOf(secondStart)
+        val first =
+            SubtitleSegment(
+                id = 1,
+                startMs = 0,
+                endMs = 2_000,
+                originalText = sentence.substring(firstStart, secondStart).trim(),
+                translatedText = "Hello,",
+                sentence = SentenceSlice(sentence, cuts, 0),
+            )
+        val second =
+            SubtitleSegment(
+                id = 2,
+                startMs = 2_000,
+                endMs = 4_000,
+                originalText = sentence.substring(secondStart).trim(),
+                translatedText = "friends!",
+                sentence = SentenceSlice(sentence, cuts, 1),
+            )
+        val state =
+            DuoSubUiState(
+                activeVideoId = "dQw4w9WgXcQ",
+                sourcePreference = "vi",
+                resolvedSourceLanguage = "vi",
+                targetLanguage = "en",
+                segments = listOf(first, second),
+                currentIndex = 0,
+            )
+
+        val firstPair =
+            learningOverlayContent(
+                state,
+                TestUiStrings,
+                readingSegmentId = first.id,
+                readingSide = ReadSide.PRIMARY,
+            )
+        val repeatedFirstPair =
+            learningOverlayContent(
+                state,
+                TestUiStrings,
+                readingSegmentId = first.id,
+                readingSide = ReadSide.SECONDARY,
+            )
+        val secondPair =
+            learningOverlayContent(
+                state,
+                TestUiStrings,
+                readingSegmentId = second.id,
+                readingSide = ReadSide.PRIMARY,
+            )
+
+        assertEquals(sentence, firstPair?.originalText)
+        assertEquals("Hello, friends!", firstPair?.translatedText)
+        assertEquals(
+            SubtitleTextRange(sentence.indexOf("Xin chào,"), sentence.indexOf("Xin chào,") + "Xin chào,".length),
+            firstPair?.spokenOriginalRange,
+        )
+        assertEquals(SubtitleTextRange(0, "Hello,".length), firstPair?.spokenTranslatedRange)
+        assertEquals(firstPair?.spokenOriginalRange, repeatedFirstPair?.spokenOriginalRange)
+        assertEquals(firstPair?.spokenTranslatedRange, repeatedFirstPair?.spokenTranslatedRange)
+        assertEquals(
+            SubtitleTextRange(secondStart, sentence.length),
+            secondPair?.spokenOriginalRange,
+        )
+        assertEquals(
+            SubtitleTextRange("Hello, ".length, "Hello, friends!".length),
+            secondPair?.spokenTranslatedRange,
+        )
+    }
+
+    @Test
     fun overlayKeepsShortRowsWithoutASentenceSliceAsTheirOwnLine() {
         val state =
             DuoSubUiState(

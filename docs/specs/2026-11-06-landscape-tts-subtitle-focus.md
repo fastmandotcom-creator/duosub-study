@@ -5,11 +5,12 @@
 The original landscape/fullscreen correction was published as Study APK
 `study-1.0.4.15`. The follow-up pair-highlighting change was committed and pushed as
 `7387619`, with its UI test correction in `ca148f4`; the Study APK has not been
-republished. Kien requested the original
-correction, a visible highlight on the line currently spoken by TTS, and clearer
-phrase-level tracking for long captions (2026-11-06). Follow-up request (2026-11-06):
-keep both sides of the active pair highlighted throughout primary and secondary speech,
-and give each consecutive pair a distinct color.
+republished. Kien clarified the exact expected correspondence (2026-11-06): when TTS
+reads the Vietnamese phrase "Xin chào", the English phrase "Hello" translated from that
+same caption segment must be highlighted at the same time, both in portrait and
+landscape/fullscreen. The published `study-1.0.4.15` predates the pair-highlighting
+implementation, and its earlier tests used manually supplied ranges rather than proving
+the app derives the pair from caption/translation data.
 
 ## Context / problem
 
@@ -26,6 +27,9 @@ highlight the active language.
   is speaking, even after playback advances.
 - Keep both translated and original phrase highlights visible for the full read-pair step,
   even as TTS switches from one language side to the other.
+- For a sentence split into caption rows, use each row's own whole-sentence translation
+  slice as its corresponding phrase; for example, "Xin chào," / "Hello," highlights that
+  pair together and not the neighboring "các bạn!" / "friends!" pair.
 - In a long sentence, highlight the current spoken short-caption phrase within the full
   sentence, advancing through the punctuation/phrase chunks TTS reads.
 - Use one shared color for the two sides of a pair and a different color for each adjacent
@@ -72,6 +76,9 @@ finishes, the overlay follows the current video caption again.
   `LearningPlayerRoot` supplies the earlier pair to its landscape/fullscreen overlay.
 - [x] The overlay remains on the active pair while playback moves ahead.
 - [x] Both language phrases of a pair stay highlighted while primary and secondary TTS play.
+- [x] With paired rows "Xin chào," / "Hello," and "các bạn!" / "friends!", selecting the
+  first row yields source and translation ranges for the first pair only; selecting the
+  second yields ranges for the second pair only.
 - [x] Adjacent segment pairs have distinct colors shared across both languages.
 - [x] The portrait transcript card also highlights both sides of the active segment pair.
 - [x] When no paired-reading segment is active, the overlay follows the playback index and
@@ -86,10 +93,12 @@ finishes, the overlay follows the current video caption again.
 | --- | --- | --- |
 | Focused unit tests | `./gradlew testDebugUnitTest --tests 'duosub.study.translation.AiSubtitleTranslatorTest' --tests 'duosub.study.ui.CaptionTranslationCancellationTest.shortRowsAreTranslatedFromTheirOwnText' --tests 'duosub.study.ui.TranslationFailureTest.aFailedRowDoesNotInventTranslationForTheNextRow' --tests 'duosub.study.ui.TranslationUpgradesTest' --tests 'duosub.study.ui.LearningPlayerRootTest' --tests 'duosub.study.ui.SubtitleWordHighlightTest'` | Passed; AI tests use an in-memory fake model and need no API key or network |
 | Pair-highlight unit tests | `ANDROID_HOME="$HOME/Library/Android/sdk" ./gradlew testDebugUnitTest --tests 'duosub.study.ui.LearningPlayerRootTest' --tests 'duosub.study.ui.SubtitleHighlightTest'` | Passed |
+| Caption-to-translation pair mapping | `ANDROID_HOME="$HOME/Library/Android/sdk" ./gradlew testDebugUnitTest --tests 'duosub.study.ui.LearningPlayerRootTest.spokenVietnamesePhraseHighlightsItsMatchingEnglishTranslationSlice'` | Passed |
+| Actual paired text in UI | `TranslationPositionAndThemeUiTest.pairedReadingKeepsBothLanguagePhrasesHighlightedInOnePairColor` derives overlay ranges from `learningOverlayContent` for "Xin chào," / "Hello,"; verify both side spans on portrait card and overlay | Compiles locally; local API 36 emulator could not start, CI rerun pending |
 | Full unit suite | `./gradlew testDebugUnitTest` | 1,137 tests ran; two unrelated existing `SubtitleTextSanitizerTest` assertions fail (`maybe...` and `cool<3`) |
 | Android build and lint | `formatNewCode`, focused `testDebugUnitTest`, `assembleDebug`, `assembleDebugAndroidTest`, and `lintDebug` | Passed locally after the paired-highlight changes |
-| Manual Android workflow | `gh workflow run 406759641 --ref main` (run `42180222366`, commit `ca148f4`) | `verify-build` failed at `formatCheck` on untouched existing files. The API 36 run passed the new pair-highlight UI test but reported six unrelated existing UI test failures |
-| Compose UI test | `pixel2Api36DebugAndroidTest` | `TranslationPositionAndThemeUiTest.pairedReadingKeepsBothLanguagePhrasesHighlightedInOnePairColor` passed on API 36 in run `42180222366`; the full device suite failed on six other existing tests |
+| Manual Android workflow | `gh workflow run 406759641 --ref main` | Prior run `42180222366` failed at `formatCheck` on untouched existing files and reported six unrelated existing device tests; new UI test passed. Rerun after exact text-pair UI assertions |
+| Compose UI test | `pixel2Api36DebugAndroidTest` | The earlier UI version passed on API 36 in run `42180222366`. The refined test now derives ranges from the actual caption/translation segments; local emulator startup failed after five attempts |
 | Physical-device/manual | In portrait and landscape YouTube fullscreen, let paired reading advance while TTS speaks; both phrase highlights retain one pair color through both sides, adjacent pairs differ, and the overlay follows playback after TTS ends | Not run on a physical device |
 
 ## Risks / edge cases
@@ -101,8 +110,8 @@ finishes, the overlay follows the current video caption again.
 
 ## Release intent
 
-Study channel (default). Published [DuoSub Study 1.0.4-study.15](https://github.com/fastmandotcom-creator/duosub-study/releases/tag/study-1.0.4.15)
-from commit `56cc1a0`.
+Study channel. Publish the paired-highlight fix after testing the actual caption-to-
+translation phrase alignment; `study-1.0.4.15` does not include that implementation.
 
 ## Implementation result
 
@@ -118,16 +127,17 @@ side-specific focus border remain unchanged.
 
 ## Validation result
 
-The pair-highlight unit tests pass with the command listed above. The combined local run
-of `formatNewCode`, focused `testDebugUnitTest`, `assembleDebug`,
-`assembleDebugAndroidTest`, and `lintDebug` passed, and the corrected instrumented test
-source compiles locally. On API 36, `pairedReadingKeepsBothLanguagePhrasesHighlightedInOnePairColor`
-passed; the overall managed-device job failed on six unrelated existing UI tests.
-`verify-build` failed at `formatCheck`, which reported violations only in untouched files
-(`SubtitleTextSanitizer.kt`, `PlaybackTranslation.kt`, `PerRowTranslationTest.kt`, and
-`TranslationCoordinatorTest.kt`). Earlier, the AI and TTS focused tests passed; AI tests
+The exact Vietnamese-to-English caption-pair unit test passes: it checks source and
+translated ranges for both "Xin chào," / "Hello," and the neighboring "các bạn!" /
+"friends!" pair, remaining stable across primary and secondary speech. Local
+`formatNewCode`, focused unit tests, `compileDebugAndroidTestKotlin`, both debug APK
+builds, and lint passed. The refined instrumented test compiles but local API 36 emulator
+startup failed after five attempts; its previous version passed on API 36. On the prior
+CI run, `verify-build` failed at `formatCheck` on untouched files; the device job passed
+the pair-highlighting UI assertion and reported six unrelated UI failures. The exact
+caption-derived UI test still needs API 36 rerun. Earlier, the AI and TTS focused tests passed; AI tests
 use `FakeModel` and do not contact an AI service or require a key. The stale test expectations
 were updated to the app's row-wise translation contract in commit `25e36df`. The full unit
 suite runs 1,137 tests but remains blocked by two unrelated `SubtitleTextSanitizerTest`
 assertion failures. The original implementation was published as `study-1.0.4.15`; the
-follow-up pair-highlighting change has not been published.
+pair-highlighting implementation remains absent from that APK until a new Study release.
