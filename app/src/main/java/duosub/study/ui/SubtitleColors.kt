@@ -82,6 +82,22 @@ internal val DEFAULT_HIGHLIGHT_COLOR_KEY = SubtitleColorOption.MINT.key
 internal val DEFAULT_SUBTITLE_BOX_BACKGROUND_KEY = SubtitleBoxBackgroundOption.DEEP_TEAL.key
 internal val DEFAULT_APP_THEME_ACCENT_KEY = AppThemeAccentOption.CYAN.key
 
+private val PAIRED_READING_HIGHLIGHT_KEYS =
+    listOf(
+        SubtitleColorOption.SKY_BLUE.key,
+        SubtitleColorOption.MINT.key,
+        SubtitleColorOption.AMBER.key,
+        SubtitleColorOption.ROSE.key,
+        SubtitleColorOption.LAVENDER.key,
+    )
+
+/** A stable shared color for one adjacent pair of displayed subtitle segments. */
+internal fun pairedReadingHighlightColor(pairIndex: Int): Color {
+    val paletteSize = PAIRED_READING_HIGHLIGHT_KEYS.size
+    val paletteIndex = Math.floorMod(pairIndex, paletteSize)
+    return subtitleColor(PAIRED_READING_HIGHLIGHT_KEYS[paletteIndex])
+}
+
 internal fun storedSubtitleColorKey(
     raw: String?,
     fallback: String,

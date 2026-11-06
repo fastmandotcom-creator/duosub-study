@@ -725,6 +725,10 @@ internal fun LearningSubtitleOverlay(
     var overlayActionsVisible by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
+    val pairedPhraseColor =
+        content.spokenPairIndex
+            ?.takeIf { content.spokenOriginalRange != null || content.spokenTranslatedRange != null }
+            ?.let(::pairedReadingHighlightColor)
     val dragTravelPx =
         with(density) {
             if (isFullscreen) {
@@ -841,11 +845,11 @@ internal fun LearningSubtitleOverlay(
                                     markNewWords = true,
                                 )
                             val spokenAnnotated =
-                                remember(annotated, content.readingSide, content.spokenOriginalRange, highlightColor) {
+                                remember(annotated, content.spokenOriginalRange, pairedPhraseColor) {
                                     annotatedSpokenPhrase(
                                         annotated,
-                                        content.spokenOriginalRange.takeIf { content.readingSide == ReadSide.PRIMARY },
-                                        highlightColor,
+                                        content.spokenOriginalRange,
+                                        pairedPhraseColor ?: highlightColor,
                                     )
                                 }
                             PairedReadingFocusLine(readingFocus, "read_pair_overlay_focus_primary") {
@@ -874,12 +878,13 @@ internal fun LearningSubtitleOverlay(
                                         text = spokenAnnotated,
                                         modifier =
                                             if (isFullscreen) {
-                                                Modifier
+                                                Modifier.testTag("read_pair_overlay_phrase_primary")
                                             } else {
-                                                Modifier.lineSide(
-                                                    annotated,
-                                                    LocalLayoutDirection.current,
-                                                )
+                                                Modifier
+                                                    .lineSide(
+                                                        annotated,
+                                                        LocalLayoutDirection.current,
+                                                    ).testTag("read_pair_overlay_phrase_primary")
                                             },
                                         style = LocalTextStyle.current.inLineDirection(),
                                         textAlign = if (isFullscreen) TextAlign.Center else TextAlign.Unspecified,
@@ -921,11 +926,11 @@ internal fun LearningSubtitleOverlay(
                                     AnnotatedString(translated)
                                 }
                             val spokenAnnotated =
-                                remember(annotated, content.readingSide, content.spokenTranslatedRange, highlightColor) {
+                                remember(annotated, content.spokenTranslatedRange, pairedPhraseColor) {
                                     annotatedSpokenPhrase(
                                         annotated,
-                                        content.spokenTranslatedRange.takeIf { content.readingSide == ReadSide.SECONDARY },
-                                        highlightColor,
+                                        content.spokenTranslatedRange,
+                                        pairedPhraseColor ?: highlightColor,
                                     )
                                 }
                             PairedReadingFocusLine(readingFocus, "read_pair_overlay_focus_secondary") {
@@ -955,12 +960,13 @@ internal fun LearningSubtitleOverlay(
                                         text = spokenAnnotated,
                                         modifier =
                                             if (isFullscreen) {
-                                                Modifier
+                                                Modifier.testTag("read_pair_overlay_phrase_secondary")
                                             } else {
-                                                Modifier.lineSide(
-                                                    annotated,
-                                                    LocalLayoutDirection.current,
-                                                )
+                                                Modifier
+                                                    .lineSide(
+                                                        annotated,
+                                                        LocalLayoutDirection.current,
+                                                    ).testTag("read_pair_overlay_phrase_secondary")
                                             },
                                         style = LocalTextStyle.current.inLineDirection(),
                                         textAlign = if (isFullscreen) TextAlign.Center else TextAlign.Unspecified,

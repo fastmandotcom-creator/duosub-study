@@ -1,10 +1,14 @@
-# Keep the spoken subtitle visible and highlighted in landscape
+# Keep the spoken subtitle visible and highlight bilingual pairs
 
 ## Status
 
-Implemented and published as Study APK `study-1.0.4.15`. Kien requested the
-landscape/fullscreen correction, a visible highlight on the line currently spoken by TTS,
-and clearer phrase-level tracking for long captions (2026-11-06).
+The original landscape/fullscreen correction was published as Study APK
+`study-1.0.4.15`. The follow-up pair-highlighting change is implemented and validated
+locally; it has not yet been committed or published. Kien requested the original
+correction, a visible highlight on the line currently spoken by TTS, and clearer
+phrase-level tracking for long captions (2026-11-06). Follow-up request (2026-11-06):
+keep both sides of the active pair highlighted throughout primary and secondary speech,
+and give each consecutive pair a distinct color.
 
 ## Context / problem
 
@@ -19,25 +23,28 @@ highlight the active language.
 
 - Keep the landscape/fullscreen overlay on the same caption pair that paired-reading TTS
   is speaking, even after playback advances.
-- Highlight only the currently spoken language line in that overlay, using the existing
-  read-pair focus styling.
+- Keep both translated and original phrase highlights visible for the full read-pair step,
+  even as TTS switches from one language side to the other.
 - In a long sentence, highlight the current spoken short-caption phrase within the full
   sentence, advancing through the punctuation/phrase chunks TTS reads.
+- Use one shared color for the two sides of a pair and a different color for each adjacent
+  segment pair, cycling through the existing theme-aware subtitle color palette.
 - Keep each language's existing text color, so the two sides remain easy to distinguish.
 - Return to following the playback caption and remove the focus when TTS finishes.
 
 ## Non-goals
 
-- Change TTS text, timing, playback, translation, or the portrait transcript panel.
+- Change TTS text, timing, playback, or translation.
 - Add a new highlight style or user setting.
 - Publish only if the implementation passes the applicable validation checks.
 
 ## User-visible behavior
 
-While paired-reading TTS speaks, the landscape/fullscreen bilingual overlay stays on the
-spoken caption instead of advancing with the video and gives the spoken language line a
-themed background and border. When TTS finishes, the overlay follows the current video
-caption again. The portrait panel retains its existing behavior.
+While paired-reading TTS speaks, portrait and landscape/fullscreen keep the current segment
+pair marked in both languages for the entire primary/secondary read. Matching phrases share
+a color; each adjacent segment pair uses a distinct theme-aware color. In landscape, the
+full sentence remains visible while only the current phrase pair is marked. When TTS
+finishes, the overlay follows the current video caption again.
 
 ## Technical constraints / invariants
 
@@ -52,19 +59,24 @@ caption again. The portrait panel retains its existing behavior.
    `CompositionLocal` boundary to the overlay content built in `LearningPlayerRoot`.
 2. Derive the active source and translated phrase ranges from `SentenceSlice` and the
    ordered translated fragments; account for the Vietnamese/English display swap.
-3. Apply a subtle, theme-aware background to the active phrase while keeping the
-   existing per-language text colors and line-level read-pair focus.
-4. Add coverage for source/translation ranges, phrase focus, and focus clearing after TTS.
+3. Assign the segment pair a stable color from the existing subtitle palette and apply it
+   to both phrase ranges regardless of the current TTS side; keep the side-specific border.
+4. Apply the same paired-color mark to both lines of the active portrait transcript row.
+5. Add coverage for range/color stability across both speech sides, adjacent pair colors,
+   both screen presentations, and focus clearing after TTS.
 
 ## Acceptance criteria
 
 - [x] With current index on a later segment and paired reading on an earlier segment,
   `LearningPlayerRoot` supplies the earlier pair to its landscape/fullscreen overlay.
-- [x] Primary and secondary TTS steps highlight only their corresponding overlay line.
+- [x] The overlay remains on the active pair while playback moves ahead.
+- [x] Both language phrases of a pair stay highlighted while primary and secondary TTS play.
+- [x] Adjacent segment pairs have distinct colors shared across both languages.
+- [x] The portrait transcript card also highlights both sides of the active segment pair.
 - [x] When no paired-reading segment is active, the overlay follows the playback index and
   neither line has read-pair focus.
 - [x] Existing whole-sentence rendering and portrait-panel focus behavior remain intact.
-- [ ] During a long-sentence read, the overlay keeps the full sentence visible and colors
+- [x] During a long-sentence read, the overlay keeps the full sentence visible and colors
   only the currently spoken source/translated phrase; the active phrase changes with TTS.
 
 ## Validation plan
@@ -72,10 +84,12 @@ caption again. The portrait panel retains its existing behavior.
 | Category | Command/scenario and expected result | Environment / applicability |
 | --- | --- | --- |
 | Focused unit tests | `./gradlew testDebugUnitTest --tests 'duosub.study.translation.AiSubtitleTranslatorTest' --tests 'duosub.study.ui.CaptionTranslationCancellationTest.shortRowsAreTranslatedFromTheirOwnText' --tests 'duosub.study.ui.TranslationFailureTest.aFailedRowDoesNotInventTranslationForTheNextRow' --tests 'duosub.study.ui.TranslationUpgradesTest' --tests 'duosub.study.ui.LearningPlayerRootTest' --tests 'duosub.study.ui.SubtitleWordHighlightTest'` | Passed; AI tests use an in-memory fake model and need no API key or network |
+| Pair-highlight unit tests | `ANDROID_HOME="$HOME/Library/Android/sdk" ./gradlew testDebugUnitTest --tests 'duosub.study.ui.LearningPlayerRootTest' --tests 'duosub.study.ui.SubtitleHighlightTest'` | Passed |
 | Full unit suite | `./gradlew testDebugUnitTest` | 1,137 tests ran; two unrelated existing `SubtitleTextSanitizerTest` assertions fail (`maybe...` and `cool<3`) |
-| Android build and lint | `assembleDebug assembleDebugAndroidTest lintDebug` | Passed on local Android SDK; release script's Study build and package/version checks also passed |
+| Android build and lint | `formatNewCode`, focused `testDebugUnitTest`, `assembleDebug`, `assembleDebugAndroidTest`, and `lintDebug` | Passed locally after the paired-highlight changes |
 | Manual Android workflow | `gh workflow run 'Android build and releases' --ref main` | The run on release commit `56cc1a0` stopped at the stale `AiSubtitleTranslatorTest.kt:111` compile error, before the test updates. The corrected focused tests pass locally; latest full-suite workflow not run |
-| Physical-device/manual | In landscape YouTube fullscreen, let paired reading advance while TTS speaks; the displayed pair stays fixed, the spoken side is highlighted, and the overlay follows playback after TTS ends | Not run on a physical device |
+| Compose UI test | `pixel2Api36DebugAndroidTest` | Not run: the API 36 managed emulator failed to start after five attempts; the Android test APK compiled successfully |
+| Physical-device/manual | In portrait and landscape YouTube fullscreen, let paired reading advance while TTS speaks; both phrase highlights retain one pair color through both sides, adjacent pairs differ, and the overlay follows playback after TTS ends | Not run on a physical device |
 
 ## Risks / edge cases
 
@@ -95,16 +109,21 @@ from commit `56cc1a0`.
 which builds the shared overlay content from that snapshot. Phrase ranges are derived
 from the active `SentenceSlice` and the translation fragments in sentence order. Pending
 or unavailable translations have no translated phrase range. The full sentence stays
-visible; only the active fragment gets a subtle background and underline inside the
-already focused language line. Each language keeps its existing text color.
+visible; only the active fragment in each language gets the same subtle background and
+underline for the entire pair, including while TTS switches sides. Portrait cards apply
+the same paired-color mark to both complete segment lines. The pair index selects from a
+stable five-color cycle; adjacent pairs always differ. Existing text colors and the
+side-specific focus border remain unchanged.
 
 ## Validation result
 
-The AI and TTS focused tests pass. AI tests use `FakeModel`; they test request parsing,
-streaming, row-level cache and failure behavior without contacting an AI service or
-requiring a key. The stale test expectations were updated to the app's row-wise translation
-contract. The full unit suite runs 1,137 tests but remains blocked by two unrelated
-`SubtitleTextSanitizerTest` assertion failures. The debug APK, Android test APK, and lint
-all built successfully. The official Study release build verified the `duosub.study.study`
-package and expected version, then published `DuoSub-Study.apk` as `study-1.0.4.15`.
-The API 36 managed-device run and physical-device checks were not confirmed here.
+The pair-highlight unit tests pass with the command listed above. The combined local run
+of `formatNewCode`, focused `testDebugUnitTest`, `assembleDebug`,
+`assembleDebugAndroidTest`, and `lintDebug` also passed. The Android test APK compiles,
+but the API 36 managed emulator did not start, so the new Compose UI test and physical
+device appearance remain unverified. Earlier, the AI and TTS focused tests passed; AI tests
+use `FakeModel` and do not contact an AI service or require a key. The stale test expectations
+were updated to the app's row-wise translation contract in commit `25e36df`. The full unit
+suite runs 1,137 tests but remains blocked by two unrelated `SubtitleTextSanitizerTest`
+assertion failures. The original implementation was published as `study-1.0.4.15`; the
+follow-up pair-highlighting change has not been published.

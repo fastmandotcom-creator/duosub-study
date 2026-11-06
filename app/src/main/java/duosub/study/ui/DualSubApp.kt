@@ -1041,6 +1041,10 @@ internal fun SubtitleTimeline(
                     // skip recomposition each time the highlighted word moves.
                     activeWordIndex = if (active && readingSegmentId == null) activeWordIndex else -1,
                     readingSide = readingSide.takeIf { segment.id == readingSegmentId },
+                    readingPairHighlightColor =
+                        index
+                            .takeIf { segment.id == readingSegmentId }
+                            ?.let(::pairedReadingHighlightColor),
                     originalColor = originalColor,
                     translatedColor = translatedColor,
                     highlightColor = highlightColor,

@@ -11,7 +11,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -19,6 +21,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.test.platform.app.InstrumentationRegistry
 import duosub.study.data.SubtitleSegment
@@ -47,6 +50,18 @@ class TranslationPositionAndThemeUiTest {
             .onNodeWithText(text, useUnmergedTree = true)
             .fetchSemanticsNode()
             .boundsInRoot.top
+
+    private fun phraseBackground(tag: String): Color {
+        val text =
+            composeRule
+                .onNodeWithTag(tag, useUnmergedTree = true)
+                .fetchSemanticsNode()
+                .config[SemanticsProperties.Text]
+                .single()
+        return text.spanStyles
+            .single { it.item.textDecoration == TextDecoration.Underline }
+            .item.background
+    }
 
     @Test
     fun aboveShowsTheTranslationFirstInThePanelAndTheOverlay() {
@@ -82,10 +97,11 @@ class TranslationPositionAndThemeUiTest {
     }
 
     @Test
-    fun pairedReadingVisiblyEmphasizesOnlyTheSideBeingSpoken() {
+    fun pairedReadingKeepsBothLanguagePhrasesHighlightedInOnePairColor() {
         preferences.edit().putString(APP_COLOR_THEME_PREFERENCE, AppColorThemeOption.DEEP_TEAL.key).commit()
         var side by mutableStateOf<ReadSide?>(ReadSide.PRIMARY)
         val segment = SubtitleSegment(1, 0, 2_000, "Xin chào thế giới", "Hello world")
+        val pairColor = pairedReadingHighlightColor(0)
         composeRule.setContent {
             DuoSubTheme {
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -96,6 +112,7 @@ class TranslationPositionAndThemeUiTest {
                             fontScale = 1f,
                             onReplay = {},
                             readingSide = side,
+                            readingPairHighlightColor = pairColor.takeIf { side != null },
                             translationPosition = TranslationPosition.BELOW,
                         )
                         LearningSubtitleOverlay(
@@ -106,8 +123,9 @@ class TranslationPositionAndThemeUiTest {
                                     null,
                                     segment = segment,
                                     readingSide = side,
-                                    spokenOriginalRange = SubtitleTextRange(0, "Xin chào".length),
-                                    spokenTranslatedRange = SubtitleTextRange(0, "Hello".length),
+                                    spokenPairIndex = 0.takeIf { side != null },
+                                    spokenOriginalRange = SubtitleTextRange(0, "Xin chào".length).takeIf { side != null },
+                                    spokenTranslatedRange = SubtitleTextRange(0, "Hello".length).takeIf { side != null },
                                 ),
                             fontScale = 1f,
                             translationPosition = TranslationPosition.BELOW,
@@ -123,6 +141,10 @@ class TranslationPositionAndThemeUiTest {
         composeRule.onNodeWithTag("read_pair_focus_secondary", useUnmergedTree = true).assertDoesNotExist()
         composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertExists()
         composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertDoesNotExist()
+        assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_phrase_primary"))
+        assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_phrase_secondary"))
+        assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_overlay_phrase_primary"))
+        assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_overlay_phrase_secondary"))
         saveUiEvidence("paired-reading-primary-focus", composeRule.onRoot().captureToImage())
 
         preferences.edit().putString(APP_COLOR_THEME_PREFERENCE, AppColorThemeOption.LIGHT.key).commit()
@@ -132,6 +154,10 @@ class TranslationPositionAndThemeUiTest {
         composeRule.onNodeWithTag("read_pair_focus_secondary", useUnmergedTree = true).assertExists()
         composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertDoesNotExist()
         composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertExists()
+        assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_phrase_primary"))
+        assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_phrase_secondary"))
+        assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_overlay_phrase_primary"))
+        assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_overlay_phrase_secondary"))
         saveUiEvidence("paired-reading-secondary-focus", composeRule.onRoot().captureToImage())
 
         composeRule.runOnIdle { side = null }

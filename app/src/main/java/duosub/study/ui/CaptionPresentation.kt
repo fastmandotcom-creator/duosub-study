@@ -24,6 +24,8 @@ internal data class LearningOverlayContent(
     val thirdText: String? = null,
     /** The side currently spoken by paired reading, if this overlay is showing that sentence. */
     val readingSide: ReadSide? = null,
+    /** Display-segment index used to keep the pair's highlight color stable across both TTS sides. */
+    val spokenPairIndex: Int? = null,
     /** The active short-caption phrase's range in each full sentence shown during paired reading. */
     val spokenOriginalRange: SubtitleTextRange? = null,
     val spokenTranslatedRange: SubtitleTextRange? = null,
@@ -168,6 +170,7 @@ private fun unfilteredLearningOverlayContent(
             words = active.words,
             thirdText = state.thirdLineFor(active),
             readingSide = readingSide.takeIf { readingSegmentId != null },
+            spokenPairIndex = activeIndex.takeIf { readingSegmentId != null },
             spokenOriginalRange = spokenOriginalRange,
             spokenTranslatedRange = spokenTranslatedRange,
         )

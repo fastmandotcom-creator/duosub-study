@@ -9,6 +9,7 @@ import duosub.study.data.LanguageAwareTokenizer
 import duosub.study.data.SubtitleSegment
 import duosub.study.data.SubtitleWord
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -141,6 +142,29 @@ class SubtitleWordHighlightTest {
         assertEquals(range.endExclusive, style.end)
         assertEquals(Color.Yellow.copy(alpha = 0.38f), style.item.background)
         assertEquals(TextDecoration.Underline, style.item.textDecoration)
+    }
+
+    @Test
+    fun bothLanguagesShareASegmentColorAndAdjacentPairsUseDifferentColors() {
+        val source = annotatedSpokenPhrase(AnnotatedString("Một câu đầy đủ."), SubtitleTextRange(0, 3), pairedReadingHighlightColor(7))
+        val translated =
+            annotatedSpokenPhrase(AnnotatedString("A complete sentence."), SubtitleTextRange(0, 3), pairedReadingHighlightColor(7))
+        val nextPair = pairedReadingHighlightColor(8)
+
+        assertEquals(
+            source.spanStyles
+                .single()
+                .item.background,
+            translated.spanStyles
+                .single()
+                .item.background,
+        )
+        assertNotEquals(
+            source.spanStyles
+                .single()
+                .item.background,
+            nextPair.copy(alpha = 0.38f),
+        )
     }
 
     @Test fun returnsEmptyWithoutWordsOrText() {

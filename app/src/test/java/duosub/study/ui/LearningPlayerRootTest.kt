@@ -70,6 +70,7 @@ class LearningPlayerRootTest {
                 statusText = null,
                 segment = first.copy(originalText = "Xin chào", translatedText = "Hello", words = emptyList()),
                 readingSide = ReadSide.SECONDARY,
+                spokenPairIndex = 0,
                 spokenOriginalRange = SubtitleTextRange(0, "Xin chào".length),
                 spokenTranslatedRange = SubtitleTextRange(0, "Hello".length),
             ),
@@ -150,6 +151,7 @@ class LearningPlayerRootTest {
                 .indexOf("he carefully closed the lid")
         assertEquals(sentence, speakingMiddlePhrase?.originalText)
         assertEquals(ReadSide.SECONDARY, speakingMiddlePhrase?.readingSide)
+        assertEquals(1, speakingMiddlePhrase?.spokenPairIndex)
         assertEquals(
             SubtitleTextRange(sourceStart, sourceStart + spokenSourceText.length),
             speakingMiddlePhrase?.spokenOriginalRange,
@@ -158,6 +160,16 @@ class LearningPlayerRootTest {
             SubtitleTextRange(translatedStart, translatedStart + sibling1.translatedText!!.length),
             speakingMiddlePhrase?.spokenTranslatedRange,
         )
+        val speakingSource =
+            learningOverlayContent(
+                state,
+                TestUiStrings,
+                readingSegmentId = sibling1.id,
+                readingSide = ReadSide.PRIMARY,
+            )
+        assertEquals(speakingMiddlePhrase?.spokenOriginalRange, speakingSource?.spokenOriginalRange)
+        assertEquals(speakingMiddlePhrase?.spokenTranslatedRange, speakingSource?.spokenTranslatedRange)
+        assertEquals(speakingMiddlePhrase?.spokenPairIndex, speakingSource?.spokenPairIndex)
     }
 
     @Test

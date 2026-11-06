@@ -75,6 +75,7 @@ internal fun CompactSubtitleCard(
     showTranslation: Boolean = true,
     translationPosition: TranslationPosition = TranslationPosition.BELOW,
     readingSide: ReadSide? = null,
+    readingPairHighlightColor: Color? = null,
     /** Goes before the row's click, for a focus requester (TV layout). */
     focusModifier: Modifier = Modifier,
     /** Settings → Languages → Third line: plain text under the other lines; null shows nothing. */
@@ -153,6 +154,7 @@ internal fun CompactSubtitleCard(
                         onWordClick = onWordClick,
                         onReplay = onReplay,
                         readingFocus = readingFocus,
+                        readingPairHighlightColor = readingPairHighlightColor,
                     )
                 }
                 thirdText?.let { ThirdLineText(it, fontScale, translatedColor, Modifier.padding(top = 2.dp)) }
@@ -182,6 +184,7 @@ private fun CompactCardSubtitleLine(
     onWordClick: (WordTap) -> Unit,
     onReplay: () -> Unit,
     readingFocus: Boolean,
+    readingPairHighlightColor: Color?,
 ) {
     PairedReadingFocusLine(
         focused = readingFocus,
@@ -207,6 +210,7 @@ private fun CompactCardSubtitleLine(
                 onWordClick,
                 onReplay,
                 readingFocus,
+                readingPairHighlightColor,
             )
         } else {
             OriginalCardText(
@@ -227,6 +231,7 @@ private fun CompactCardSubtitleLine(
                 onWordClick,
                 onReplay,
                 readingFocus,
+                readingPairHighlightColor,
             )
         }
     }
@@ -325,6 +330,7 @@ private fun OriginalCardText(
     onWordClick: (WordTap) -> Unit,
     onReplay: () -> Unit,
     readingFocus: Boolean,
+    readingPairHighlightColor: Color?,
 ) {
     val shouldHighlightPos =
         wordLearningEnabled && isSentenceEligibleForPos && (wordLearningTarget == "original" || wordLearningTarget == "both")
@@ -339,10 +345,20 @@ private fun OriginalCardText(
             languageCode = resolvedSourceLanguage,
             markNewWords = true,
         )
+    val pairedAnnotatedOriginal =
+        if (readingPairHighlightColor != null) {
+            annotatedSpokenPhrase(
+                annotatedOriginal,
+                SubtitleTextRange(0, segment.originalText.length),
+                readingPairHighlightColor,
+            )
+        } else {
+            annotatedOriginal
+        }
     if (wordLearningEnabled && tapToLearnEnabled) {
         SelectableSubtitleText(
             text = segment.originalText,
-            annotated = annotatedOriginal,
+            annotated = pairedAnnotatedOriginal,
             style =
                 TextStyle(
                     fontSize = (17 * fontScale).sp,
@@ -363,8 +379,11 @@ private fun OriginalCardText(
         )
     } else {
         Text(
-            text = annotatedOriginal,
-            modifier = Modifier.lineSide(annotatedOriginal, LocalLayoutDirection.current),
+            text = pairedAnnotatedOriginal,
+            modifier =
+                Modifier
+                    .lineSide(pairedAnnotatedOriginal, LocalLayoutDirection.current)
+                    .testTag("read_pair_phrase_primary"),
             style = LocalTextStyle.current.inLineDirection(),
             fontSize = (17 * fontScale).sp,
             lineHeight = (22 * fontScale).sp,
@@ -398,6 +417,7 @@ private fun TranslatedCardText(
     onWordClick: (WordTap) -> Unit,
     onReplay: () -> Unit,
     readingFocus: Boolean,
+    readingPairHighlightColor: Color?,
 ) {
     val shouldHighlightTrans =
         wordLearningEnabled && isSentenceEligibleForPos && (wordLearningTarget == "translation" || wordLearningTarget == "both")
@@ -427,10 +447,20 @@ private fun TranslatedCardText(
         } else {
             AnnotatedString(translatedText ?: fallbackText)
         }
+    val pairedAnnotatedTranslation =
+        if (readingPairHighlightColor != null && translatedText != null) {
+            annotatedSpokenPhrase(
+                annotatedTrans,
+                SubtitleTextRange(0, translatedText.length),
+                readingPairHighlightColor,
+            )
+        } else {
+            annotatedTrans
+        }
     if (wordLearningEnabled && tapToLearnEnabled && translatedText != null) {
         SelectableSubtitleText(
             text = translatedText,
-            annotated = annotatedTrans,
+            annotated = pairedAnnotatedTranslation,
             style =
                 TextStyle(
                     fontSize = (14 * fontScale).sp,
@@ -448,8 +478,11 @@ private fun TranslatedCardText(
         )
     } else {
         Text(
-            text = annotatedTrans,
-            modifier = Modifier.lineSide(annotatedTrans, LocalLayoutDirection.current),
+            text = pairedAnnotatedTranslation,
+            modifier =
+                Modifier
+                    .lineSide(pairedAnnotatedTranslation, LocalLayoutDirection.current)
+                    .testTag("read_pair_phrase_secondary"),
             style = LocalTextStyle.current.inLineDirection(),
             fontSize = (14 * fontScale).sp,
             lineHeight = (18 * fontScale).sp,
