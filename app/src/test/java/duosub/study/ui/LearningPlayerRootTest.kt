@@ -2,6 +2,7 @@ package duosub.study.ui
 
 import android.content.res.Configuration
 import duosub.study.R
+import duosub.study.data.SentenceSlice
 import duosub.study.data.SubtitleSegment
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -77,6 +78,75 @@ class LearningPlayerRootTest {
                 readingSide = ReadSide.SECONDARY,
             ),
         )
+    }
+
+    @Test
+    fun overlayShowsTheWholeSentenceWhenTheActiveRowIsOnlyAFragment() {
+        val sentence = "According to the young man, he carefully closed the lid before flushing."
+        val cut1 = sentence.indexOf(" he carefully")
+        val cut2 = sentence.indexOf(" before flushing")
+        val fragments = listOf(sentence.substring(0, cut1), sentence.substring(cut1, cut2), sentence.substring(cut2))
+        val cuts = listOf(cut1, cut2)
+        val slice2 = SentenceSlice(sentence, cuts, 2)
+        val fragment2 = SubtitleSegment(
+            id = 2,
+            startMs = 4_000,
+            endMs = 6_000,
+            originalText = fragments[2],
+            translatedText = "before flushing.",
+            words = emptyList(),
+            sentence = slice2,
+        )
+        val sibling1 = fragment2.copy(
+            id = 1,
+            startMs = 2_000,
+            endMs = 4_000,
+            originalText = fragments[1],
+            translatedText = "he carefully closed the lid",
+            sentence = SentenceSlice(sentence, cuts, 1),
+        )
+        val sibling0 = fragment2.copy(
+            id = 0,
+            startMs = 0,
+            endMs = 2_000,
+            originalText = fragments[0],
+            translatedText = "According to the young man,",
+            sentence = SentenceSlice(sentence, cuts, 0),
+        )
+        val state =
+            DuoSubUiState(
+                activeVideoId = "dQw4w9WgXcQ",
+                resolvedSourceLanguage = "en",
+                targetLanguage = "vi",
+                segments = listOf(sibling0, sibling1, fragment2),
+                currentIndex = 2,
+            )
+
+        val content = learningOverlayContent(state, TestUiStrings)
+
+        assertEquals(sentence, content?.originalText)
+        assertEquals(
+            "According to the young man, he carefully closed the lid before flushing.",
+            content?.translatedText,
+        )
+        assertEquals(sentence, content?.segment?.originalText)
+    }
+
+    @Test
+    fun overlayKeepsShortRowsWithoutASentenceSliceAsTheirOwnLine() {
+        val state =
+            DuoSubUiState(
+                activeVideoId = "dQw4w9WgXcQ",
+                segments =
+                    listOf(
+                        SubtitleSegment(1, 1_000, 2_000, "First line", "Dòng đầu tiên"),
+                        SubtitleSegment(2, 2_000, 3_000, "Second line", "Dòng thứ hai"),
+                    ),
+                currentIndex = 1,
+            )
+
+        assertEquals("Second line", learningOverlayContent(state, TestUiStrings)?.originalText)
+        assertEquals("Dòng thứ hai", learningOverlayContent(state, TestUiStrings)?.translatedText)
     }
 
     @Test
