@@ -100,18 +100,21 @@ class AiSubtitleTranslatorTest {
             val model =
                 FakeModel {
                     """{"sentences":[
-                        {"id":1,"rows":["Thực tế là có hai chuyện khác nhau","đang diễn ra cùng lúc ngay lúc này."]},
-                        {"id":2,"rows":["Ở một phía, ta có các CVE."]}]}"""
+                        {"id":1,"rows":["Thực tế là có hai chuyện khác nhau"]},
+                        {"id":2,"rows":["đang diễn ra cùng lúc ngay lúc này."]},
+                        {"id":3,"rows":["Ở một phía, ta có các CVE."]}]}"""
                 }
             val translator = AiSubtitleTranslator(cacheDirectory = null)
             val texts = translationTexts(rows)
             translator.translateAll(model, "en", "vi", texts)
-            val whole = translator.cachedTranslation(model, "en", "vi", sentence)!!
-            val prefix = translator.cachedTranslation(model, "en", "vi", rows[0].originalText)!!
-            val shown = withTranslation(rows, 0, whole, listOf(prefix))
+            val first = translator.cachedTranslation(model, "en", "vi", rows[0].originalText)!!
+            val second = translator.cachedTranslation(model, "en", "vi", rows[1].originalText)!!
+            val third = translator.cachedTranslation(model, "en", "vi", rows[2].originalText)!!
+            val shown = withTranslation(rows, 0, first)
             assertEquals("Thực tế là có hai chuyện khác nhau", shown[0].translatedText)
-            assertEquals("đang diễn ra cùng lúc ngay lúc này.", shown[1].translatedText)
-            assertEquals("Ở một phía, ta có các CVE.", translator.cachedTranslation(model, "en", "vi", rows[2].originalText))
+            assertNull(shown[1].translatedText)
+            assertEquals(second, withTranslation(rows, 1, second)[1].translatedText)
+            assertEquals("Ở một phía, ta có các CVE.", third)
             // Everything is cached: a second call sends nothing.
             translator.translateAll(model, "en", "vi", texts)
             assertEquals(1, model.requests.size)
