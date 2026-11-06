@@ -482,7 +482,12 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
     }
 
     val pairedReader = LocalPairedReading.current
-    val overlayContent = learningOverlayContent(state)
+    val overlayContent =
+        learningOverlayContent(
+            state,
+            readingSegmentId = pairedReader?.readingSegmentId,
+            readingSide = pairedReader?.progress?.side,
+        )
     val translationPosition = effectiveStudyTranslationPosition(state, readingPairActive = pairedReader?.readingSegmentId != null)
     val controlsLiftDp =
         playerControlsAvoidanceLiftDp(
