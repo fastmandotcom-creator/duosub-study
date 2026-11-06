@@ -142,7 +142,7 @@ internal fun sentenceTranslation(rows: List<SubtitleSegment>, row: SubtitleSegme
         rows
             .filter { it.sentence?.text == slice.text && it.translatedText != null }
             .sortedBy { it.sentence?.index ?: 0 }
-    val parts = ordered.map { it.translatedText }.filter { it.isNotBlank() }
+    val parts = ordered.map { it.translatedText.orEmpty() }.filter { it.isNotBlank() }
     return parts.joinToString(" ").takeIf { it.isNotEmpty() }
 }
 
