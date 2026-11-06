@@ -4,7 +4,8 @@
 
 The original landscape/fullscreen correction was published as Study APK
 `study-1.0.4.15`. The follow-up pair-highlighting change was committed and pushed as
-`7387619`; the Study APK has not been republished. Kien requested the original
+`7387619`, with its UI test correction in `ca148f4`; the Study APK has not been
+republished. Kien requested the original
 correction, a visible highlight on the line currently spoken by TTS, and clearer
 phrase-level tracking for long captions (2026-11-06). Follow-up request (2026-11-06):
 keep both sides of the active pair highlighted throughout primary and secondary speech,
@@ -87,8 +88,8 @@ finishes, the overlay follows the current video caption again.
 | Pair-highlight unit tests | `ANDROID_HOME="$HOME/Library/Android/sdk" ./gradlew testDebugUnitTest --tests 'duosub.study.ui.LearningPlayerRootTest' --tests 'duosub.study.ui.SubtitleHighlightTest'` | Passed |
 | Full unit suite | `./gradlew testDebugUnitTest` | 1,137 tests ran; two unrelated existing `SubtitleTextSanitizerTest` assertions fail (`maybe...` and `cool<3`) |
 | Android build and lint | `formatNewCode`, focused `testDebugUnitTest`, `assembleDebug`, `assembleDebugAndroidTest`, and `lintDebug` | Passed locally after the paired-highlight changes |
-| Manual Android workflow | `gh workflow run 406759641 --ref main` (run `42178152555`, commit `7387619`) | `verify-build` failed at `formatCheck` on untouched existing files. Managed-device tests ran; the new UI test exposed an incorrect expectation that an un-focused wrapper is absent, now corrected. Other unrelated existing UI tests also failed |
-| Compose UI test | `pixel2Api36DebugAndroidTest` | API 36 execution reached the new test; its wrapper-presence assertion was wrong and is corrected. Rerun after the correction |
+| Manual Android workflow | `gh workflow run 406759641 --ref main` (run `42180222366`, commit `ca148f4`) | `verify-build` failed at `formatCheck` on untouched existing files. The API 36 run passed the new pair-highlight UI test but reported six unrelated existing UI test failures |
+| Compose UI test | `pixel2Api36DebugAndroidTest` | `TranslationPositionAndThemeUiTest.pairedReadingKeepsBothLanguagePhrasesHighlightedInOnePairColor` passed on API 36 in run `42180222366`; the full device suite failed on six other existing tests |
 | Physical-device/manual | In portrait and landscape YouTube fullscreen, let paired reading advance while TTS speaks; both phrase highlights retain one pair color through both sides, adjacent pairs differ, and the overlay follows playback after TTS ends | Not run on a physical device |
 
 ## Risks / edge cases
@@ -119,13 +120,13 @@ side-specific focus border remain unchanged.
 
 The pair-highlight unit tests pass with the command listed above. The combined local run
 of `formatNewCode`, focused `testDebugUnitTest`, `assembleDebug`,
-`assembleDebugAndroidTest`, and `lintDebug` also passed. After commit `7387619`, Android CI
-reported formatting failures only in untouched existing files. Its API 36 run reached the
-new Compose test, where a test expectation about always-present line wrappers failed; that
-expectation has been corrected and its instrumented source recompiles locally. The same
-managed-device run also reported unrelated existing UI failures; a rerun is still needed
-to verify the corrected test. Earlier, the AI and TTS focused tests passed; AI tests use
-`FakeModel` and do not contact an AI service or require a key. The stale test expectations
+`assembleDebugAndroidTest`, and `lintDebug` passed, and the corrected instrumented test
+source compiles locally. On API 36, `pairedReadingKeepsBothLanguagePhrasesHighlightedInOnePairColor`
+passed; the overall managed-device job failed on six unrelated existing UI tests.
+`verify-build` failed at `formatCheck`, which reported violations only in untouched files
+(`SubtitleTextSanitizer.kt`, `PlaybackTranslation.kt`, `PerRowTranslationTest.kt`, and
+`TranslationCoordinatorTest.kt`). Earlier, the AI and TTS focused tests passed; AI tests
+use `FakeModel` and do not contact an AI service or require a key. The stale test expectations
 were updated to the app's row-wise translation contract in commit `25e36df`. The full unit
 suite runs 1,137 tests but remains blocked by two unrelated `SubtitleTextSanitizerTest`
 assertion failures. The original implementation was published as `study-1.0.4.15`; the
