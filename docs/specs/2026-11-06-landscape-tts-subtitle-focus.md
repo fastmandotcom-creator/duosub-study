@@ -3,8 +3,8 @@
 ## Status
 
 The original landscape/fullscreen correction was published as Study APK
-`study-1.0.4.15`. The follow-up pair-highlighting change is implemented and validated
-locally; it has not yet been committed or published. Kien requested the original
+`study-1.0.4.15`. The follow-up pair-highlighting change was committed and pushed as
+`7387619`; the Study APK has not been republished. Kien requested the original
 correction, a visible highlight on the line currently spoken by TTS, and clearer
 phrase-level tracking for long captions (2026-11-06). Follow-up request (2026-11-06):
 keep both sides of the active pair highlighted throughout primary and secondary speech,
@@ -28,7 +28,7 @@ highlight the active language.
 - In a long sentence, highlight the current spoken short-caption phrase within the full
   sentence, advancing through the punctuation/phrase chunks TTS reads.
 - Use one shared color for the two sides of a pair and a different color for each adjacent
-  segment pair, cycling through the existing theme-aware subtitle color palette.
+  segment pair, cycling through the existing subtitle color palette.
 - Keep each language's existing text color, so the two sides remain easy to distinguish.
 - Return to following the playback caption and remove the focus when TTS finishes.
 
@@ -42,7 +42,7 @@ highlight the active language.
 
 While paired-reading TTS speaks, portrait and landscape/fullscreen keep the current segment
 pair marked in both languages for the entire primary/secondary read. Matching phrases share
-a color; each adjacent segment pair uses a distinct theme-aware color. In landscape, the
+a color; each adjacent segment pair uses a distinct color. In landscape, the
 full sentence remains visible while only the current phrase pair is marked. When TTS
 finishes, the overlay follows the current video caption again.
 
@@ -87,8 +87,8 @@ finishes, the overlay follows the current video caption again.
 | Pair-highlight unit tests | `ANDROID_HOME="$HOME/Library/Android/sdk" ./gradlew testDebugUnitTest --tests 'duosub.study.ui.LearningPlayerRootTest' --tests 'duosub.study.ui.SubtitleHighlightTest'` | Passed |
 | Full unit suite | `./gradlew testDebugUnitTest` | 1,137 tests ran; two unrelated existing `SubtitleTextSanitizerTest` assertions fail (`maybe...` and `cool<3`) |
 | Android build and lint | `formatNewCode`, focused `testDebugUnitTest`, `assembleDebug`, `assembleDebugAndroidTest`, and `lintDebug` | Passed locally after the paired-highlight changes |
-| Manual Android workflow | `gh workflow run 'Android build and releases' --ref main` | The run on release commit `56cc1a0` stopped at the stale `AiSubtitleTranslatorTest.kt:111` compile error, before the test updates. The corrected focused tests pass locally; latest full-suite workflow not run |
-| Compose UI test | `pixel2Api36DebugAndroidTest` | Not run: the API 36 managed emulator failed to start after five attempts; the Android test APK compiled successfully |
+| Manual Android workflow | `gh workflow run 406759641 --ref main` (run `42178152555`, commit `7387619`) | `verify-build` failed at `formatCheck` on untouched existing files. Managed-device tests ran; the new UI test exposed an incorrect expectation that an un-focused wrapper is absent, now corrected. Other unrelated existing UI tests also failed |
+| Compose UI test | `pixel2Api36DebugAndroidTest` | API 36 execution reached the new test; its wrapper-presence assertion was wrong and is corrected. Rerun after the correction |
 | Physical-device/manual | In portrait and landscape YouTube fullscreen, let paired reading advance while TTS speaks; both phrase highlights retain one pair color through both sides, adjacent pairs differ, and the overlay follows playback after TTS ends | Not run on a physical device |
 
 ## Risks / edge cases
@@ -119,10 +119,13 @@ side-specific focus border remain unchanged.
 
 The pair-highlight unit tests pass with the command listed above. The combined local run
 of `formatNewCode`, focused `testDebugUnitTest`, `assembleDebug`,
-`assembleDebugAndroidTest`, and `lintDebug` also passed. The Android test APK compiles,
-but the API 36 managed emulator did not start, so the new Compose UI test and physical
-device appearance remain unverified. Earlier, the AI and TTS focused tests passed; AI tests
-use `FakeModel` and do not contact an AI service or require a key. The stale test expectations
+`assembleDebugAndroidTest`, and `lintDebug` also passed. After commit `7387619`, Android CI
+reported formatting failures only in untouched existing files. Its API 36 run reached the
+new Compose test, where a test expectation about always-present line wrappers failed; that
+expectation has been corrected and its instrumented source recompiles locally. The same
+managed-device run also reported unrelated existing UI failures; a rerun is still needed
+to verify the corrected test. Earlier, the AI and TTS focused tests passed; AI tests use
+`FakeModel` and do not contact an AI service or require a key. The stale test expectations
 were updated to the app's row-wise translation contract in commit `25e36df`. The full unit
 suite runs 1,137 tests but remains blocked by two unrelated `SubtitleTextSanitizerTest`
 assertion failures. The original implementation was published as `study-1.0.4.15`; the

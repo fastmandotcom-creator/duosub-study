@@ -138,9 +138,9 @@ class TranslationPositionAndThemeUiTest {
         }
 
         composeRule.onNodeWithTag("read_pair_focus_primary", useUnmergedTree = true).assertExists()
-        composeRule.onNodeWithTag("read_pair_focus_secondary", useUnmergedTree = true).assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_focus_secondary", useUnmergedTree = true).assertExists()
         composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertExists()
-        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertExists()
         assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_phrase_primary"))
         assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_phrase_secondary"))
         assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_overlay_phrase_primary"))
@@ -150,9 +150,9 @@ class TranslationPositionAndThemeUiTest {
         preferences.edit().putString(APP_COLOR_THEME_PREFERENCE, AppColorThemeOption.LIGHT.key).commit()
         composeRule.runOnIdle { side = ReadSide.SECONDARY }
         composeRule.waitForIdle()
-        composeRule.onNodeWithTag("read_pair_focus_primary", useUnmergedTree = true).assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_focus_primary", useUnmergedTree = true).assertExists()
         composeRule.onNodeWithTag("read_pair_focus_secondary", useUnmergedTree = true).assertExists()
-        composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertExists()
         composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertExists()
         assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_phrase_primary"))
         assertEquals(pairColor.copy(alpha = 0.38f), phraseBackground("read_pair_phrase_secondary"))
@@ -162,8 +162,8 @@ class TranslationPositionAndThemeUiTest {
 
         composeRule.runOnIdle { side = null }
         composeRule.waitForIdle()
-        composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertDoesNotExist()
-        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertExists()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertExists()
     }
 
     @Test
