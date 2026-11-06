@@ -94,11 +94,11 @@ finishes, the overlay follows the current video caption again.
 | Focused unit tests | `./gradlew testDebugUnitTest --tests 'duosub.study.translation.AiSubtitleTranslatorTest' --tests 'duosub.study.ui.CaptionTranslationCancellationTest.shortRowsAreTranslatedFromTheirOwnText' --tests 'duosub.study.ui.TranslationFailureTest.aFailedRowDoesNotInventTranslationForTheNextRow' --tests 'duosub.study.ui.TranslationUpgradesTest' --tests 'duosub.study.ui.LearningPlayerRootTest' --tests 'duosub.study.ui.SubtitleWordHighlightTest'` | Passed; AI tests use an in-memory fake model and need no API key or network |
 | Pair-highlight unit tests | `ANDROID_HOME="$HOME/Library/Android/sdk" ./gradlew testDebugUnitTest --tests 'duosub.study.ui.LearningPlayerRootTest' --tests 'duosub.study.ui.SubtitleHighlightTest'` | Passed |
 | Caption-to-translation pair mapping | `ANDROID_HOME="$HOME/Library/Android/sdk" ./gradlew testDebugUnitTest --tests 'duosub.study.ui.LearningPlayerRootTest.spokenVietnamesePhraseHighlightsItsMatchingEnglishTranslationSlice'` | Passed |
-| Actual paired text in UI | `TranslationPositionAndThemeUiTest.pairedReadingKeepsBothLanguagePhrasesHighlightedInOnePairColor` derives overlay ranges from `learningOverlayContent` for "Xin chào," / "Hello,"; verify both side spans on portrait card and overlay | Compiles locally; local API 36 emulator could not start, CI rerun pending |
+| Actual paired text in UI | `TranslationPositionAndThemeUiTest.pairedReadingKeepsBothLanguagePhrasesHighlightedInOnePairColor` derives overlay ranges from `learningOverlayContent` for "Xin chào," / "Hello,"; verify both side spans on portrait card and overlay | Passed on API 36 in CI run `42183481106` (5/5 tests in this class) |
 | Full unit suite | `./gradlew testDebugUnitTest` | 1,137 tests ran; two unrelated existing `SubtitleTextSanitizerTest` assertions fail (`maybe...` and `cool<3`) |
 | Android build and lint | `formatNewCode`, focused `testDebugUnitTest`, `assembleDebug`, `assembleDebugAndroidTest`, and `lintDebug` | Passed locally after the paired-highlight changes |
-| Manual Android workflow | `gh workflow run 406759641 --ref main` | Prior run `42180222366` failed at `formatCheck` on untouched existing files and reported six unrelated existing device tests; new UI test passed. Rerun after exact text-pair UI assertions |
-| Compose UI test | `pixel2Api36DebugAndroidTest` | The earlier UI version passed on API 36 in run `42180222366`. The refined test now derives ranges from the actual caption/translation segments; local emulator startup failed after five attempts |
+| Manual Android workflow | `gh workflow run 406759641 --ref main` | Run `42183481106` failed: format ratchet reported the changed UI test plus existing files; API 36 had six failures in existing `LanguageSetupScreenTest` (2), `LearningPlayerUiTest` (1), `RestoredHighlightPlaybackTest` (1), and `SubtitleUiTest` (2). All six also failed in earlier run `42159290817`; the paired-highlight UI test passed |
+| Compose UI test | `pixel2Api36DebugAndroidTest` | Refined caption-derived paired-highlight UI test passed on API 36 in run `42183481106`; the local emulator is unavailable |
 | Physical-device/manual | In portrait and landscape YouTube fullscreen, let paired reading advance while TTS speaks; both phrase highlights retain one pair color through both sides, adjacent pairs differ, and the overlay follows playback after TTS ends | Not run on a physical device |
 
 ## Risks / edge cases
@@ -129,15 +129,16 @@ side-specific focus border remain unchanged.
 
 The exact Vietnamese-to-English caption-pair unit test passes: it checks source and
 translated ranges for both "Xin chào," / "Hello," and the neighboring "các bạn!" /
-"friends!" pair, remaining stable across primary and secondary speech. Local
-`formatNewCode`, focused unit tests, `compileDebugAndroidTestKotlin`, both debug APK
-builds, and lint passed. The refined instrumented test compiles but local API 36 emulator
-startup failed after five attempts; its previous version passed on API 36. On the prior
-CI run, `verify-build` failed at `formatCheck` on untouched files; the device job passed
-the pair-highlighting UI assertion and reported six unrelated UI failures. The exact
-caption-derived UI test still needs API 36 rerun. Earlier, the AI and TTS focused tests passed; AI tests
-use `FakeModel` and do not contact an AI service or require a key. The stale test expectations
-were updated to the app's row-wise translation contract in commit `25e36df`. The full unit
-suite runs 1,137 tests but remains blocked by two unrelated `SubtitleTextSanitizerTest`
-assertion failures. The original implementation was published as `study-1.0.4.15`; the
-pair-highlighting implementation remains absent from that APK until a new Study release.
+"friends!" pair, remaining stable across primary and secondary speech. The refined
+caption-derived paired-highlight instrumented test also passed on API 36 in CI run
+`42183481106`, including the portrait card and landscape overlay. Locally,
+`formatNewCode`, the focused unit test, `compileDebugAndroidTestKotlin`, both debug APK
+builds, and lint passed. The CI `verify-build` job failed at `formatCheck`; its one
+finding in the modified UI test was fixed in commit `7bd59f5`, while other findings are
+in existing files. The API 36 job reported six failures in unrelated existing tests;
+the same six failed in earlier run `42159290817`. The full unit suite runs 1,137 tests
+but remains blocked by two unrelated `SubtitleTextSanitizerTest` assertion failures.
+Earlier AI and TTS focused tests passed; AI tests use `FakeModel` and do not contact an
+AI service or require a key. The original implementation was published as
+`study-1.0.4.15`; the pair-highlighting implementation remains absent from that APK
+until a new Study release.
