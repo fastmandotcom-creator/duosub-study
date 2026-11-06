@@ -102,13 +102,14 @@ import kotlin.math.roundToInt
 
 @Composable
 @Suppress("LongMethod")
-fun DuoSubApp(
+internal fun DuoSubApp(
     viewModel: AppViewModel,
     playerMode: PlayerExperienceMode = PlayerExperienceMode.TRANSCRIPT_PANEL,
     effectivePlayerMode: PlayerExperienceMode = playerMode,
     onPlayerModeChange: (PlayerExperienceMode) -> Unit = {},
     externalSettingsRequestId: Long = 0L,
     fullscreenLearningOverlay: (@Composable BoxScope.() -> Unit)? = null,
+    onPairedReadingStateChange: (Long?, ReadSide?) -> Unit = { _, _ -> },
     onNavigationVisibilityChange: (Boolean) -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -123,9 +124,12 @@ fun DuoSubApp(
     val studyRunner = rememberStudyPlaybackRunner(webController, state)
     val pairReader = remember(pronouncer, webController) { PairedLineReaderHost(pronouncer, webController) }
     val pairSettings by rememberStudySettings()
+    val readingSegmentId = pairReader.readingSegmentId
+    val readingSide = pairReader.progress?.side.takeIf { readingSegmentId != null }
     SideEffect {
         pairReader.state = state
         pairReader.secondaryTimes = pairSettings.pairReadCount
+        onPairedReadingStateChange(readingSegmentId, readingSide)
     }
     DisposableEffect(studyRunner, pairReader) {
         studyRunner.onReadPair = pairReader::readEndedLine

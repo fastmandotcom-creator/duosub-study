@@ -84,7 +84,7 @@ class TranslationPositionAndThemeUiTest {
     @Test
     fun pairedReadingVisiblyEmphasizesOnlyTheSideBeingSpoken() {
         preferences.edit().putString(APP_COLOR_THEME_PREFERENCE, AppColorThemeOption.DEEP_TEAL.key).commit()
-        var side by mutableStateOf(ReadSide.PRIMARY)
+        var side by mutableStateOf<ReadSide?>(ReadSide.PRIMARY)
         val segment = SubtitleSegment(1, 0, 2_000, "Xin chào", "Hello")
         composeRule.setContent {
             DuoSubTheme {
@@ -124,6 +124,11 @@ class TranslationPositionAndThemeUiTest {
         composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertDoesNotExist()
         composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertExists()
         saveUiEvidence("paired-reading-secondary-focus", composeRule.onRoot().captureToImage())
+
+        composeRule.runOnIdle { side = null }
+        composeRule.waitForIdle()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_primary", useUnmergedTree = true).assertDoesNotExist()
+        composeRule.onNodeWithTag("read_pair_overlay_focus_secondary", useUnmergedTree = true).assertDoesNotExist()
     }
 
     @Test

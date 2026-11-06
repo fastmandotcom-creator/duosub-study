@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -336,6 +337,8 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
     }
     var restoreTranscriptAfterAutomaticOverlay by remember { mutableStateOf(false) }
     var fullscreenOverlayHiddenByUser by remember { mutableStateOf(false) }
+    var pairedReadingSegmentId by remember { mutableStateOf<Long?>(null) }
+    var pairedReadingSide by remember { mutableStateOf<ReadSide?>(null) }
     var settingsRequestId by remember { mutableLongStateOf(0L) }
     var navigationOpen by remember { mutableStateOf(false) }
 
@@ -481,9 +484,15 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
         }
     }
 
-    val pairedReader = LocalPairedReading.current
-    val overlayContent = learningOverlayContent(state)
-    val translationPosition = effectiveStudyTranslationPosition(state, readingPairActive = pairedReader?.readingSegmentId != null)
+    val readingSegmentId = pairedReadingSegmentId
+    val overlayContent =
+        learningOverlayContent(
+            state,
+            LocalResources.current.uiStrings(),
+            readingSegmentId = readingSegmentId,
+            readingSide = pairedReadingSide.takeIf { readingSegmentId != null },
+        )
+    val translationPosition = effectiveStudyTranslationPosition(state, readingPairActive = readingSegmentId != null)
     val controlsLiftDp =
         playerControlsAvoidanceLiftDp(
             enabled = autoAvoidPlayerControls,
@@ -584,6 +593,10 @@ fun LearningPlayerRoot(viewModel: AppViewModel) {
                 onPlayerModeChange = ::selectMode,
                 externalSettingsRequestId = settingsRequestId,
                 fullscreenLearningOverlay = fullscreenLearningOverlay,
+                onPairedReadingStateChange = { segmentId, side ->
+                    pairedReadingSegmentId = segmentId
+                    pairedReadingSide = side
+                },
                 onNavigationVisibilityChange = { navigationOpen = it },
             )
 
