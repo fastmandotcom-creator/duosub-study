@@ -2,10 +2,9 @@
 
 ## Status
 
-Implemented; local build and lint pass. Kien requested the landscape/fullscreen correction,
-a visible highlight on the line currently spoken by TTS, and clearer phrase-level tracking
-for long captions (2026-11-06). The owner authorized publishing a Study APK if validation
-is satisfactory.
+Implemented and published as Study APK `study-1.0.4.15`. Kien requested the
+landscape/fullscreen correction, a visible highlight on the line currently spoken by TTS,
+and clearer phrase-level tracking for long captions (2026-11-06).
 
 ## Context / problem
 
@@ -73,9 +72,9 @@ caption again. The portrait panel retains its existing behavior.
 | Category | Command/scenario and expected result | Environment / applicability |
 | --- | --- | --- |
 | Unit tests | `./gradlew testDebugUnitTest --tests "duosub.study.ui.LearningPlayerRootTest"` | Blocked before test execution by the pre-existing `AiSubtitleTranslatorTest.kt:111` compile error: too many arguments to `withTranslation` |
-| Android build and lint | `assembleDebug assembleDebugAndroidTest lintDebug` | Passed on local Android SDK; Android test APK compiled |
-| Instrumented | Run the paired-reading focus UI test on API 36 | Not run; no managed/connected device available |
-| Physical-device/manual | In landscape YouTube fullscreen, let paired reading advance while TTS speaks; the displayed pair stays fixed, the spoken side is highlighted, and the overlay follows playback after TTS ends | Not run; no device verification |
+| Android build and lint | `assembleDebug assembleDebugAndroidTest lintDebug` | Passed on local Android SDK; release script's Study build and package/version checks also passed |
+| Manual Android workflow | `gh workflow run 'Android build and releases' --ref main` | `verify-build` failed at test compilation due to the same pre-existing `AiSubtitleTranslatorTest.kt:111` error; API 36 managed-device tests were still running when the APK was published |
+| Physical-device/manual | In landscape YouTube fullscreen, let paired reading advance while TTS speaks; the displayed pair stays fixed, the spoken side is highlighted, and the overlay follows playback after TTS ends | Not run on a physical device |
 
 ## Risks / edge cases
 
@@ -86,9 +85,8 @@ caption again. The portrait panel retains its existing behavior.
 
 ## Release intent
 
-Study channel (default). Owner authorized a Study APK if validation is satisfactory.
-Publication is withheld because the unit-test compilation failure prevents confirming
-the new phrase-range unit coverage.
+Study channel (default). Published [DuoSub Study 1.0.4-study.15](https://github.com/fastmandotcom-creator/duosub-study/releases/tag/study-1.0.4.15)
+from commit `56cc1a0`.
 
 ## Implementation result
 
@@ -103,5 +101,7 @@ already focused language line. Each language keeps its existing text color.
 
 The phrase-range checks were added, but the focused unit-test task could not compile the
 test source set due to the unrelated `AiSubtitleTranslatorTest.kt:111` error. The debug
-APK, Android test APK, and lint all built successfully. Instrumented runtime and physical
-device checks were not available, so no Study APK was published.
+APK, Android test APK, and lint all built successfully. The official Study release build
+verified the `duosub.study.study` package and expected version, then published
+`DuoSub-Study.apk` as `study-1.0.4.15`. The API 36 managed-device run and physical-device
+checks were not confirmed here.
