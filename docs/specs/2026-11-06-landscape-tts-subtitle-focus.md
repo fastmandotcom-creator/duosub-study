@@ -110,8 +110,9 @@ finishes, the overlay follows the current video caption again.
 
 ## Release intent
 
-Study channel. Publish the paired-highlight fix after testing the actual caption-to-
-translation phrase alignment; `study-1.0.4.15` does not include that implementation.
+Study channel. The paired-highlight fix was published as
+[`study-1.0.4.16`](https://github.com/fastmandotcom-creator/duosub-study/releases/tag/study-1.0.4.16)
+from commit `05159f6`; `study-1.0.4.15` does not include the implementation.
 
 ## Implementation result
 
@@ -139,6 +140,5 @@ in existing files. The API 36 job reported six failures in unrelated existing te
 the same six failed in earlier run `42159290817`. The full unit suite runs 1,137 tests
 but remains blocked by two unrelated `SubtitleTextSanitizerTest` assertion failures.
 Earlier AI and TTS focused tests passed; AI tests use `FakeModel` and do not contact an
-AI service or require a key. The original implementation was published as
-`study-1.0.4.15`; the pair-highlighting implementation remains absent from that APK
-until a new Study release.
+AI service or require a key. Study APK `1.0.4-study.16`, asset `DuoSub-Study.apk`, was
+published from commit `05159f6`. Physical-device verification was not performed.
