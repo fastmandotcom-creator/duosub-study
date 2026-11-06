@@ -71,9 +71,10 @@ caption again. The portrait panel retains its existing behavior.
 
 | Category | Command/scenario and expected result | Environment / applicability |
 | --- | --- | --- |
-| Unit tests | `./gradlew testDebugUnitTest --tests "duosub.study.ui.LearningPlayerRootTest"` | Blocked before test execution by the pre-existing `AiSubtitleTranslatorTest.kt:111` compile error: too many arguments to `withTranslation` |
+| Focused unit tests | `./gradlew testDebugUnitTest --tests 'duosub.study.ui.LearningPlayerRootTest' --tests 'duosub.study.ui.SubtitleWordHighlightTest' --tests 'duosub.study.translation.AiSubtitleTranslatorTest.eachRowGetsExactlyTheWordsTheModelGaveIt'` | Passed after updating the stale AI row-translation test to the current `withTranslation` contract |
+| Broader AI translation tests | `./gradlew testDebugUnitTest --tests 'duosub.study.translation.AiSubtitleTranslatorTest'` | Not green: six existing tests still assert the superseded sentence/prefix translation behavior from before row-wise translation |
 | Android build and lint | `assembleDebug assembleDebugAndroidTest lintDebug` | Passed on local Android SDK; release script's Study build and package/version checks also passed |
-| Manual Android workflow | `gh workflow run 'Android build and releases' --ref main` | `verify-build` failed at test compilation due to the same pre-existing `AiSubtitleTranslatorTest.kt:111` error; API 36 managed-device tests were still running when the APK was published |
+| Manual Android workflow | `gh workflow run 'Android build and releases' --ref main` | `verify-build` on release commit `56cc1a0` failed compiling the stale `AiSubtitleTranslatorTest.kt:111` call; after updating that test locally, focused TTS tests pass but the six broader AI translation test failures remain. API 36 managed-device tests were still running when the APK was published |
 | Physical-device/manual | In landscape YouTube fullscreen, let paired reading advance while TTS speaks; the displayed pair stays fixed, the spoken side is highlighted, and the overlay follows playback after TTS ends | Not run on a physical device |
 
 ## Risks / edge cases
@@ -99,9 +100,10 @@ already focused language line. Each language keeps its existing text color.
 
 ## Validation result
 
-The phrase-range checks were added, but the focused unit-test task could not compile the
-test source set due to the unrelated `AiSubtitleTranslatorTest.kt:111` error. The debug
-APK, Android test APK, and lint all built successfully. The official Study release build
-verified the `duosub.study.study` package and expected version, then published
-`DuoSub-Study.apk` as `study-1.0.4.15`. The API 36 managed-device run and physical-device
-checks were not confirmed here.
+The focused TTS overlay, phrase-style, and row-translation tests pass. The broader
+`AiSubtitleTranslatorTest` suite still has six failures asserting behavior superseded by
+the row-wise translation refactor; this is unrelated to the caption-focus implementation.
+The debug APK, Android test APK, and lint all built successfully. The official Study
+release build verified the `duosub.study.study` package and expected version, then
+published `DuoSub-Study.apk` as `study-1.0.4.15`. The API 36 managed-device run and
+physical-device checks were not confirmed here.
